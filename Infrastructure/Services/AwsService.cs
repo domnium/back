@@ -1,19 +1,26 @@
-
+using Amazon.S3;
+using Amazon.S3.Model;
+using Amazon.S3.Transfer;
+using Amazon.Runtime;
 using Domain.Interfaces.Repositories;
+using Domain;
+using Amazon;
 
-namespace Infrastructure.Repositories;
+namespace Application.Services;
 
-public sealed class AwsRepository : IAwsRepository
+public sealed class AwsService : IAwsService
 {
-    #region Propriedades/Atributos
+    private readonly IAmazonS3 _awsS3Client;
 
-    private readonly IAmazonS3 _awsS3Client = new AmazonS3Client(new BasicAWSCredentials(Configuration.AwsKeyId, Configuration.AwsKeySecret),
-        new AmazonS3Config { RegionEndpoint = RegionEndpoint.GetBySystemName(Configuration.AwsRegion) });
-    
-    #endregion
+    public AwsService()
+    {
+        _awsS3Client = new AmazonS3Client(
+            new BasicAWSCredentials(Configuration.AwsKeyId, Configuration.AwsKeySecret),
+            new AmazonS3Config { RegionEndpoint = RegionEndpoint.GetBySystemName(Configuration.AwsRegion) }
+        );
+    }
 
-    #region UPLOAD
-    public async Task<string> UploadFileAsync(string bucketName, string key, IFormFile file)
+    public async Task<string> UploadFileAsync(string bucketName, string key, Stream file, string contentType)
     {
         using var newMemoryStream = new MemoryStream();
         await file.CopyToAsync(newMemoryStream);
@@ -24,21 +31,17 @@ public sealed class AwsRepository : IAwsRepository
             InputStream = newMemoryStream,
             Key = key,
             BucketName = bucketName,
-            ContentType = file.ContentType
+            ContentType = contentType
         });
         return key;
     }
-    #endregion UPLOAD
 
-    #region DELETE
-    public async Task<bool> DeleteFileAsync(string bucket, string key)
+    public async Task<bool> DeleteFileAsync(string bucketName, string key)
     {
-        var response = await _awsS3Client.DeleteObjectAsync(bucket, key);
+        var response = await _awsS3Client.DeleteObjectAsync(bucketName, key);
         return response.HttpStatusCode == System.Net.HttpStatusCode.NoContent;
     }
-    #endregion
 
-    #region DOWLOAD
     public async Task<Stream> GetFileAsync(string bucketName, string key)
     {
         var request = new GetObjectRequest
@@ -53,14 +56,12 @@ public sealed class AwsRepository : IAwsRepository
         memoryStream.Position = 0;
         return memoryStream;
     }
-    #endregion
 
-    #region GENERATE
-    public async Task<string> GeneratePreSignedUrlAsync(string bucketname, double duration, string objectKey, string contentType)
+    public async Task<string> GeneratePreSignedUrlAsync(string bucketName, double duration, string objectKey, string contentType)
     {
         var request = new GetPreSignedUrlRequest
         {
-            BucketName = bucketname,
+            BucketName = bucketName,
             Key = objectKey,
             Expires = DateTime.UtcNow.AddHours(duration),
             Verb = HttpVerb.GET,
@@ -69,8 +70,7 @@ public sealed class AwsRepository : IAwsRepository
                 ContentType = contentType
             }
         };
-        return await _awsS3Client.GetPreSignedURLAsync(request);
-    }
 
-    #endregion
+        return await Task.FromResult(_awsS3Client.GetPreSignedURL(request));
+    }
 }

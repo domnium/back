@@ -1,6 +1,5 @@
 using System;
 using Domain.Interfaces.Repositories;
-using Domain.Interfaces.Repositories;
 using Domain.Records;
 using MediatR;
 

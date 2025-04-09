@@ -29,4 +29,11 @@ public abstract class Archive : Entity
     {
         BucketName = bucket;
     }
+    
+    public Guid? SetGuid(Guid id)
+    {
+        if (AwsKey is null) return null;
+        Id = Guid.NewGuid();
+        return Id;
+    }
 }

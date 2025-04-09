@@ -4,7 +4,7 @@ namespace Domain.Entities.Abstracts;
 
 public abstract class Entity : Notifiable<Notification>
 {
-    public Guid Id { get; private set; }
+    public Guid Id { get; protected set; }
     public DateTime? CreatedDate { get;  private set; }
     public DateTime? UpdatedDate { get;  private set; }
     public DateTime? DeletedDate { get;  private set; }

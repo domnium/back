@@ -1,10 +1,11 @@
 using Domain.Records;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.UseCases.Category.Create;
 
 public record Request(
     string? Name, 
     string? Description,
-    Stream? Imagem
+    IFormFile? Imagem
 ) : IRequest<BaseResponse>;
