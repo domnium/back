@@ -11,7 +11,7 @@ public abstract class Subscription : Entity
     public SubscriptionPeriod Period { get; private set; }
     public PaymentDetails? Payment { get; private set; }
 
-   protected Subscription(Guid studentId, SubscriptionPeriod period, PaymentDetails? payment = null)
+    protected Subscription(Guid studentId, SubscriptionPeriod period, PaymentDetails? payment = null)
     {
         StudentId = studentId;
         Period = period;

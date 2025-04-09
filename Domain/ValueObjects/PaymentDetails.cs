@@ -3,11 +3,12 @@ using Flunt.Validations;
 
 namespace Domain.ValueObjects;
 
-public class PaymentDetails : Notifiable<Notification>
+public class PaymentDetails : BaseValueObject
 {
     public string PaymentGateway { get; private set; }
     public string TransactionId { get; private set; }
 
+    private PaymentDetails(){}
     public PaymentDetails(string gateway, string transactionId)
     {
         PaymentGateway = gateway;

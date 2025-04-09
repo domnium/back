@@ -49,13 +49,13 @@ public class IAMapping : IEntityTypeConfiguration<IA>
         // Relacionamento com Picture
         builder.HasOne(i => i.Picture)
             .WithMany()
-            .HasForeignKey("PictureId")
+            .HasForeignKey(i => i.PictureId)
             .OnDelete(DeleteBehavior.SetNull);
 
         // Relacionamento com Courses
         builder.HasMany(i => i.Courses)
             .WithOne(c => c.IA)
-            .HasForeignKey("IAId")
+            .HasForeignKey(c => c.IAid)
             .OnDelete(DeleteBehavior.SetNull);
     }
 }

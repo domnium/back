@@ -54,7 +54,7 @@ public class CategoryMap : IEntityTypeConfiguration<Category>
 
         builder.HasOne(c => c.Image)
             .WithMany()
-            .HasForeignKey("PictureId") 
+            .HasForeignKey(c => c.PictureId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -1,13 +1,10 @@
-using System;
-
-namespace Infrastructure.Data.FluentMapping;
 
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 
 namespace Infrastructure.Data.FluentMapping;
-
 public class PictureMap : IEntityTypeConfiguration<Picture>
 {
     public void Configure(EntityTypeBuilder<Picture> builder)
@@ -56,14 +53,11 @@ public class PictureMap : IEntityTypeConfiguration<Picture>
                 .IsRequired();
         });
 
-        builder.OwnsOne(p => p.ContentType, ct =>
-        {
-            ct.Property(c => c.Type)
-                .HasColumnName("ContentType")
-                .HasColumnType("varchar")
-                .HasMaxLength(100)
-                .IsRequired(false);
-        });
+       builder.Property(p => p.ContentType)
+        .HasColumnName("ContentType")
+        .HasColumnType("varchar")
+        .HasConversion<string>() 
+        .IsRequired(false);
 
         builder.OwnsOne(p => p.UrlTemp, url =>
         {

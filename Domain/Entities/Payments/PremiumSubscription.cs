@@ -13,6 +13,9 @@ public class PremiumSubscription : Subscription
     public DateTime? StartDate { get; private set; }
     public DateTime? EndDate { get; private set; }
 
+    protected PremiumSubscription() : base(Guid.Empty, new SubscriptionPeriod(DateTime.MinValue, DateTime.MinValue)) 
+    {
+    }
     public PremiumSubscription(
         Guid studentId,
         SubscriptionPeriod period,

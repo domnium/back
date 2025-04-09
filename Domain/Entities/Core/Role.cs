@@ -12,6 +12,7 @@ public class Role : Entity
     private readonly IList<User> _users = new List<User>();
     public IReadOnlyCollection<User> Users => _users.ToList();
 
+    private Role() {}
     public Role(UniqueName name, string slug)
     {
         Name = name;

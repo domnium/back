@@ -9,4 +9,7 @@ public class FreeSubscription : Subscription
         : base(studentId, period)
     {
     }
+    protected FreeSubscription() : base(Guid.Empty, new SubscriptionPeriod(DateTime.MinValue, DateTime.MinValue)) 
+    {
+    }
 }

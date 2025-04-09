@@ -54,7 +54,6 @@ public class ParameterMapping : IEntityTypeConfiguration<Parameter>
 
         builder.HasOne(p => p.Course)
             .WithOne(c => c.Parameters)
-            .HasForeignKey("CourseId")
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

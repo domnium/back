@@ -9,6 +9,7 @@ public sealed class Parameter : Entity
     public bool? FreeCourse { get; private set;}
     public Course? Course { get; private set;}
 
+    private Parameter() {}
     public Parameter(UniqueName? name, Description? description, bool? freeCourse, Course? course)
     {
         AddNotificationsFromValueObjects(name, description, course);

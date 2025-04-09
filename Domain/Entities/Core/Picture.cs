@@ -13,6 +13,7 @@ public class Picture : Archive
     [NotMapped]
     public AppFile? File { get; private set;}
 
+    private Picture() {}
     public Picture(BigString awsKey, bool ativo = true, AppFile appFile = null)
         : base(awsKey)
     {

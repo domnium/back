@@ -9,8 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
-public class DomnumDbContext(DbContextOptions<DomnumDbContext> options) : DbContext 
+public class DomnumDbContext : DbContext 
 {
+    public DomnumDbContext(DbContextOptions<DomnumDbContext> options)
+        : base(options)
+    {
+    }
     public DbSet<StudentLecture> StudentLectures { get; init; }
     public DbSet<StudentCourse> StudentCourses { get; init; }
     public DbSet<Student> Students { get; init; }
@@ -27,7 +31,7 @@ public class DomnumDbContext(DbContextOptions<DomnumDbContext> options) : DbCont
     public DbSet<User> Users { get; init; }
     public DbSet<FreeSubscription> FreeSubscriptions { get; init; }
     public DbSet<PremiumSubscription> PremiumSubscriptions { get; init; }
-    public DbSet<StripeWebhookEvent> StripeWebhookEvents { get; set; }
+    public DbSet<StripeWebhookEvent> StripeWebhookEvents { get; init; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

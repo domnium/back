@@ -16,6 +16,7 @@ public class StudentLecture : Entity
     public bool IsCompleted { get; private set; }
     public DateTime? CompletionDate { get; private set; }
 
+    private StudentLecture() {}
     public StudentLecture(Guid studentId, Guid lectureId, Lecture lecture, Student student, Guid? courseId = null)
     {
         StudentId = studentId;

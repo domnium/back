@@ -6,6 +6,8 @@ namespace Domain.Entities.Core;
 public class Video : Archive
 {
     public bool Ativo { get; private set; }
+
+    [NotMapped]
     public VideoFile? File { get; private set; }
 
     private Video() {}

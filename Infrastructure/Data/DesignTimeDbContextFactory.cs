@@ -11,7 +11,9 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<DomnumDbCo
     {
        try
         {
-            var connectionString = args.FirstOrDefault() ?? StringConnection.BuildConnectionString();
+            var connectionString = StringConnection.BuildConnectionString();
+            
+        Console.WriteLine($"[DEBUG] Connection string: {connectionString}");
             if (string.IsNullOrEmpty(connectionString))
                 throw new Exception("A connection string must be provided.");
 

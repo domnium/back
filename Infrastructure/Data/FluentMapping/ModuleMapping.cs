@@ -59,12 +59,11 @@ public class ModuleMapping : IEntityTypeConfiguration<Module>
         // Relationships
         builder.HasOne(m => m.Course)
             .WithMany(c => c.Modules)
-            .HasForeignKey("CourseId")
+            .HasForeignKey(m => m.CourseId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(m => m.Lectures)
             .WithOne(l => l.Module)
-            .HasForeignKey("ModuleId")
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

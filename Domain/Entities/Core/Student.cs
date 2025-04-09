@@ -8,7 +8,9 @@ public class Student : Entity
 {
     public UniqueName Name { get; private set; }
     public Picture Picture { get; private set; }
+    public Guid PictureId { get; private set; }
     public User User { get; private set; }
+    public Guid  UserId { get; private set; }
     public bool IsFreeStudent { get; private set; }
     private readonly IList<StudentLecture> _studentLectures = new List<StudentLecture>();
     public IReadOnlyCollection<StudentLecture> StudentLectures => _studentLectures.ToList();

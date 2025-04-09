@@ -11,6 +11,7 @@ public class StripeWebhookEvent : Entity
     public string PayloadJson { get; private set; }
     public DateTime ReceivedAt { get; private set; }
 
+    private StripeWebhookEvent() {}
     public StripeWebhookEvent(string eventId, string type, string payloadJson)
     {
         EventId = eventId;

@@ -100,6 +100,7 @@ public class CourseMapping : IEntityTypeConfiguration<Course>
 
         builder.HasOne(i => i.IA)
             .WithMany(c => c.Courses)
+            .HasForeignKey(c => c.IAid)
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(c => c.Modules)
@@ -108,16 +109,19 @@ public class CourseMapping : IEntityTypeConfiguration<Course>
 
         builder.HasOne(c => c.Category)
             .WithMany()
+            .HasForeignKey(c => c.CategoryId)
             .HasConstraintName("FK_Course_Category")
             .OnDelete(DeleteBehavior.Restrict);  
 
         builder.HasOne(c => c.Teacher)
             .WithMany()
+            .HasForeignKey(c => c.TeacherId)
             .HasConstraintName("FK_Course_Teacher")
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(c => c.Image)
-            .WithOne()
+            .WithMany() 
+            .HasForeignKey(c => c.PictureId) 
             .HasConstraintName("FK_Course_Picture")
             .OnDelete(DeleteBehavior.SetNull);
 

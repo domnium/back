@@ -19,7 +19,7 @@ public class Handler : IRequestHandler<Request, Response>
     }
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
-        var user = _mapper.Map<Domain.Entities.User>(request);
+        var user = _mapper.Map<Domain.Entities.Core.User>(request);
         var isAuthenticated = await _userRepository.Authenticate(user, cancellationToken);
 
         if (!isAuthenticated || user.Notifications.Any())

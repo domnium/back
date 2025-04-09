@@ -11,6 +11,7 @@ public class StudentCourse : Entity
     public Course Course { get; private set; }
     public DateTime EnrollmentDate { get; private set; }
 
+    private StudentCourse() {}
     public StudentCourse(Guid studentId, Guid courseId, Student student, Course course)
     {
         StudentId = studentId;

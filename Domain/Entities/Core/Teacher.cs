@@ -17,6 +17,7 @@ public class Teacher : Entity
     public Url? GitHub { get; private set; }
     public Description Description { get; private set; }
     public Picture Picture { get; private set; }
+    public Guid? PictureId { get; private set; }
     private readonly IList<Course> _courses = new List<Course>();
     public IReadOnlyCollection<Course> Courses => _courses.ToList();
     private Teacher() { }
