@@ -31,7 +31,5 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         if(await _userRepository
             .GetWithParametersAsync(x => x.Id.Equals(request.UserId),
              cancellationToken) is null) return new BaseResponse(400, "User does not exists");
-
-        
     }
 }
