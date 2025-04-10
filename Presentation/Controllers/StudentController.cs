@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using GetStudentRequest = Application.UseCases.Student.GetById.Request;
 using GetAllStudentsRequest = Application.UseCases.Student.GetAll.Request;
 using CreateStudentRequest = Application.UseCases.Student.Create.Request;
+using UpdateStudentRequest = Application.UseCases.Student.Create.Request;
 using DeleteStudentRequest = Application.UseCases.Student.Delete.Request;
 
 namespace Presentation.Controllers;
@@ -44,6 +45,20 @@ public class StudentController(IMediator mediator) : ControllerBase
 
     [HttpPost("create")]
     public async Task<IActionResult> Create(CreateStudentRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var response = await mediator.Send(request, cancellationToken);
+            return StatusCode(response.statuscode, new {response.message, response.Response});
+        }
+        catch(Exception e)
+        {   
+            return StatusCode(500, e.StackTrace);
+        }
+    }
+
+    [HttpPost("update")]
+    public async Task<IActionResult> Update(UpdateStudentRequest request, CancellationToken cancellationToken)
     {
         try
         {
