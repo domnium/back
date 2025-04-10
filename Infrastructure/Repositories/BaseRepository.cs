@@ -24,7 +24,10 @@ public class BaseRepository<T>(DbContext context)
         => context.Update(entity);
 
     public virtual async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
-        => await Task.Run(() => context.Remove(entity), cancellationToken);
+    {
+        entity.SetValuesDelete();
+        await Task.Run(() => context.Update(entity), cancellationToken);
+    }
 
     public virtual async Task<List<T>> GetAll(CancellationToken cancellationToken, int skip = 0, int take = 10)
         => await context.Set<T>().AsNoTracking()

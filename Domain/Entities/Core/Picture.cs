@@ -14,7 +14,7 @@ public class Picture : Archive
     public AppFile? File { get; private set;}
 
     private Picture() {}
-    public Picture(BigString awsKey, bool ativo = true, AppFile appFile = null)
+    public Picture(BigString? awsKey, bool ativo = true, AppFile appFile = null)
         : base(awsKey)
     {
         AddNotificationsFromValueObjects(appFile);

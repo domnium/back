@@ -1,7 +1,6 @@
 using System;
 using Domain;
 using Domain.Entities;
-using Domain.Entities.Core;
 using Domain.Interfaces.Repositories;
 using Domain.Records;
 using Domain.ValueObjects;
@@ -34,7 +33,6 @@ public class Handler : IRequestHandler<Request, BaseResponse>
              cancellationToken) is not null) return new BaseResponse(400, "Category already exists");
 
         var pictureId = Guid.NewGuid();
-
         var awsKey = await _awsService.UploadFileAsync(
             Configuration.BucketArchives,
             pictureId.ToString(),
@@ -42,7 +40,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             request.Imagem.ContentType
         ); 
 
-        if(awsKey is null) return new BaseResponse(400, "Error uploading file to AWS S3");
+        if(awsKey is null) return new BaseResponse(400, "Error uploading file");
 
         var newPicture = new Picture(new BigString(awsKey), true, new AppFile(request.Imagem.OpenReadStream(), "FotoCategoria"));
         newPicture.SetGuid(pictureId);
@@ -50,16 +48,14 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         newPicture.SetTemporaryUrl(new Url(awsKey), DateTime.UtcNow.AddDays(1));
         
         if (newPicture is null || newPicture.Notifications.Any()) return new BaseResponse(400, "Error creating picture"
-            + newPicture.Notifications.Select(x => x.Message).ToString());
+         ,newPicture?.Notifications.ToList());
 
         var storedPicture = await _pictureRepository.CreateReturnEntity(newPicture, cancellationToken);
-    
         var newCategory = new Domain.Entities.Core.Category(
             new UniqueName(request.Name),
             new Description(request.Description),
-            newPicture
+            storedPicture
         );
-
         await _categoryRepository.CreateAsync(newCategory, cancellationToken);
         await _dbCommit.Commit(cancellationToken);
         return new BaseResponse(201, "Category Created");

@@ -10,11 +10,16 @@ public static class Configuration
     public static string BackendUrl { get; set; } = string.Empty;
     public static string FrontendUrl { get; set; } = string.Empty;
     public static string PicturesStudensPath {get; set;} = "/Images/Students/";
+    public static string PicturesCoursesPath {get; set;} = "/Images/Courses/";
+    public static string VideoCoursesTrailer {get; set;} = "/Videos/Courses/Trailers/";
     public static string SmtpServer { get; set; } = string.Empty;
     public static int SmtpPort { get; set; } = 587;
     public static string SmtpUser { get; set; } = string.Empty;
     public static string SmtpPass { get; set; } = string.Empty;
     public static long PremiumPrice { get; set; } = 79990;
+    public static string RabbitMQUser { get; set; } = string.Empty;
+    public static string RabbitMQHost { get; set; } = string.Empty;
+    public static string RabbitMQPassword { get; set; } = string.Empty;
     public static string AwsKeyId { get; set; } = string.Empty;
     public static string AwsKeySecret { get; set; } = string.Empty;
     public static string AwsRegion { get; set; } = string.Empty;  // Região da AWS

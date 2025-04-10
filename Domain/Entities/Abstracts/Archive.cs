@@ -16,7 +16,6 @@ public abstract class Archive : Entity
     public Archive(BigString awsKey)
     {
         AwsKey = awsKey;
-        AddNotifications(awsKey);
     }
 
     public void SetTemporaryUrl(Url url, DateTime expiration)

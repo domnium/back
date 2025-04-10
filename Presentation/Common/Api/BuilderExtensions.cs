@@ -117,6 +117,7 @@ public  static class BuilderExtensions
         });
         
         builder.Services.AppServices();
+        builder.Services.AddRabbitMQ();
         builder.Services.ConfigureInfraServices();
     }
 }
