@@ -2,7 +2,7 @@ using Domain.Interfaces;
 using Domain.Records;
 using MediatR;
 
-namespace Application.UseCases.Student.GetAll;
+namespace Application.UseCases.Student.GetById;
 
 public class Handler : IRequestHandler<Request, BaseResponse>
 {
@@ -14,17 +14,17 @@ public class Handler : IRequestHandler<Request, BaseResponse>
 
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
-        var students = await _studentRepository.GetAllProjectedAsync(
-            x => x.DeletedDate != null, 
+        var student = await _studentRepository.GetAllProjectedAsync(
+            x => x.DeletedDate != null && x.Id == request.StudentId, 
             x => new {
                 x.Id,
                 x.Name,
                 x.Picture.UrlTemp
             }
-            ,cancellationToken, 0, 100, x => x.Picture
+            ,cancellationToken, 0, 1, x => x.Picture
         );
 
-        if(students is null) return new BaseResponse(404, "Students not found");
-        return new BaseResponse(200, "Students found", null, students);
+        if(student is null) return new BaseResponse(404, "Student not found");
+        return new BaseResponse(200, "Student found", null, student[0]);
     }
 }
