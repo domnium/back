@@ -14,17 +14,17 @@ public class Handler : IRequestHandler<Request, BaseResponse>
 
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
-        var student = await _studentRepository.GetAllProjectedAsync(
+        var student = await _studentRepository.GetProjectedAsync(
             x => x.DeletedDate != null && x.Id == request.StudentId, 
             x => new {
                 x.Id,
                 x.Name,
                 x.Picture.UrlTemp
             }
-            ,cancellationToken, 0, 1, x => x.Picture
+            ,cancellationToken, x => x.Picture
         );
 
         if(student is null) return new BaseResponse(404, "Student not found");
-        return new BaseResponse(200, "Student found", null, student[0]);
+        return new BaseResponse(200, "Student found", null, student);
     }
 }

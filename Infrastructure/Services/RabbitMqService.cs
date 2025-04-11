@@ -14,4 +14,6 @@ public class RabbitMqService : IMessageQueueService
 
     public async Task EnqueueUploadMessageAsync(UploadFileMessage message, CancellationToken cancellationToken)
         => await _publishEndpoint.Publish(message, cancellationToken);
+    public async Task EnqueueDeleteMessageAsync(DeleteFileMessage message, CancellationToken cancellationToken)
+        => await _publishEndpoint.Publish(message, cancellationToken);
 }

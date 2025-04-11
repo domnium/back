@@ -20,7 +20,8 @@ public sealed class AwsService : IAwsService
         );
     }
 
-    public async Task<string> UploadFileAsync(string bucketName, string key, Stream file, string contentType)
+    public async Task<string> UploadFileAsync(string bucketName, string key, Stream file, string contentType,
+         CancellationToken cancellationToken)
     {
         using var newMemoryStream = new MemoryStream();
         await file.CopyToAsync(newMemoryStream);
@@ -32,17 +33,18 @@ public sealed class AwsService : IAwsService
             Key = key,
             BucketName = bucketName,
             ContentType = contentType
-        });
+        }, cancellationToken);
         return key;
     }
 
-    public async Task<bool> DeleteFileAsync(string bucketName, string key)
+    public async Task<bool> DeleteFileAsync(string bucketName, string key,
+         CancellationToken cancellationToken)
     {
-        var response = await _awsS3Client.DeleteObjectAsync(bucketName, key);
+        var response = await _awsS3Client.DeleteObjectAsync(bucketName, key, cancellationToken);
         return response.HttpStatusCode == System.Net.HttpStatusCode.NoContent;
     }
 
-    public async Task<Stream> GetFileAsync(string bucketName, string key)
+    public async Task<Stream> GetFileAsync(string bucketName, string key, CancellationToken cancellationToken)
     {
         var request = new GetObjectRequest
         {
@@ -50,14 +52,15 @@ public sealed class AwsService : IAwsService
             Key = key
         };
 
-        using var response = await _awsS3Client.GetObjectAsync(request);
+        using var response = await _awsS3Client.GetObjectAsync(request, cancellationToken);
         var memoryStream = new MemoryStream();
         await response.ResponseStream.CopyToAsync(memoryStream);
         memoryStream.Position = 0;
         return memoryStream;
     }
 
-    public async Task<string> GeneratePreSignedUrlAsync(string bucketName, double duration, string objectKey, string contentType)
+    public async Task<string> GeneratePreSignedUrlAsync(string bucketName, double duration, string objectKey, 
+        string contentType)
     {
         var request = new GetPreSignedUrlRequest
         {
@@ -70,7 +73,6 @@ public sealed class AwsService : IAwsService
                 ContentType = contentType
             }
         };
-
         return await Task.FromResult(_awsS3Client.GetPreSignedURL(request));
     }
 }

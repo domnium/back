@@ -7,4 +7,6 @@ public interface IMessageQueueService
 {
     Task EnqueueUploadMessageAsync(UploadFileMessage message, 
         CancellationToken cancellationToken);
+    Task EnqueueDeleteMessageAsync(DeleteFileMessage message,
+        CancellationToken cancellationToken);
 }

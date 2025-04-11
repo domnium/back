@@ -19,6 +19,8 @@ public static class ServicesExtensions
         services.AddMassTransit(x =>
         {
             x.AddConsumer<UploadFileConsumer>();
+            x.AddConsumer<DeleteFileConsumer>(); 
+
             x.UsingRabbitMq((ctx, cfg) =>
             {
                cfg.Host(Configuration.RabbitMQHost, h =>
@@ -30,6 +32,10 @@ public static class ServicesExtensions
                 cfg.ReceiveEndpoint("upload_queue", e =>
                 {
                     e.ConfigureConsumer<UploadFileConsumer>(ctx);
+                });
+                cfg.ReceiveEndpoint("delete_queue", e =>
+                {
+                    e.ConfigureConsumer<DeleteFileConsumer>(ctx);
                 });
             });
         });

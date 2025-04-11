@@ -111,24 +111,24 @@ public class CourseMapping : IEntityTypeConfiguration<Course>
             .WithMany()
             .HasForeignKey(c => c.CategoryId)
             .HasConstraintName("FK_Course_Category")
-            .OnDelete(DeleteBehavior.Restrict);  
+            .OnDelete(DeleteBehavior.Cascade);  
 
         builder.HasOne(c => c.Teacher)
             .WithMany()
             .HasForeignKey(c => c.TeacherId)
             .HasConstraintName("FK_Course_Teacher")
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(c => c.Image)
             .WithMany() 
             .HasForeignKey(c => c.PictureId) 
             .HasConstraintName("FK_Course_Picture")
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(c => c.Trailer)
             .WithOne()
             .HasConstraintName("FK_Course_Trailer_Video")
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(c => c.Parameters)
             .WithOne(p => p.Course)
