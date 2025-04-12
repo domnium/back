@@ -83,8 +83,6 @@ public class Student : Entity
         }
 
         var newLecture = new StudentLecture(
-            studentId: this.Id,
-            lectureId: lecture.Id,
             lecture: lecture,
             student: this,
             courseId: lecture.Module?.Course?.Id

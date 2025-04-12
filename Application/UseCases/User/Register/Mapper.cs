@@ -16,8 +16,8 @@ public class Mapper : Profile
                 new FullName(request.FirstName, request.LastName),
                 new Email(request.Email),
                 new Address(request.Number, request.NeighBordHood, request.Road, request.Complement),
-                false,
-                new Password(request.Password, false)
+                new Password(request.Password, false),
+                false
             ));
 
         CreateMap<Domain.Entities.Core.User, Response>()
