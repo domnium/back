@@ -2,42 +2,43 @@ using Domain.Interfaces.Repositories;
 using Domain.Records;
 using MediatR;
 
-namespace Application.UseCases.Teacher.GetById;
+namespace Application.UseCases.Module.GetById;
 
 /// <summary>
-/// Handler responsável por retornar apenas um professor.
+/// Handler responsável por retornar apenas um módulo.
 /// </summary>
 public class Handler : IRequestHandler<Request, BaseResponse>
 {
-    private readonly ITeacherRepository _teacherRepository;
+    private readonly IModuleRepository _moduleRepository;
 
     /// <summary>
-    /// Construtor para o handler de retorno de apenas um professor.
+    /// Construtor para o handler de retorno de apenas um módulo.
     /// </summary>
-    public Handler(ITeacherRepository teacherRepository)
+    public Handler(IModuleRepository moduleRepository)
     {
-        _teacherRepository = teacherRepository;
+        _moduleRepository = moduleRepository;
     }
 
     /// <summary>
-    /// Manipula o retorno de apenas um professor com base no identificador encaminhado.
+    /// Manipula o retorno de apenas um módulo com base no identificador encaminhado.
     /// </summary>
-    /// <param name="request">Request com o identificador de professor para filtro</param>
+    /// <param name="request">Request com o identificador de módulo para filtro</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns><see cref="BaseResponse"/> com status e mensagem</returns>
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
-        var teacher = await _teacherRepository.GetProjectedAsync(
-            x => x.DeletedDate != null && x.Id == request.TeacherId, 
+        var module = await _moduleRepository.GetProjectedAsync(
+            x => x.DeletedDate != null && x.Id == request.ModuleId, 
             x => new {
                 x.Id,
                 x.Name,
-                x.Picture.UrlTemp
+                x.Description,
+                x.Course
             }
-            ,cancellationToken, x => x.Picture
+            ,cancellationToken, x => x.Course
         );
 
-        if(teacher is null) return new BaseResponse(404, "Teacher not found");
-        return new BaseResponse(200, "Teacher found", null, teacher);
+        if(module is null) return new BaseResponse(404, "Module not found");
+        return new BaseResponse(200, "Module found", null, module);
     }
 }
