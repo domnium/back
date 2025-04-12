@@ -19,8 +19,7 @@ builder.AddServices();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-    app.ConfigureDevEnvironment();
+app.ConfigureEnvironment();
 
 app.UseRouting();
 app.UseCors(Configuration.CorsPolicyName);

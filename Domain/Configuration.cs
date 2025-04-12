@@ -9,6 +9,11 @@ public static class Configuration
     public static string ConnectionString { get; set; } = string.Empty;
     public static string BackendUrl { get; set; } = string.Empty;
     public static string FrontendUrl { get; set; } = string.Empty;
+    public static string JwtKey { get; set; } = string.Empty;
+    public static string VersionApi { get; set; } = string.Empty;
+    public static string ApiKey { get; set; } = string.Empty;
+    public static string ConnectionStringPostgresql { get; set; } = string.Empty;
+    public static string ApiKeyAttribute { get; set; } = string.Empty;
     public static string PicturesStudensPath {get; set;} = "/Images/Students/";
     public static string PicturesCoursesPath {get; set;} = "/Images/Courses/";
     public static string PicturesCategoriesPath {get; set;} = "/Images/Categories/";
@@ -19,6 +24,7 @@ public static class Configuration
     public static string SmtpUser { get; set; } = string.Empty;
     public static string SmtpPass { get; set; } = string.Empty;
     public static long PremiumPrice { get; set; } = 79990;
+
     public static string RabbitMQUser { get; set; } = string.Empty;
     public static string RabbitMQHost { get; set; } = string.Empty;
     public static string RabbitMQPassword { get; set; } = string.Empty;
@@ -30,4 +36,5 @@ public static class Configuration
     public static int DurationUrlTempVideos { get; set; } = 24;
     public static bool IsDevelopment { get; set; } = true;
     public static int DurationUrlTempImage { get; set; } = 24;
+    public static string CorsPolicyName { get; set; } = "DommnumCorsPolicy";
 }
