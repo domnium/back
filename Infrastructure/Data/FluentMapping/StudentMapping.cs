@@ -15,7 +15,7 @@ public class StudentMapping : IEntityTypeConfiguration<Student>
         builder.Property(s => s.Id)
             .HasColumnType("uuid")
             .IsRequired()
-            .ValueGeneratedOnAdd();
+            ;
 
         builder.Property(s => s.CreatedDate)
             .HasColumnType("timestamp")

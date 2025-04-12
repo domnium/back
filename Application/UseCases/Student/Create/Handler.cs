@@ -9,72 +9,87 @@ using MediatR;
 
 namespace Application.UseCases.Student.Create;
 
+/// <summary>
+/// Handler responsável pela criação de um novo estudante,
+/// com associação a um usuário existente, imagem de perfil e envio assíncrono de upload para RabbitMQ.
+/// </summary>
 public class Handler : IRequestHandler<Request, BaseResponse>
 {
     private readonly IMessageQueueService _messageQueueService;
     private readonly IStudentRepository _studentRepository;
     private readonly IUserRepository _userRepository;
     private readonly IDbCommit _dbCommit;
-    private readonly IPictureRepository _pictureRepository;
+    private readonly ITemporaryStorageService _temporaryStorageService;
 
-    public Handler(IMessageQueueService messageQueueService,
-     IStudentRepository studentRepository,
-     IUserRepository userRepository,
-     IDbCommit dbCommit,
-     IPictureRepository pictureRepository)
+    /// <summary>
+    /// Construtor para o handler de criação de estudantes.
+    /// </summary>
+    public Handler(
+        IMessageQueueService messageQueueService,
+        IStudentRepository studentRepository,
+        IUserRepository userRepository,
+        IDbCommit dbCommit,
+        ITemporaryStorageService temporaryStorageService)
     {
         _messageQueueService = messageQueueService;
         _studentRepository = studentRepository;
         _userRepository = userRepository;
         _dbCommit = dbCommit;
-        _pictureRepository = pictureRepository;
+        _temporaryStorageService = temporaryStorageService;
     }
 
+    /// <summary>
+    /// Manipula a criação de um novo estudante, salvando a imagem em disco e enfileirando-a para upload.
+    /// </summary>
+    /// <param name="request">Request com dados do aluno e imagem</param>
+    /// <param name="cancellationToken">Token de cancelamento</param>
+    /// <returns><see cref="BaseResponse"/> com status e mensagem</returns>
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
         var userFound = await _userRepository
-            .GetWithParametersAsync(x => x.Id.Equals(request.UserId),
-             cancellationToken);
+            .GetWithParametersAsync(x => x.Id == request.UserId, cancellationToken);
 
-        if(userFound is null) return new BaseResponse(400, "User does not exists");
+        if (userFound is null)
+            return new BaseResponse(400, "User does not exist");
 
-        var newPicture = new Picture(null, false, new AppFile(request.Picture.OpenReadStream(),
-             request.Picture.FileName));
+        // Cria a imagem
+        var picture = new Picture(null, false, new AppFile(request.Picture.OpenReadStream(), request.Picture.FileName));
 
-        if (newPicture.Notifications.Any()) return new BaseResponse(400, "Error creating picture"
-            + newPicture.Notifications.Select(x => x.Message).ToString());
+        if (picture.Notifications.Any())
+            return new BaseResponse(400, "Error creating picture", picture.Notifications.ToList());
 
-        //Crio StoredPicture no banco.
-        var storedPicture = await _pictureRepository.CreateReturnEntity(newPicture, cancellationToken);
-
+        // Cria entidade Student com imagem
         var newStudent = new Domain.Entities.Core.Student(
             new UniqueName(request.Name),
             userFound,
             request.IsFreeStudent,
-            newPicture
+            picture
         );
 
-        if(newStudent.Notifications.Any())
-            return new BaseResponse(400, "Invalid student", newStudent.Notifications.ToList(), null);
+        if (newStudent.Notifications.Any())
+            return new BaseResponse(400, "Invalid student", newStudent.Notifications.ToList());
 
-        //Cria Estudante no banco
+        // Persiste tudo: Student + Picture
         await _studentRepository.CreateAsync(newStudent, cancellationToken);
         await _dbCommit.Commit(cancellationToken);
 
-        //Salva arquivo no sistema de arquivos local
-        var tempPicturePath = Path.Combine(Configuration.PicturesCoursesPath, $"_{storedPicture.Id.ToString()}.{Path
-            .GetExtension(request.Picture.FileName)}");
-
-        //Manda mensagem para o RabbitMQ
-        await _messageQueueService.EnqueueUploadMessageAsync(new UploadFileMessage
-        (
-            Id: storedPicture.Id,
-            Bucket: Configuration.BucketArchives,
-            Path: $"{tempPicturePath}.{Path.GetExtension(request.Picture.FileName)}",
-            ContentType: request.Picture.ContentType,
-            TempFilePath: tempPicturePath
-        ), cancellationToken
+        // Salva imagem local
+        var tempPath = await _temporaryStorageService.SaveAsync(
+            Configuration.PicturesStudensPath,
+            picture.Id,
+            request.Picture.OpenReadStream(),
+            cancellationToken
         );
-        return new BaseResponse(201, "Student Created");
+
+        // Enfileira imagem para upload
+        await _messageQueueService.EnqueueUploadMessageAsync(new UploadFileMessage(
+            picture.Id,
+            Configuration.BucketArchives,
+            Configuration.PicturesStudensPath,
+            request.Picture.ContentType,
+            tempPath
+        ), cancellationToken);
+
+        return new BaseResponse(201, "Student created");
     }
 }

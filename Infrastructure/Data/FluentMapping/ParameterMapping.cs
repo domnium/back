@@ -15,7 +15,7 @@ public class ParameterMapping : IEntityTypeConfiguration<Parameter>
         builder.Property(p => p.Id)
             .HasColumnType("uuid")
             .IsRequired()
-            .ValueGeneratedOnAdd();
+            ;
 
         builder.Property(p => p.CreatedDate)
             .HasColumnType("timestamp")

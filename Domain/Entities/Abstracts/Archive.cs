@@ -10,13 +10,21 @@ public abstract class Archive : Entity
     public DateTime? UrlExpired { get; private set; }
     public Url? UrlTemp { get; private set; }
     public string? BucketName { get; private set; }
+    public BigString? TemporaryPath { get; private set; }
 
     protected Archive() { }
 
-    public Archive(BigString awsKey)
+    public Archive(BigString awsKey, BigString temporaryPath)
     {
         AwsKey = awsKey;
+        TemporaryPath = temporaryPath;
     }
+
+    public Archive(BigString temporaryPath)
+    {
+        TemporaryPath = temporaryPath;
+    }
+
 
     public void SetTemporaryUrl(Url url, DateTime expiration)
     {
@@ -27,12 +35,5 @@ public abstract class Archive : Entity
     public void SetBucket(string bucket)
     {
         BucketName = bucket;
-    }
-    
-    public Guid? SetGuid(Guid id)
-    {
-        if (AwsKey is null) return null;
-        Id = Guid.NewGuid();
-        return Id;
     }
 }

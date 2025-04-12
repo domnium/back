@@ -28,6 +28,12 @@ public class Module : Entity
             AddNotification("Lecture", "Aula inválida.");
             return;
         }
+
+        if (_lectures.Any(l => l.Name == lecture.Name))
+        {
+            AddNotification("Lecture", "Já existe uma aula com esse nome neste módulo.");
+            return;
+        }
         _lectures.Add(lecture);
     }
 }

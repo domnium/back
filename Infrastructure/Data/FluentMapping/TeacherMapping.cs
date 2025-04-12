@@ -18,7 +18,7 @@ public class TeacherMapping : IEntityTypeConfiguration<Teacher>
         builder.Property(t => t.Id)
             .HasColumnType("uuid")
             .IsRequired()
-            .ValueGeneratedOnAdd();
+            ;
 
         builder.Property(t => t.CreatedDate)
             .HasColumnType("timestamp")

@@ -18,7 +18,7 @@ public class VideoMapping : IEntityTypeConfiguration<Video>
         builder.Property(v => v.Id)
             .HasColumnType("uuid")
             .IsRequired()
-            .ValueGeneratedOnAdd();
+            ;
 
         builder.Property(v => v.CreatedDate)
             .HasColumnType("timestamp")

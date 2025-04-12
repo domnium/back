@@ -16,7 +16,7 @@ public class SubscriptionMapping : IEntityTypeConfiguration<Subscription>
         builder.Property(s => s.Id)
             .HasColumnType("uuid")
             .IsRequired()
-            .ValueGeneratedOnAdd();
+            ;
 
         builder.Property(s => s.CreatedDate).HasColumnType("timestamp").IsRequired();
         builder.Property(s => s.UpdatedDate).HasColumnType("timestamp").IsRequired();

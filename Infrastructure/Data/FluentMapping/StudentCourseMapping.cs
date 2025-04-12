@@ -15,7 +15,7 @@ public class StudentCourseMap : IEntityTypeConfiguration<StudentCourse>
         builder.Property(sc => sc.Id)
             .HasColumnType("uuid")
             .IsRequired()
-            .ValueGeneratedOnAdd();
+            ;
 
         builder.Property(sc => sc.EnrollmentDate)
             .HasColumnType("timestamp")

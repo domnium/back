@@ -16,7 +16,7 @@ public class PictureMap : IEntityTypeConfiguration<Picture>
         builder.Property(p => p.Id)
             .HasColumnType("uuid")
             .IsRequired()
-            .ValueGeneratedOnAdd();
+            ;
 
         builder.Property(p => p.CreatedDate)
             .HasColumnType("timestamp")
