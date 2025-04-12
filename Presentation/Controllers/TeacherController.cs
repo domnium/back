@@ -2,23 +2,23 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using GetStudentRequest = Application.UseCases.Student.GetById.Request;
-using GetAllStudentsRequest = Application.UseCases.Student.GetAll.Request;
-using CreateStudentRequest = Application.UseCases.Student.Create.Request;
-using DeleteStudentRequest = Application.UseCases.Student.Delete.Request;
+using GetTeacherRequest = Application.UseCases.Teacher.GetById.Request;
+using GetAllTeachersRequest = Application.UseCases.Teacher.GetAll.Request;
+using CreateTeacherRequest = Application.UseCases.Teacher.Create.Request;
+using DeleteTeacherRequest = Application.UseCases.Teacher.Delete.Request;
 
 namespace Presentation.Controllers;
 
 /// <summary>
-/// Controller responsável pelos métodos de retorno, exclução e criação de Estudantes.
+/// Controller responsável pelos métodos de retorno, exclução e criação de Professores.
 /// </summary>
 [ApiController]
-[Route("Student")]
+[Route("Teacher")]
 [Authorize]
-public class StudentController(IMediator mediator) : ControllerBase
+public class TeacherController(IMediator mediator) : ControllerBase
 {
     /// <summary>
-    /// Método responsável por retornar um estudante do sistema pelo seu identificador.
+    /// Método responsável por retornar um professor do sistema pelo seu identificador.
     /// </summary>
     /// <param name="id">Identificador para o filtro</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
@@ -28,7 +28,7 @@ public class StudentController(IMediator mediator) : ControllerBase
     {
         try
         {
-            var response = await mediator.Send(new GetStudentRequest( StudentId: id ), cancellationToken);
+            var response = await mediator.Send(new GetTeacherRequest( TeacherId: id ), cancellationToken);
             return StatusCode(response.statuscode, new {response.message, response.Response});
         }
         catch(Exception e)
@@ -38,7 +38,7 @@ public class StudentController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-    /// Método responsável por retornar até 100 estudantes do sistema.
+    /// Método responsável por retornar até 100 professores do sistema.
     /// </summary>
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
@@ -47,7 +47,7 @@ public class StudentController(IMediator mediator) : ControllerBase
     {
         try
         {
-            var response = await mediator.Send(new GetAllStudentsRequest(), cancellationToken);
+            var response = await mediator.Send(new GetAllTeachersRequest(), cancellationToken);
             return StatusCode(response.statuscode, new {response.message, response.Response});
         }
         catch(Exception e)
@@ -57,13 +57,13 @@ public class StudentController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-    /// Método responsável por criar um estudante no sistema.
+    /// Método responsável por criar um professor no sistema.
     /// </summary>
-    /// <param name="request">Objeto com os parâmetros necessários para a criação de um estudante</param>
+    /// <param name="request">Objeto com os parâmetros necessários para a criação de um professor</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
     [HttpPost("create")]
-    public async Task<IActionResult> Create(CreateStudentRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(CreateTeacherRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -77,7 +77,7 @@ public class StudentController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-    /// Método responsável por deletar um estudante no sistema.
+    /// Método responsável por deletar um professor no sistema.
     /// </summary>
     /// <param name="id">Identificador para a exclução</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
@@ -87,7 +87,7 @@ public class StudentController(IMediator mediator) : ControllerBase
     {
         try
         {
-            var response = await mediator.Send(new DeleteStudentRequest( StudentId: id ), cancellationToken);
+            var response = await mediator.Send(new DeleteTeacherRequest( TeacherId: id ), cancellationToken);
             return StatusCode(response.statuscode, new {response.message, response.Response});
         }
         catch(Exception e)
