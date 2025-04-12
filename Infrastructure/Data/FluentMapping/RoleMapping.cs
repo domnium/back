@@ -18,7 +18,7 @@ public class RoleMapping : IEntityTypeConfiguration<Role>
         builder.Property(r => r.Id)
             .HasColumnName("Id")
             .HasColumnType("uuid")
-            .ValueGeneratedOnAdd()
+            
             .IsRequired();
 
         builder.Property(r => r.CreatedDate)

@@ -17,7 +17,7 @@ public class StripeWebhookEventMapping : IEntityTypeConfiguration<StripeWebhookE
         builder.Property(e => e.Id)
             .HasColumnType("uuid")
             .IsRequired()
-            .ValueGeneratedOnAdd();
+            ;
 
         // Datas
         builder.Property(e => e.CreatedDate)

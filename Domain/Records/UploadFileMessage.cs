@@ -5,4 +5,4 @@ public record UploadFileMessage(
     string Bucket, 
     string Path, 
     string ContentType, 
-    string TempFilePath);
+    string? TempFilePath);

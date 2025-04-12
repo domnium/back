@@ -19,7 +19,7 @@ public class IAMapping : IEntityTypeConfiguration<IA>
             .HasColumnName("Id")
             .HasColumnType("uuid")
             .IsRequired()
-            .ValueGeneratedOnAdd();
+            ;
 
         builder.Property(i => i.CreatedDate)
             .HasColumnName("CreatedDate")

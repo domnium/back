@@ -19,7 +19,7 @@ public class LectureMapping : IEntityTypeConfiguration<Lecture>
             .HasColumnName("Id")
             .HasColumnType("uuid")
             .IsRequired()
-            .ValueGeneratedOnAdd();
+            ;
 
         builder.Property(l => l.CreatedDate)
             .HasColumnName("CreatedDate")

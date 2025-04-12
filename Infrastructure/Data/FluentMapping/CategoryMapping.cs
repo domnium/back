@@ -18,7 +18,7 @@ public class CategoryMap : IEntityTypeConfiguration<Category>
         builder.Property(c => c.Id)
             .HasColumnName("Id")
             .HasColumnType("uuid")
-            .IsRequired().ValueGeneratedOnAdd();
+            .IsRequired();
 
         builder.Property(c => c.CreatedDate)
             .HasColumnName("CreatedDate")

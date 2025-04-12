@@ -11,7 +11,9 @@ public static class Configuration
     public static string FrontendUrl { get; set; } = string.Empty;
     public static string PicturesStudensPath {get; set;} = "/Images/Students/";
     public static string PicturesCoursesPath {get; set;} = "/Images/Courses/";
+    public static string PicturesCategoriesPath {get; set;} = "/Images/Categories/";
     public static string VideoCoursesTrailer {get; set;} = "/Videos/Courses/Trailers/";
+    public static string VideoLecturesPath {get; set;} = "/Videos/Courses/Lectures/";
     public static string SmtpServer { get; set; } = string.Empty;
     public static int SmtpPort { get; set; } = 587;
     public static string SmtpUser { get; set; } = string.Empty;

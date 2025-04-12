@@ -17,26 +17,26 @@ public class Lecture : Entity
     public IReadOnlyCollection<StudentLecture> StudentLectures => _studentLectures.ToList();
 
     private Lecture() {}
-    public Lecture(UniqueName name, string tempo, Module module, Url? githubUrl, Video? video)
+    public Lecture(UniqueName name, string tempo, Url? githubUrl, Video? video)
     {
-        AddNotificationsFromValueObjects(name, module, githubUrl, video);
+        AddNotificationsFromValueObjects(name, githubUrl, video);
         Name = name;
         Tempo = tempo;
-        Module = module;
         Video = video;
         GithubUrl = githubUrl;
     }
 
-    public void AddView() => Views++;
-
-    public void AddVideo(Video video)
+    public void AddModule(Module module)
     {
-        if (video is null)
+        if (module is null)
         {
-            AddNotification("Video", "Vídeo inválido.");
+            AddNotification("Module", "Módulo inválido.");
             return;
         }
-        Video = video;
+        ModuleId = module.Id;
+        Module = module;
     }
+
+    public void AddView() => Views++;
 }
 

@@ -19,7 +19,7 @@ public class ModuleMapping : IEntityTypeConfiguration<Module>
             .HasColumnName("Id")
             .HasColumnType("uuid")
             .IsRequired()
-            .ValueGeneratedOnAdd();
+            ;
 
         builder.Property(m => m.CreatedDate)
             .HasColumnName("CreatedDate")

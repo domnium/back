@@ -15,7 +15,7 @@ public class StudentLectureMap : IEntityTypeConfiguration<StudentLecture>
         builder.Property(sl => sl.Id)
             .HasColumnType("uuid")
             .IsRequired()
-            .ValueGeneratedOnAdd();
+            ;
 
         builder.Property(sl => sl.CreatedDate)
             .HasColumnType("timestamp")

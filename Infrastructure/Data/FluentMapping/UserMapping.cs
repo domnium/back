@@ -18,7 +18,7 @@ public class UserMapping : IEntityTypeConfiguration<User>
         builder.Property(c => c.Id)
             .HasColumnName("Id")
             .HasColumnType("uuid")
-            .ValueGeneratedOnAdd()
+            
             .IsRequired();
 
         builder.Property(c => c.CreatedDate)

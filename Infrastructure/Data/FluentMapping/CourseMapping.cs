@@ -19,8 +19,7 @@ public class CourseMapping : IEntityTypeConfiguration<Course>
         builder.Property(c => c.Id)
             .HasColumnName("Id")
             .HasColumnType("uuid")
-            .IsRequired()
-            .ValueGeneratedOnAdd();
+            .IsRequired();
 
         builder.OwnsOne(r => r.Name, name =>
         {

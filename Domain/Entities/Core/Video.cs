@@ -11,8 +11,8 @@ public class Video : Archive
     public VideoFile? File { get; private set; }
 
     private Video() {}
-    public Video(BigString awsKey, bool ativo = true, VideoFile file = null)
-        : base(awsKey)
+    public Video( BigString path, bool ativo = true, VideoFile file = null)
+        : base(path)
     {
         AddNotificationsFromValueObjects(file);
         File = file;
