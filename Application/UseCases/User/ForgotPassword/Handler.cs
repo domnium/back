@@ -28,7 +28,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
                return new BaseResponse(404,"User not found");
           }
           
-          userFromDb.GenerateNewToken();
+          userFromDb.GenerateToken();
           _userRepository.Update(userFromDb);
           await _dbCommit.Commit(cancellationToken);
           

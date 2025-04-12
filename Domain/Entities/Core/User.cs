@@ -33,6 +33,12 @@ public class User : Entity
         SetValuesCreate();
     }
 
+    public User(Email email, Password password)
+    {
+        AddNotificationsFromValueObjects(email);
+        Email = email;
+    }
+
     public void UpdatePassword(Password password)
     {
         AddNotificationsFromValueObjects(password);
