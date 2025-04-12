@@ -1,7 +1,9 @@
 using System;
 using System.Reflection;
+using Application.Jobs;
 using Application.Messaging.Consumers;
 using Domain;
+using Domain.Interfaces.Services;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +14,7 @@ public static class ServicesExtensions
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddMediatR(x => x.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+        services.AddSingleton<IGeneratePresignedUrlJob, GeneratePresignedUrl>();
     }
 
     public static void AddRabbitMQ(this IServiceCollection services)

@@ -17,10 +17,10 @@ public class StudentLecture : Entity
     public DateTime? CompletionDate { get; private set; }
 
     private StudentLecture() {}
-    public StudentLecture(Guid studentId, Guid lectureId, Lecture lecture, Student student, Guid? courseId = null)
+    public StudentLecture(Lecture lecture, Student student, Guid? courseId = null)
     {
-        StudentId = studentId;
-        LectureId = lectureId;
+        StudentId = student.Id;
+        LectureId = lecture.Id;
         CourseId = courseId;
         Student = student;
         Lecture = lecture;

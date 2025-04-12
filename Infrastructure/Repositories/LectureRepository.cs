@@ -5,46 +5,32 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
-public class LectureRepository(DomnumDbContext context) 
+
+/// <summary>
+/// Repositório responsável por operações relacionadas à entidade <see cref="Lecture"/>,
+/// incluindo a verificação se uma aula foi concluída por um estudante.
+/// </summary>
+public class LectureRepository(DomnumDbContext context)
     : BaseRepository<Lecture>(context), ILectureRepository
 {
-    // Implementação do método IsLectureCompleted
-    public async Task<bool> IsLectureCompleted(Guid studentId, Guid lectureId, CancellationToken cancellationToken)
+    /// <summary>
+    /// Verifica se uma determinada aula foi concluída por um estudante.
+    /// </summary>
+    /// <param name="studentId">Identificador do estudante</param>
+    /// <param name="lectureId">Identificador da aula</param>
+    /// <param name="cancellationToken">Token de cancelamento da operação</param>
+    /// <returns>
+    /// <see cref="bool"/> true se a aula foi concluída, false se não foi, ou null se a combinação não existe
+    /// </returns>
+    public async Task<bool?> IsLectureCompleted(Guid studentId, Guid lectureId, CancellationToken cancellationToken)
     {
-        // Verificar se o aluno completou a lecture
-        return await context.StudentLectures.AsNoTracking()
-            .AnyAsync(sl => sl.StudentId == studentId && sl.LectureId == lectureId && sl.IsCompleted, cancellationToken);
-    }
-        
-        
-    // Método para marcar a Lecture como concluída para um aluno
-    public async Task MarkLectureAsCompleted(Guid courseId, Guid studentId, Guid lectureId, CancellationToken cancellationToken)
-    {
-        var studentLecture = await context.StudentLectures.AsNoTracking()
-            .FirstOrDefaultAsync(sl => sl.StudentId == studentId && sl.LectureId == lectureId, cancellationToken);
+        var completed = await context.StudentLectures.AsNoTracking()
+            .AnyAsync(sl =>
+                sl.StudentId == studentId &&
+                sl.LectureId == lectureId &&
+                sl.IsCompleted,
+                cancellationToken);
 
-        if (studentLecture == null)
-        {
-            // Se o aluno ainda não tiver um registro para essa lecture, criamos um
-            studentLecture = new StudentLecture
-            {
-                StudentId = studentId,
-                LectureId = lectureId,
-                IsCompleted = true,
-                CourseId = courseId,
-                CompletionDate = DateTime.Now,
-                CreatedDate = DateTime.Now,
-                UpdatedDate = DateTime.Now
-            };
-            await context.StudentLectures.AddAsync(studentLecture, cancellationToken);
-        }
-        else
-        {
-            // Se já existir, apenas marcamos como completada
-            studentLecture.IsCompleted = true;
-            studentLecture.CompletionDate = DateTime.Now;
-            studentLecture.UpdatedDate = DateTime.Now;
-            context.Update(studentLecture);
-        }
+        return completed;
     }
 }
