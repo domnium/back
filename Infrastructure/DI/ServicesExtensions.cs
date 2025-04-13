@@ -1,5 +1,4 @@
 using System;
-using Application.Services;
 using Domain.Interfaces;
 using Domain.Interfaces.Repositories;
 using Hangfire;
@@ -9,6 +8,9 @@ using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Hangfire.PostgreSql;
+using Infrastructure.Repositories.Cold;
+using Domain.Interfaces.Services;
+using Infrastructure.Services;
 
 namespace Infrastructure.DI;
 
@@ -23,7 +25,17 @@ public static class ServicesExtensions
         services.AddScoped<IModuleRepository, ModuleRepository>();
         services.AddScoped<ILectureRepository, LectureRepository>();
         services.AddScoped<IDbCommit, DbCommit>();
+        services.AddScoped<IMessageQueueService, RabbitMqService>();
+        services.AddScoped<ITemporaryStorageService, TemporaryStorageService>();
         services.AddScoped<IAwsService, AwsService>();
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IStudentCourseRepository, StudentCourseRepository>();
+        services.AddScoped<IStudentLectureRepository, StudentLectureRepository>();
+        services.AddScoped<IARepository, IARepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IParameterRepository, ParameterRepository>();
+        services.AddScoped<IIARepository, IARepository>();
         services.AddScoped<IPictureRepository, PictureRepository>();
         services.AddScoped<ICourseProgressRepository, CourseProgressRepository>();
         services.AddScoped<IStudentRepository, StudentRepository>();
@@ -31,7 +43,8 @@ public static class ServicesExtensions
         services.AddScoped<IStudentLectureRepository, StudentLectureRepository>();
         services.AddScoped<IJobRepository, JobRepository>();
         services.AddAWSService<IAmazonS3>();
-        services.AddHangfire(config => config.UsePostgreSqlStorage(Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING")));
+        services.AddHangfire(config => config.UsePostgreSqlStorage(
+            StringConnection.BuildConnectionString() ?? string.Empty));
         services.AddHangfireServer();
     }
 
