@@ -6,7 +6,7 @@ using Domain.Interfaces.Repositories;
 using Domain;
 using Amazon;
 
-namespace Application.Services;
+namespace Infrastructure.Services;
 
 public sealed class AwsService : IAwsService
 {
