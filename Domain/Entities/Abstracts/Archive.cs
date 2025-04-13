@@ -16,18 +16,21 @@ public abstract class Archive : Entity
 
     public Archive(BigString awsKey, BigString temporaryPath)
     {
+        AddNotificationsFromValueObjects(awsKey, temporaryPath);
         AwsKey = awsKey;
         TemporaryPath = temporaryPath;
     }
 
     public Archive(BigString temporaryPath)
     {
+        AddNotificationsFromValueObjects(temporaryPath);
         TemporaryPath = temporaryPath;
     }
 
 
     public void SetTemporaryUrl(Url url, DateTime expiration)
     {
+        AddNotificationsFromValueObjects(url);
         UrlTemp = url;
         UrlExpired = expiration;
     }
