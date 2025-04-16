@@ -13,6 +13,7 @@ public class User : Entity
     public Password Password { get; private set; }
     public bool Active { get; private set; }
     public long? TokenActivate { get; private set; }
+    [NotMapped]
     public string Token { get; private set; }
 
     private readonly IList<Role> _roles = new List<Role>();
