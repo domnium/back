@@ -59,6 +59,15 @@ public class PictureMap : IEntityTypeConfiguration<Picture>
         .HasConversion<string>() 
         .IsRequired(false);
 
+        builder.OwnsOne(v => v.TemporaryPath, tp =>
+        {
+            tp.Property(a => a.Body)
+                .HasColumnName("TemporaryPath")
+                .HasColumnType("varchar")
+                .HasMaxLength(255)
+                .IsRequired();
+        });
+
         builder.OwnsOne(p => p.UrlTemp, url =>
         {
             url.Property(u => u.Endereco)

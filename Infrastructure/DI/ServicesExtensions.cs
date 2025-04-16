@@ -18,32 +18,32 @@ public static class ServicesExtensions
 {
     public static void ConfigureInfraServices(this IServiceCollection services)
     {
-        services.AddScoped<IDbCommit, DbCommit>();
-        services.AddScoped<ICourseRepository, CourseRepository>();
-        services.AddScoped<ITeacherRepository, TeacherRepository>();
-        services.AddScoped<ICategoryRepository, CategoryRepository>();
-        services.AddScoped<IModuleRepository, ModuleRepository>();
-        services.AddScoped<ILectureRepository, LectureRepository>();
-        services.AddScoped<IDbCommit, DbCommit>();
-        services.AddScoped<IMessageQueueService, RabbitMqService>();
-        services.AddScoped<ITemporaryStorageService, TemporaryStorageService>();
-        services.AddScoped<IAwsService, AwsService>();
-        services.AddScoped<IEmailService, EmailService>();
-        services.AddScoped<ITokenService, TokenService>();
-        services.AddScoped<IStudentCourseRepository, StudentCourseRepository>();
-        services.AddScoped<IStudentLectureRepository, StudentLectureRepository>();
-        services.AddScoped<IARepository, IARepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IParameterRepository, ParameterRepository>();
-        services.AddScoped<IIARepository, IARepository>();
-        services.AddScoped<IPictureRepository, PictureRepository>();
-        services.AddScoped<ICourseProgressRepository, CourseProgressRepository>();
-        services.AddScoped<IStudentRepository, StudentRepository>();
-        services.AddScoped<IVideoRepository, VideoRepository>();
-        services.AddScoped<IStudentLectureRepository, StudentLectureRepository>();
-        services.AddScoped<IJobRepository, JobRepository>();
-        services.AddAWSService<IAmazonS3>();
-        services.AddHangfire(config => config.UsePostgreSqlStorage(
+        services.AddScoped<IDbCommit, DbCommit>()
+        .AddScoped<ICourseRepository, CourseRepository>()
+        .AddScoped<ITeacherRepository, TeacherRepository>()
+        .AddScoped<ICategoryRepository, CategoryRepository>()
+        .AddScoped<IModuleRepository, ModuleRepository>()
+        .AddScoped<ILectureRepository, LectureRepository>()
+        .AddScoped<IDbCommit, DbCommit>()
+        .AddScoped<IMessageQueueService, RabbitMqService>()
+        .AddScoped<ITemporaryStorageService, TemporaryStorageService>()
+        .AddScoped<IAwsService, AwsService>()
+        .AddScoped<IEmailService, EmailService>()
+        .AddScoped<ITokenService, TokenService>()
+        .AddScoped<IStudentCourseRepository, StudentCourseRepository>()
+        .AddScoped<IStudentLectureRepository, StudentLectureRepository>()
+        .AddScoped<IARepository, IARepository>()
+        .AddScoped<IUserRepository, UserRepository>()
+        .AddScoped<IParameterRepository, ParameterRepository>()
+        .AddScoped<IIARepository, IARepository>()
+        .AddScoped<IPictureRepository, PictureRepository>()
+        .AddScoped<ICourseProgressRepository, CourseProgressRepository>()
+        .AddScoped<IStudentRepository, StudentRepository>()
+        .AddScoped<IVideoRepository, VideoRepository>()
+        .AddScoped<IStudentLectureRepository, StudentLectureRepository>()
+        .AddScoped<IJobRepository, JobRepository>()
+        .AddAWSService<IAmazonS3>()
+        .AddHangfire(config => config.UsePostgreSqlStorage(
             StringConnection.BuildConnectionString() ?? string.Empty));
         services.AddHangfireServer();
     }

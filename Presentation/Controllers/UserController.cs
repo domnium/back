@@ -20,7 +20,7 @@ namespace Presentation.Controllers;
 /// como login, registro, ativação de conta, recuperação e redefinição de senha.
 /// </summary>
 [ApiController]
-[Route("user")]
+[Route("User")]
 public class UserController(IMediator mediator) : ControllerBase
 {
     /// <summary>
@@ -29,7 +29,7 @@ public class UserController(IMediator mediator) : ControllerBase
     /// <param name="request">Credenciais de login</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Token de acesso ou erro de autenticação</returns>
-    [HttpPost("login")]
+    [HttpPost("Login")]
     [ApiKey]
     public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
@@ -51,7 +51,7 @@ public class UserController(IMediator mediator) : ControllerBase
     /// <param name="request">Dados de registro do usuário</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Status da operação e notificações</returns>
-    [HttpPost("register")]
+    [HttpPost("Register")]
     [ApiKey]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
     {
@@ -78,7 +78,7 @@ public class UserController(IMediator mediator) : ControllerBase
     /// <param name="email">E-mail do usuário</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Status da ativação</returns>
-    [HttpPut("activate")]
+    [HttpPut("Activate")]
     [ApiKey]
     public async Task<IActionResult> Activate([FromQuery] string code, [FromQuery] string email, CancellationToken cancellationToken)
     {
@@ -103,7 +103,7 @@ public class UserController(IMediator mediator) : ControllerBase
     /// <param name="request">Dados do usuário (e-mail)</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Status da solicitação</returns>
-    [HttpPut("forgot-password")]
+    [HttpPut("Forgot-Password")]
     [ApiKey]
     public async Task<IActionResult> ForgotPassword(ForgotRequest request, CancellationToken cancellationToken)
     {
@@ -124,7 +124,7 @@ public class UserController(IMediator mediator) : ControllerBase
     /// <param name="request">Dados do usuário</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Status da operação</returns>
-    [HttpPut("resend-code")]
+    [HttpPut("Resend-Code")]
     [ApiKey]
     public async Task<IActionResult> ResendCode(ResendCodeRequest request, CancellationToken cancellationToken)
     {
@@ -145,7 +145,7 @@ public class UserController(IMediator mediator) : ControllerBase
     /// <param name="request">Dados do código e nova senha</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Status da redefinição</returns>
-    [HttpPut("forgot-password/activate")]
+    [HttpPut("Forgot-Password/Activate")]
     [ApiKey]
     public async Task<IActionResult> ForgotPasswordActivate(ActivatePasswordRequest request, CancellationToken cancellationToken)
     {
