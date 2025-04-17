@@ -1,19 +1,8 @@
-# Etapa de build
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-
-WORKDIR /usr/local/bin/presentation
-
-COPY . .
-
-RUN dotnet restore
-RUN dotnet publish -c Release -o ./Presentation
-
-# Etapa de runtime
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y postgresql-client
+RUN apt-get update && apt-get install -y postgresql-client && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Argumentos de build
 ARG AWS_KEY_ID
@@ -27,27 +16,21 @@ ARG BACKEND_URL
 ARG VERSION_API
 ARG API_KEY
 ARG JWT_KEY
-
-# SMTP
 ARG SMTP_PORT
 ARG SMTP_SERVER
 ARG SMTP_USER
 ARG SMTP_PASS
-
-# Database (PostgreSQL)
 ARG HOST_DATABASE
 ARG USERNAME_DATABASE
 ARG PASSWORD_DATABASE
 ARG DATABASE
 ARG PORT_DATABASE
-
-# RabbitMQ
 ARG RABBITMQ_USER
 ARG RABBITMQ_HOST
 ARG RABBITMQ_PASSWORD
 
-# Variáveis de ambiente
-ENV ASPNETCORE_ENVIRONMENT=Development
+# Variáveis de ambiente (mantidas para uso em runtime)
+ENV ASPNETCORE_ENVIRONMENT=Production
 ENV ASPNETCORE_URLS=http://0.0.0.0:5070
 
 ENV AWS_KEY_ID=${AWS_KEY_ID}
@@ -61,26 +44,22 @@ ENV BACKEND_URL=${BACKEND_URL}
 ENV VERSION_API=${VERSION_API}
 ENV API_KEY=${API_KEY}
 ENV JWT_KEY=${JWT_KEY}
-
 ENV SMTP_PORT=${SMTP_PORT}
 ENV SMTP_SERVER=${SMTP_SERVER}
 ENV SMTP_USER=${SMTP_USER}
 ENV SMTP_PASS=${SMTP_PASS}
-
 ENV HOST_DATABASE=${HOST_DATABASE}
 ENV USERNAME_DATABASE=${USERNAME_DATABASE}
 ENV PASSWORD_DATABASE=${PASSWORD_DATABASE}
 ENV DATABASE=${DATABASE}
 ENV PORT_DATABASE=${PORT_DATABASE}
-
 ENV RABBITMQ_USER=${RABBITMQ_USER}
 ENV RABBITMQ_HOST=${RABBITMQ_HOST}
 ENV RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
 
-# Copia os arquivos da etapa de build
-COPY --from=build /usr/local/bin/presentation/Presentation/ .
-COPY --from=build /usr/local/bin/presentation/Infrastructure/ /app/Infrastructure/
+# Copia apenas os artefatos do publish gerados na pipeline
+COPY ./publish/ .
 
 EXPOSE 5070
 
-CMD ["dotnet", "Presentation.dll"]
+ENTRYPOINT ["dotnet", "Presentation.dll"]

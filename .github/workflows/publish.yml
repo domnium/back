@@ -19,6 +19,17 @@ jobs:
       - name: Definir versão da imagem com base na execução
         run: echo "IMAGE_VERSION=1.0.${{ github.run_number }}" >> $GITHUB_ENV
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependências
+        run: dotnet restore
+
+      - name: Build e Publish da aplicação
+        run: dotnet publish -c Release -o ./publish
+
       - name: Login no GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -26,7 +37,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build da imagem Docker
+      - name: Build da imagem Docker com artefatos publicados
         run: |
           docker build -t ghcr.io/domnum/back:${{ env.IMAGE_VERSION }} \
                        -t ghcr.io/domnum/back:main \
@@ -53,7 +64,7 @@ jobs:
             --build-arg RABBITMQ_USER=${{ secrets.RABBITMQ_USER }} \
             --build-arg RABBITMQ_HOST=${{ secrets.RABBITMQ_HOST }} \
             --build-arg RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }} \
-            -f ./Dockerfile .
+            -f Dockerfile .
 
       - name: Push da imagem versionada
         run: docker push ghcr.io/domnum/back:${{ env.IMAGE_VERSION }}
