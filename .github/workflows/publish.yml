@@ -2,7 +2,7 @@ name: Publish Backend Docker Image
 
 on:
   push:
-    branches: [main]  
+    branches: [main]
 
 jobs:
   build:
@@ -21,11 +21,35 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}  
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build da imagem Docker
         run: |
-          docker build -t ghcr.io/${{ github.KaueSMoraes }}/backend:main -f ./Dockerfile .
+          docker build -t ghcr.io/${{ github.KaueSMoraes }}/backend:main \
+            --build-arg AWS_KEY_ID=${{ secrets.AWS_KEY_ID }} \
+            --build-arg AWS_KEY_SECRET=${{ secrets.AWS_KEY_SECRET }} \
+            --build-arg AWS_REGION=${{ secrets.AWS_REGION }} \
+            --build-arg BUCKET_ARCHIVES=${{ secrets.BUCKET_ARCHIVES }} \
+            --build-arg BUCKET_VIDEOS=${{ secrets.BUCKET_VIDEOS }} \
+            --build-arg ISDEVELOPMENT=${{ secrets.ISDEVELOPMENT }} \
+            --build-arg FRONTEND_URL=${{ secrets.FRONTEND_URL }} \
+            --build-arg BACKEND_URL=${{ secrets.BACKEND_URL }} \
+            --build-arg VERSION_API=${{ secrets.VERSION_API }} \
+            --build-arg API_KEY=${{ secrets.API_KEY }} \
+            --build-arg JWT_KEY=${{ secrets.JWT_KEY }} \
+            --build-arg SMTP_PORT=${{ secrets.SMTP_PORT }} \
+            --build-arg SMTP_SERVER=${{ secrets.SMTP_SERVER }} \
+            --build-arg SMTP_USER=${{ secrets.SMTP_USER }} \
+            --build-arg SMTP_PASS=${{ secrets.SMTP_PASS }} \
+            --build-arg HOST_DATABASE=${{ secrets.HOST_DATABASE }} \
+            --build-arg USERNAME_DATABASE=${{ secrets.USERNAME_DATABASE }} \
+            --build-arg PASSWORD_DATABASE=${{ secrets.PASSWORD_DATABASE }} \
+            --build-arg DATABASE=${{ secrets.DATABASE }} \
+            --build-arg PORT_DATABASE=${{ secrets.PORT_DATABASE }} \
+            --build-arg RABBITMQ_USER=${{ secrets.RABBITMQ_USER }} \
+            --build-arg RABBITMQ_HOST=${{ secrets.RABBITMQ_HOST }} \
+            --build-arg RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }} \
+            -f ./Dockerfile .
 
       - name: Push da imagem para o GHCR
         run: |
