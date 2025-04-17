@@ -71,3 +71,11 @@ jobs:
 
       - name: Push da imagem com tag main
         run: docker push ghcr.io/domnum/back:main
+
+      - name: Disparar deploy no repositório ci-cd
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.CICD_TRIGGER_TOKEN }}
+          repository: domnum/ci-cd
+          event-type: deploy-domnum
+          client-payload: '{"service":"backend"}'
