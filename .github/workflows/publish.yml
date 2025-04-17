@@ -16,6 +16,9 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v3
 
+      - name: Definir versão da imagem com base na execução
+        run: echo "IMAGE_VERSION=1.0.${{ github.run_number }}" >> $GITHUB_ENV
+
       - name: Login no GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -25,7 +28,8 @@ jobs:
 
       - name: Build da imagem Docker
         run: |
-          docker build -t ghcr.io/domnum/back:main \
+          docker build -t ghcr.io/domnum/back:${{ env.IMAGE_VERSION }} \
+                       -t ghcr.io/domnum/back:main \
             --build-arg AWS_KEY_ID=${{ secrets.AWS_KEY_ID }} \
             --build-arg AWS_KEY_SECRET=${{ secrets.AWS_KEY_SECRET }} \
             --build-arg AWS_REGION=${{ secrets.AWS_REGION }} \
@@ -34,7 +38,7 @@ jobs:
             --build-arg ISDEVELOPMENT=${{ secrets.ISDEVELOPMENT }} \
             --build-arg FRONTEND_URL=${{ secrets.FRONTEND_URL }} \
             --build-arg BACKEND_URL=${{ secrets.BACKEND_URL }} \
-            --build-arg VERSION_API=${{ secrets.VERSION_API }} \
+            --build-arg VERSION_API=${{ env.IMAGE_VERSION }} \
             --build-arg API_KEY=${{ secrets.API_KEY }} \
             --build-arg JWT_KEY=${{ secrets.JWT_KEY }} \
             --build-arg SMTP_PORT=${{ secrets.SMTP_PORT }} \
@@ -51,6 +55,8 @@ jobs:
             --build-arg RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }} \
             -f ./Dockerfile .
 
-      - name: Push da imagem para o GHCR
-        run: |
-          docker push ghcr.io/domnum/back:main
+      - name: Push da imagem versionada
+        run: docker push ghcr.io/domnum/back:${{ env.IMAGE_VERSION }}
+
+      - name: Push da imagem com tag main
+        run: docker push ghcr.io/domnum/back:main
