@@ -27,4 +27,4 @@ jobs:
 
       # Build de todos os projetos
       - name: Build solution
-        run: dotnet build ScoreBlog.sln --configuration Release
+        run: dotnet build Domnum.sln --configuration Release
