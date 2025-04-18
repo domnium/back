@@ -29,7 +29,17 @@ jobs:
       - name: Build solution
         run: dotnet build --configuration Release --no-restore
 
-      - name: Run and Report Tests (Zyborg)
+      - name: Run unit tests and capture result
+        id: tests
+        run: |
+          dotnet test Test/Test.csproj \
+            --configuration Release \
+            --no-build \
+            --logger "trx;LogFileName=test-results.trx" \
+            --results-directory Test/TestResults
+        continue-on-error: true
+
+      - name: Publish test report
         uses: zyborg/dotnet-tests-report@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -37,11 +47,8 @@ jobs:
           report_name: domnum_tests
           report_title: Domnum - Test Results
 
-      - name: Fail workflow if any test failed
+      - name: Fail workflow if tests failed
+        if: steps.tests.outcome == 'failure'
         run: |
-          if grep -q "<Outcome>Failed</Outcome>" Test/TestResults/test-results.trx; then
-            echo "❌ Some tests failed. Failing the job to block merge.";
-            exit 1
-          else
-            echo "✅ All tests passed.";
-          fi
+          echo "❌ Some tests failed. Failing the workflow."
+          exit 1
