@@ -37,7 +37,7 @@ jobs:
       - name: Publish test report
         uses: zyborg/dotnet-tests-report@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ github.token }}}
           results-directory: TestResults
           report-name: Test Results
           report-title: Detailed Test Results
