@@ -1,4 +1,4 @@
-name: Build Solution and Run Tests
+name: Run Tests and Publish Results
 
 on:
   pull_request:
@@ -7,12 +7,13 @@ on:
     branches: [main]
 
 permissions:
-  checks: write
   contents: read
+  checks: write
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -28,20 +29,10 @@ jobs:
       - name: Build solution
         run: dotnet build --configuration Release --no-restore
 
-      - name: Run unit tests and store result
-        id: test
-        run: |
-          dotnet test --configuration Release --no-build --logger "trx;LogFileName=results.trx" --results-directory TestResults || echo "TEST_FAILED=true" >> $GITHUB_ENV
-        continue-on-error: true
-
-      - name: Publish test report
+      - name: Run and Report Tests (Zyborg)
         uses: zyborg/dotnet-tests-report@v1
         with:
-          github-token: ${{ github.token }}}
-          results-directory: TestResults
-          report-name: Test Results
-          report-title: Detailed Test Results
-
-      - name: Fail workflow if tests failed
-        if: env.TEST_FAILED == 'true'
-        run: exit 1
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          project_path: Test                  
+          report_name: domnum_tests
+          report_title: Domnum - Test Results
