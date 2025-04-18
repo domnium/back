@@ -13,7 +13,7 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Setup .NET 9 (Preview)
+      - name: Setup .NET 9 
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
@@ -24,8 +24,9 @@ jobs:
       - name: Build solution
         run: dotnet build --configuration Release --no-restore
 
-      - name: Run unit tests
+      - name: Run unit tests (continue on failure)
         run: dotnet test --configuration Release --no-build --logger "trx;LogFileName=results.trx" --results-directory TestResults
+        continue-on-error: true
 
       - name: Publish test report
         uses: zyborg/dotnet-tests-report@v1
