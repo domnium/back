@@ -57,6 +57,16 @@ public class VideoMapping : IEntityTypeConfiguration<Video>
                 .IsRequired();
         });
 
+
+        builder.OwnsOne(v => v.TemporaryPath, tp =>
+        {
+            tp.Property(a => a.Body)
+                .HasColumnName("TemporaryPath")
+                .HasColumnType("varchar")
+                .HasMaxLength(255)
+                .IsRequired();
+        });
+
         // Value Object: UrlTemp
         builder.OwnsOne(v => v.UrlTemp, url =>
         {

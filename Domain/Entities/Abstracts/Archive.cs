@@ -5,7 +5,7 @@ using Domain.ValueObjects;
 namespace Domain.Entities.Abstracts;
 public abstract class Archive : Entity
 {
-    public BigString AwsKey { get; private set; }
+    public BigString? AwsKey { get; private set; }
     public ContentType? ContentType { get; private set; }
     public DateTime? UrlExpired { get; private set; }
     public Url? UrlTemp { get; private set; }
@@ -14,7 +14,7 @@ public abstract class Archive : Entity
 
     protected Archive() { }
 
-    public Archive(BigString awsKey, BigString temporaryPath)
+    public Archive(BigString? awsKey, BigString temporaryPath)
     {
         AddNotificationsFromValueObjects(awsKey, temporaryPath);
         AwsKey = awsKey;

@@ -13,7 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Presentation.Common.Api;
 
-public  static class BuilderExtensions
+public static class BuilderExtensions
 {
     public static void AddConfiguration(
         this WebApplicationBuilder builder)
@@ -23,14 +23,21 @@ public  static class BuilderExtensions
         Configuration.BackendUrl = Environment.GetEnvironmentVariable("BACKEND_URL") ?? string.Empty;
         Configuration.VersionApi = Environment.GetEnvironmentVariable("VERSION_API") ?? string.Empty;
         Configuration.ApiKey = Environment.GetEnvironmentVariable("API_KEY") ?? string.Empty;
-        Configuration.ConnectionStringPostgresql = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING") ?? string.Empty;
         Configuration.ApiKeyAttribute = "X-API-KEY";
         Configuration.FrontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? "http://localhost:4200";
         Configuration.SmtpUser = Environment.GetEnvironmentVariable("SMTP_USER") ?? string.Empty;
         Configuration.SmtpServer = Environment.GetEnvironmentVariable("SMTP_SERVER") ?? string.Empty;
         Configuration.SmtpPort = int.TryParse(Environment.GetEnvironmentVariable("SMTP_PORT"), out var smtpPort) ? smtpPort : 587;
         Configuration.SmtpPass = Environment.GetEnvironmentVariable("SMTP_PASS") ?? string.Empty;
-        builder.Services.AddControllers(options =>
+        Configuration.RabbitMQUser = Environment.GetEnvironmentVariable("RABBITMQ_USER") ?? string.Empty;
+        Configuration.RabbitMQHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? string.Empty;
+        Configuration.RabbitMQPassword = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? string.Empty;
+        Configuration.AwsKeyId = Environment.GetEnvironmentVariable("AWS_KEY_ID") ?? string.Empty;
+        Configuration.AwsKeySecret = Environment.GetEnvironmentVariable("AWS_KEY_SECRET") ?? string.Empty;
+        Configuration.AwsRegion = Environment.GetEnvironmentVariable("AWS_REGION") ?? string.Empty;
+        Configuration.BucketArchives = Environment.GetEnvironmentVariable("BUCKET_ARCHIVES") ?? string.Empty;
+        Configuration.BucketVideos = Environment.GetEnvironmentVariable("BUCKET_VIDEOS") ?? string.Empty;
+    builder.Services.AddControllers(options =>
     {
         options.Filters.Add(new ProducesAttribute("application/json"));
         options.ReturnHttpNotAcceptable = true;
