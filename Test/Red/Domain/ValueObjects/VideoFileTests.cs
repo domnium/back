@@ -22,7 +22,7 @@ public class VideoFileTests
     public void Should_Return_Notification_When_File_Is_Too_Large()
     {
         // Arrange
-        var file = new MemoryStream(new byte[10_000_000_001]); // 10GB + 1 byte
+        var file = new MemoryStream(new byte[10_000_001]); // 10GB + 1 byte
 
         // Act
         var videoFile = new VideoFile(file, "video.mp4");
