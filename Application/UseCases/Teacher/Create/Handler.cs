@@ -59,15 +59,23 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             request.Phone,
             new BigString(request.Endereco),
             request.Cep,
-            new Url(request.Tiktok),
-            new Url(request.Instagram),
-            new Url(request.GitHub),
+            !string.IsNullOrEmpty(request.Tiktok) ? new Url(request.Tiktok) : null,
+            !string.IsNullOrEmpty(request.Instagram) ? new Url(request.Instagram) : null,
+            !string.IsNullOrEmpty(request.Instagram) ? new Url(request.GitHub) : null,
             new Description(request.Description),
             picture
         );
 
         if (newTeacher.Notifications.Any())
             return new BaseResponse(400, "Invalid teacher", newTeacher.Notifications.ToList());
+
+
+        var teacherAlreadyExists = await _teacherRepository.GetWithParametersAsync(
+            t => t.Cpf.Numero.Equals(request.Cpf), cancellationToken
+        );
+
+        if(teacherAlreadyExists is not null)
+            return new BaseResponse(400, "Teacher Already Exists");
 
         // Persiste tudo: Teacher + Picture
         await _teacherRepository.CreateAsync(newTeacher, cancellationToken);

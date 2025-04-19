@@ -30,7 +30,7 @@ public class CategoryController(IMediator mediator) : ControllerBase
         try
         {
             var response = await mediator.Send(new GetAllCategoryRequest(), cancellationToken);
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {
@@ -51,7 +51,7 @@ public class CategoryController(IMediator mediator) : ControllerBase
         try
         {
             var response = await mediator.Send(new GetByIdRequest(Id), cancellationToken);
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {
@@ -66,13 +66,13 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Status de criação e dados da categoria</returns>
     [HttpPost("Create")]
-    public async Task<IActionResult> Create(CreateCategoryRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromForm] CreateCategoryRequest request, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
             var response = await mediator.Send(request, cancellationToken);
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            return StatusCode(response.statuscode,new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {
@@ -93,7 +93,7 @@ public class CategoryController(IMediator mediator) : ControllerBase
         try
         {
             var response = await mediator.Send(new DeleteCategoryRequest(Id), cancellationToken);
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {

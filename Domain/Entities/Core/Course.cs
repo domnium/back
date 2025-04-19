@@ -11,12 +11,12 @@ public class Course : Entity
     public decimal Price { get; private set; }
     public decimal TotalHours { get; private set; }
     public Url NotionUrl { get; private set; }
-    public Url GitHubUrl { get; private set; }
+    public Url? GitHubUrl { get; private set; }
     public IA IA { get; private set; }
     public Guid IAid {get; private set;}
     public Video Trailer { get; private set; }
     public  Guid? TrailerId { get; private set; }
-    public Parameter Parameters { get; private set; }
+    public Parameter? Parameters { get; private set; }
     public Guid? ParameterId { get; private set; }
     public Category Category { get; private set; }
     public Guid CategoryId { get; set; }
@@ -32,19 +32,17 @@ public class Course : Entity
     private Course() {}
     public Course(UniqueName name, Description description,
         BigString about, decimal price, decimal totalHours, Url? notionUrl, IA ia,
-        Video trailer, Parameter parameters, Category category, Teacher teacher, Picture? image)
+        Video trailer, Category category, Teacher teacher, Picture? image)
     {
-        AddNotificationsFromValueObjects(name, description, about, notionUrl, trailer, parameters);
+        AddNotificationsFromValueObjects(name, description, about, notionUrl, trailer);
         Name = name;
         Description = description;
         AboutDescription = about;
         Price = price;
         TotalHours = totalHours;
         NotionUrl = notionUrl;
-        GitHubUrl = notionUrl;
         IA = ia;
         Trailer = trailer;
-        Parameters = parameters;
         Category = category;
         Teacher = teacher;
         Image = image;

@@ -14,7 +14,7 @@ namespace Domain.ValueObjects
 
             AddNotifications(new Contract<Notification>()
                 .Requires()
-                .IsUrl(Endereco, "Url.Endereco", "Url Inválida"));
+                .IsUrl(Endereco, "Url", "Url Inválida"));
 
             if (!IsValid)
                 Endereco = null;

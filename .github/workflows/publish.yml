@@ -64,6 +64,7 @@ jobs:
             --build-arg RABBITMQ_USER=${{ secrets.RABBITMQ_USER }} \
             --build-arg RABBITMQ_HOST=${{ secrets.RABBITMQ_HOST }} \
             --build-arg RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }} \
+            --build-arg PUBLIC_URL_FRONTEND=${{ secrets.PUBLIC_URL_FRONTEND }} \
             -f Dockerfile .
 
       - name: Push da imagem versionada

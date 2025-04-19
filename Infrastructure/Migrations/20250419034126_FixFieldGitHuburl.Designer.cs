@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DomnumDbContext))]
-    [Migration("20250408224330_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250419034126_FixFieldGitHuburl")]
+    partial class FixFieldGitHuburl
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,7 +28,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Abstracts.Subscription", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
@@ -88,7 +88,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.Category", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("Id");
 
@@ -118,12 +118,13 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.Course", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("Id");
 
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
+
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp")
@@ -147,7 +148,7 @@ namespace Infrastructure.Migrations
                         .HasColumnName("Price");
 
                     b.Property<long>("Subscribes")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("BIGINT")
                         .HasDefaultValue(0L)
                         .HasColumnName("Subscribes");
@@ -190,7 +191,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.IA", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("Id");
 
@@ -220,7 +221,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.Lecture", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("Id");
 
@@ -249,7 +250,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<long>("Views")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasDefaultValue(0L)
                         .HasColumnName("Views");
@@ -267,7 +268,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.Module", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("Id");
 
@@ -297,7 +298,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.Parameter", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
@@ -322,12 +323,12 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.Role", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("Id");
 
                     b.Property<DateTime>("CreatedDate")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
                         .HasColumnName("CreatedDate")
                         .HasDefaultValueSql("now()");
@@ -343,7 +344,7 @@ namespace Infrastructure.Migrations
                         .HasColumnName("Slug");
 
                     b.Property<DateTime>("UpdatedDate")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
                         .HasColumnName("UpdatedDate")
                         .HasDefaultValueSql("now()");
@@ -356,7 +357,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.Student", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
@@ -391,7 +392,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.Teacher", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Cep")
@@ -427,7 +428,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.User", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("Id");
 
@@ -436,7 +437,7 @@ namespace Infrastructure.Migrations
                         .HasColumnName("Active");
 
                     b.Property<DateTime>("CreatedDate")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
                         .HasColumnName("CreatedDate")
                         .HasDefaultValueSql("now()");
@@ -445,16 +446,12 @@ namespace Infrastructure.Migrations
                         .HasColumnType("timestamp")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("TokenActivate")
                         .HasColumnType("varchar")
                         .HasColumnName("TokenActivate");
 
                     b.Property<DateTime>("UpdatedDate")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
                         .HasColumnName("UpdatedDate")
                         .HasDefaultValueSql("now()");
@@ -467,7 +464,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.Video", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<bool>("Ativo")
@@ -504,7 +501,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Payments.StripeWebhookEvent", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
@@ -546,7 +543,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Picture", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<bool>("Ativo")
@@ -584,7 +581,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Relationships.StudentCourse", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("CourseId")
@@ -618,7 +615,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Relationships.StudentLecture", b =>
                 {
                     b.Property<Guid>("Id")
-                        
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("CompletionDate")
@@ -823,7 +820,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Core.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Course_Category");
 
@@ -841,7 +838,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Picture", "Image")
                         .WithMany()
                         .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Course_Picture");
 
@@ -855,7 +852,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Core.Video", "Trailer")
                         .WithOne()
                         .HasForeignKey("Domain.Entities.Core.Course", "TrailerId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK_Course_Trailer_Video");
 
                     b.OwnsOne("Domain.ValueObjects.BigString", "AboutDescription", b1 =>
@@ -902,7 +899,6 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("Endereco")
-                                .IsRequired()
                                 .HasMaxLength(255)
                                 .HasColumnType("varchar")
                                 .HasColumnName("GitHubUrl");
@@ -961,8 +957,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("Description")
                         .IsRequired();
 
-                    b.Navigation("GitHubUrl")
-                        .IsRequired();
+                    b.Navigation("GitHubUrl");
 
                     b.Navigation("IA");
 
@@ -1553,6 +1548,25 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("VideoId");
                         });
 
+                    b.OwnsOne("Domain.ValueObjects.BigString", "TemporaryPath", b1 =>
+                        {
+                            b1.Property<Guid>("VideoId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Body")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("varchar")
+                                .HasColumnName("TemporaryPath");
+
+                            b1.HasKey("VideoId");
+
+                            b1.ToTable("Videos");
+
+                            b1.WithOwner()
+                                .HasForeignKey("VideoId");
+                        });
+
                     b.OwnsOne("Domain.ValueObjects.Url", "UrlTemp", b1 =>
                         {
                             b1.Property<Guid>("VideoId")
@@ -1571,8 +1585,9 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("VideoId");
                         });
 
-                    b.Navigation("AwsKey")
-                        .IsRequired();
+                    b.Navigation("AwsKey");
+
+                    b.Navigation("TemporaryPath");
 
                     b.Navigation("UrlTemp");
                 });
@@ -1598,6 +1613,25 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("PictureId");
                         });
 
+                    b.OwnsOne("Domain.ValueObjects.BigString", "TemporaryPath", b1 =>
+                        {
+                            b1.Property<Guid>("PictureId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Body")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("varchar")
+                                .HasColumnName("TemporaryPath");
+
+                            b1.HasKey("PictureId");
+
+                            b1.ToTable("Pictures");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PictureId");
+                        });
+
                     b.OwnsOne("Domain.ValueObjects.Url", "UrlTemp", b1 =>
                         {
                             b1.Property<Guid>("PictureId")
@@ -1616,8 +1650,9 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("PictureId");
                         });
 
-                    b.Navigation("AwsKey")
-                        .IsRequired();
+                    b.Navigation("AwsKey");
+
+                    b.Navigation("TemporaryPath");
 
                     b.Navigation("UrlTemp");
                 });

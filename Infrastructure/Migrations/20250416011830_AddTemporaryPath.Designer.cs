@@ -125,8 +125,6 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CategoryId1")
-                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp")
@@ -174,7 +172,6 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("CategoryId1");
 
                     b.HasIndex("IAid");
 
@@ -830,10 +827,6 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Course_Category");
-
-                    b.HasOne("Domain.Entities.Core.Category", null)
-                        .WithMany("Courses")
-                        .HasForeignKey("CategoryId1");
 
                     b.HasOne("Domain.Entities.Core.IA", "IA")
                         .WithMany("Courses")

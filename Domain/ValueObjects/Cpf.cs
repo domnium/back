@@ -17,7 +17,7 @@ namespace Domain.ValueObjects
 
             AddNotifications(new Contract<Notification>()
                 .Requires()
-                .IsTrue(ValidarCpf(numero), "Pessoa.Documento", "CPF inválido"));
+                .IsTrue(ValidarCpf(numero), Key, "CPF inválido"));
 
             if (IsValid)
                 Numero = numero;

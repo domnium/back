@@ -15,18 +15,17 @@ public class Handler : IRequestHandler<Request, BaseResponse>
 
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
-        var categories = await _categoryRepository.GetAllProjectedAsync(
-            x => x.DeletedDate != null, 
-            x => new {
-                x.Id,
-                x.Name,
-                x.Description,
-                x.Image.UrlTemp
-            }
-            ,cancellationToken, 0, 100, x => x.Image
-        );
+       var entities = await _categoryRepository.GetAllWithParametersAsync(
+            x => x.DeletedDate == null, cancellationToken, 0, 100, x => x.Image);
+
+        var categories = entities.Select(x => new {
+            x.Id,
+            x.Name,
+            x.Description,
+            ImageUrl = x.Image?.UrlTemp
+        }).ToList();
         
-        if(categories is null) return new BaseResponse(404, "Categories not found");
+        if(categories is null || categories.Any()) return new BaseResponse(404, "Categories not found");
         return new BaseResponse(200, "Categories found", null, categories);
     }
 }

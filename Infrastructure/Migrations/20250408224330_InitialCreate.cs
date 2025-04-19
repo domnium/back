@@ -277,7 +277,6 @@ namespace Infrastructure.Migrations
                     PictureId = table.Column<Guid>(type: "uuid", nullable: false),
                     TeacherId = table.Column<Guid>(type: "uuid", nullable: false),
                     Subscribes = table.Column<long>(type: "BIGINT", nullable: false, defaultValue: 0L),
-                    CategoryId1 = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp", nullable: false),
                     DeletedDate = table.Column<DateTime>(type: "timestamp", nullable: true)
@@ -309,11 +308,6 @@ namespace Infrastructure.Migrations
                         principalTable: "Videos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
-                        name: "FK_Courses_Categories_CategoryId1",
-                        column: x => x.CategoryId1,
-                        principalTable: "Categories",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Courses_IAs_IAid",
                         column: x => x.IAid,
@@ -490,10 +484,6 @@ namespace Infrastructure.Migrations
                 table: "Courses",
                 column: "CategoryId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Courses_CategoryId1",
-                table: "Courses",
-                column: "CategoryId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Courses_IAid",

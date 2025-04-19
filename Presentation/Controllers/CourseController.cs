@@ -28,13 +28,13 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Resultado da criação</returns>
     [HttpPost("Create")]
-    public async Task<IActionResult> Create(CreateRequest request ,CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromForm] CreateRequest request ,CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
             var response = await mediator.Send(request, cancellationToken);
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {
@@ -45,18 +45,18 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Retorna todos os cursos paginados.
     /// </summary>
-    /// <param name="page">Número da página</param>
-    /// <param name="pageSize">Quantidade de itens por página</param>
+    /// <param name="skip">Número da página</param>
+    /// <param name="take">Quantidade de itens por página</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Lista paginada de cursos</returns>
     [HttpGet("Get/All")]
-    public async Task<IActionResult> GetAll(int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] int skip, [FromQuery] int take, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
-            var response = await mediator.Send(new GetAllRequest(page, pageSize), cancellationToken);
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            var response = await mediator.Send(new GetAllRequest(skip, take), cancellationToken);
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {
@@ -68,18 +68,19 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// Retorna cursos filtrados por categoria com paginação.
     /// </summary>
     /// <param name="categoryId">ID da categoria</param>
-    /// <param name="page">Página atual</param>
-    /// <param name="pageSize">Quantidade de registros por página</param>
+    /// <param name="skip">Página atual</param>
+    /// <param name="take">Quantidade de registros por página</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Lista de cursos da categoria</returns>
-    [HttpGet("Get/ByCategory/{categoryId}/Page/{page}/PageSize/{pageSize}")]
-    public async Task<IActionResult> GetByCategory(Guid categoryId, int page, int pageSize, CancellationToken cancellationToken)
+    [HttpGet("Get/ByCategory")]
+    public async Task<IActionResult> GetByCategory([FromQuery] Guid categoryId,
+        [FromQuery] int skip, [FromQuery] int take, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
-            var response = await mediator.Send(new GetByCategory(categoryId, page, pageSize), cancellationToken);
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            var response = await mediator.Send(new GetByCategory(categoryId, skip, take), cancellationToken);
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {
@@ -94,13 +95,13 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Detalhes do curso</returns>
     [HttpGet("Get/ById/{id}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById([FromQuery] Guid id, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
             var response = await mediator.Send(new GetByIdRequest(id), cancellationToken);
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {
@@ -112,18 +113,19 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// Retorna cursos associados a uma IA específica, com paginação.
     /// </summary>
     /// <param name="IAId">ID da IA</param>
-    /// <param name="page">Página atual</param>
-    /// <param name="pageSize">Quantidade de registros por página</param>
+    /// <param name="skip">Página atual</param>
+    /// <param name="take">Quantidade de registros por página</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Lista de cursos associados à IA</returns>
-    [HttpGet("Get/ByIA/{IAId}/Page/{page}/PageSize/{pageSize}")]
-    public async Task<IActionResult> GetByIA(Guid IAId, int page, int pageSize, CancellationToken cancellationToken)
+    [HttpGet("Get/ByIA")]
+    public async Task<IActionResult> GetByIA([FromQuery] Guid IAId,[FromQuery] int skip,[FromQuery] int take,
+         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
-            var response = await mediator.Send(new GetByIA(IAId, page, pageSize), cancellationToken);
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            var response = await mediator.Send(new GetByIA(IAId, skip, take), cancellationToken);
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {
@@ -143,7 +145,7 @@ public class CourseController(IMediator mediator) : ControllerBase
         try
         {
             var response = await mediator.Send(new GetMostPopular(), cancellationToken);
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {
@@ -158,13 +160,13 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Resultado da operação de exclusão</returns>
     [HttpDelete("Delete/{id}")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete([FromQuery]Guid id, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         try
         {
             var response = await mediator.Send(new DeleteRequest(id), cancellationToken);
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {

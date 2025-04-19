@@ -28,7 +28,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
         var modules = await _moduleRepository.GetAllProjectedAsync(
-            x => x.DeletedDate != null, 
+            x => x.DeletedDate == null, 
             x => new {
                 x.Id,
                 x.Name,

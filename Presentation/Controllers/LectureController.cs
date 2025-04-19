@@ -27,7 +27,7 @@ public class LectureController(IMediator mediator) : ControllerBase
         try
         {
             var response = await mediator.Send(request, cancellationToken);
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {
@@ -48,7 +48,7 @@ public class LectureController(IMediator mediator) : ControllerBase
         try
         {
             var response = await mediator.Send(request, cancellationToken);
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {
@@ -74,7 +74,7 @@ public class LectureController(IMediator mediator) : ControllerBase
             var response = await mediator.Send(new Application.UseCases.Lecture.Get.AllCourseCompleted
                 .Request(courseId, studentId, page, pageSize), cancellationToken);
 
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {
@@ -98,7 +98,7 @@ public class LectureController(IMediator mediator) : ControllerBase
             var response = await mediator.Send(new Application.UseCases.Lecture.Get.IsLectureCompleted.
                 Request(studentId, lectureId), cancellationToken);
 
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {
@@ -123,7 +123,7 @@ public class LectureController(IMediator mediator) : ControllerBase
         {
             var response = await mediator.Send(new Application.UseCases.Lecture.MarkLectureCompleted
                 .Request(courseId, studentId, lectureId), cancellationToken);
-            return StatusCode(response.statuscode, new { response.message, response.Response });
+            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
         }
         catch (Exception e)
         {

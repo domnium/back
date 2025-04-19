@@ -34,8 +34,6 @@ public class BaseRepository<T>(DbContext context)
         await Task.Run(() => context.Remove(entity), cancellationToken);
     }
 
-
-
     public virtual async Task<List<T>> GetAll(CancellationToken cancellationToken, int skip = 0, int take = 10)
         => await context.Set<T>().AsNoTracking()
                              .Skip(skip)
@@ -58,6 +56,40 @@ public class BaseRepository<T>(DbContext context)
         return await query.AsNoTracking().FirstOrDefaultAsync(cancellationToken);
     }
 
+    public virtual async Task<T?> GetWithParametersAsyncWithTracking(
+        Expression<Func<T, bool>>? filter = null,
+        CancellationToken cancellationToken = default,
+        params Expression<Func<T, object>>[] includes)
+    {
+        var query = context.Set<T>().AsQueryable();
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+
+        query = includes.Aggregate(query, (current, include) => current.Include(include));
+        return await query.FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public virtual async Task<List<T>>  GetAllWithParametersAsyncWithTracking(
+        Expression<Func<T, bool>>? filter = null,
+        CancellationToken cancellationToken = default,
+        int skip = 0,
+        int take = 10,
+        params Expression<Func<T, object>>[] includes)
+    {
+        var query = context.Set<T>().AsQueryable();
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+
+        query = includes.Aggregate(query, (current, include) => current.Include(include));
+        return await query.Skip(skip)
+                          .Take(take)
+                          .ToListAsync(cancellationToken);
+    }
+
     public virtual async Task<List<T>> GetAllWithParametersAsync(
         Expression<Func<T, bool>>? filter = null,
         CancellationToken cancellationToken = default,
@@ -78,7 +110,10 @@ public class BaseRepository<T>(DbContext context)
                           .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<TResult>> GetAllProjectedAsync<TResult>(
+    /// <summary>
+    /// Projeta entidades com base em um seletor e inclui propriedades relacionadas. Usa AsNoTracking.
+    /// </summary>
+    public virtual async Task<List<TResult>> GetAllProjectedAsync<TResult>(
         Expression<Func<T, bool>>? filter = null,
         Expression<Func<T, TResult>> selector = null!,
         CancellationToken cancellationToken = default,
@@ -100,10 +135,12 @@ public class BaseRepository<T>(DbContext context)
 
         if (selector != null)
         {
-            return await query.Select(selector)
-                                .Skip(skip)
-                                .Take(take)
-                                .ToListAsync(cancellationToken);
+            return await query
+                .Skip(skip)
+                .Take(take)
+                .AsNoTracking()
+                .Select(selector)
+                .ToListAsync(cancellationToken);
         }
         else
         {
@@ -111,7 +148,10 @@ public class BaseRepository<T>(DbContext context)
         }
     }
 
-    public async Task<TResult> GetProjectedAsync<TResult>(
+    /// <summary>
+    /// Projeta uma única entidade com base em um seletor. Usa AsNoTracking.
+    /// </summary>
+    public virtual async Task<TResult> GetProjectedAsync<TResult>(
         Expression<Func<T, bool>>? filter = null,
         Expression<Func<T, TResult>> selector = null!,
         CancellationToken cancellationToken = default,
@@ -131,12 +171,70 @@ public class BaseRepository<T>(DbContext context)
 
         if (selector != null)
         {
-            return await query.Select(selector)
-                                .FirstOrDefaultAsync(cancellationToken);
+            return await query
+                .AsNoTracking()
+                .Select(selector)
+                .FirstOrDefaultAsync(cancellationToken);
         }
         else
         {
             throw new ArgumentNullException(nameof(selector), "Selector must be provided for projection.");
         }
+    }
+
+    /// <summary>
+    /// Projeta entidades com tracking habilitado, mantendo o contexto do EF.
+    /// </summary>
+    public virtual async Task<List<TResult>> GetAllProjectedWithTrackingAsync<TResult>(
+        Expression<Func<T, bool>>? filter = null,
+        Expression<Func<T, TResult>> selector = null!,
+        CancellationToken cancellationToken = default,
+        int skip = 0,
+        int take = 10,
+        params Expression<Func<T, object>>[] includes)
+    {
+        IQueryable<T> query = context.Set<T>();
+
+        if (includes != null)
+        {
+            query = includes.Aggregate(query, (current, include) => current.Include(include));
+        }
+
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+
+        return await query
+            .Skip(skip)
+            .Take(take)
+            .Select(selector)
+            .ToListAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Projeta uma única entidade com tracking habilitado.
+    /// </summary>
+    public virtual async Task<TResult> GetProjectedWithTrackingAsync<TResult>(
+        Expression<Func<T, bool>>? filter = null,
+        Expression<Func<T, TResult>> selector = null!,
+        CancellationToken cancellationToken = default,
+        params Expression<Func<T, object>>[] includes)
+    {
+        IQueryable<T> query = context.Set<T>();
+
+        if (includes != null)
+        {
+            query = includes.Aggregate(query, (current, include) => current.Include(include));
+        }
+
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+
+        return await query
+            .Select(selector)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }

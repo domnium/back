@@ -17,15 +17,16 @@ public class UserRepository(DomnumDbContext context)
         return userFromDb != null && userFromDb.Password.VerifyPassword(user.Password.Content, userFromDb.Password.Salt);
     }
 
-    public async Task<User> ActivateUserAsync(string email, long token, CancellationToken cancellationToken)
+    public async Task<User?> ActivateUserAsync(string email, long token, CancellationToken cancellationToken)
     {
        var user =  (await context.Set<User>().AsNoTracking()
             .FirstOrDefaultAsync(x => !x.Active && x.Email.Address!.Equals(email) && x.TokenActivate.Equals(token),
                 cancellationToken: cancellationToken));
-
-       user?.AssignActivate(true);
-       Update(user);
-       return user!;
+        if(user is not null){
+            user?.AssignActivate(true);
+            Update(user);
+        }
+       return user;
     }
 
     public async Task<User?> GetByEmail(string email, CancellationToken cancellationToken) =>

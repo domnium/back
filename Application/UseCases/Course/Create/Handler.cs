@@ -20,7 +20,6 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     private readonly IDbCommit _dbCommit;
     private readonly ICategoryRepository _categoryRepository;
     private readonly ITeacherRepository _teacherRepository;
-    private readonly IParameterRepository _parameterRepository;
     private readonly IPictureRepository _pictureRepository;
     private readonly IVideoRepository _videoRepository;
     private readonly IIARepository _iaRepository;
@@ -36,14 +35,12 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         IMessageQueueService messageQueueService,
         IPictureRepository pictureRepository,
         IVideoRepository videoRepository,
-        IParameterRepository parameterRepository,
         IIARepository iaRepository,
         ITemporaryStorageService temporaryStorageService)
     {
         _courseRepository = courseRepository;
         _pictureRepository = pictureRepository;
         _videoRepository = videoRepository;
-        _parameterRepository = parameterRepository;
         _dbCommit = dbCommit;
         _categoryRepository = categoryRepository;
         _teacherRepository = teacherRepository;
@@ -60,19 +57,17 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     /// <returns><see cref="BaseResponse"/> com status e mensagem.</returns>
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
-        var category = await _categoryRepository.GetWithParametersAsync(c => c.Id == request.CategoryId, cancellationToken);
+        var category = await _categoryRepository.GetWithParametersAsyncWithTracking(c => c.Id == request.CategoryId, cancellationToken);
         if (category is null) return new BaseResponse(404, "Category not found");
 
-        if (await _courseRepository.GetWithParametersAsync(c => c.Name.Equals(request.Name), cancellationToken) is not null)
+        if (await _courseRepository.GetWithParametersAsyncWithTracking(c => c.Name.Name.Equals(request.Name), cancellationToken) is not null)
             return new BaseResponse(409, "Course with this name already exists");
 
-        var teacher = await _teacherRepository.GetWithParametersAsync(t => t.Id == request.TeacherId, cancellationToken);
+        var teacher = await _teacherRepository.GetWithParametersAsyncWithTracking(t => t.Id == request.TeacherId, cancellationToken);
         if (teacher is null) return new BaseResponse(404, "Teacher not found");
 
-        var parameter = await _parameterRepository.GetWithParametersAsync(p => p.Id == request.ParametersId, cancellationToken);
-        if (parameter is null) return new BaseResponse(404, "Parameter not found");
 
-        var ia = await _iaRepository.GetWithParametersAsync(i => i.Id == request.IAId, cancellationToken);
+        var ia = await _iaRepository.GetWithParametersAsyncWithTracking(i => i.Id == request.IAId, cancellationToken);
         if (ia is null) return new BaseResponse(404, "IA not found");
 
         var picture = new Picture(null, false, new AppFile(request.Image.OpenReadStream(), request.Image.FileName));
@@ -93,7 +88,6 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             new Url(request.NotionUrl),
             ia,
             storedTrailer,
-            parameter,
             category,
             teacher,
             storedPicture
