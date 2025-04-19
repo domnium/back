@@ -13,9 +13,9 @@ public class Category : Entity
     public IReadOnlyCollection<Course> Courses => _courses.ToList();
 
     private Category() {}
-    public Category(UniqueName name, Description description, Picture? image = null)
+    public Category(UniqueName name, Description description, Picture? image)
     {
-        AddNotificationsFromValueObjects(name, description);
+        AddNotificationsFromValueObjects(name, description, image);
         Name = name;
         Description = description;
         Image = image;

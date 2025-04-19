@@ -28,7 +28,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
         var teacher = await _teacherRepository.GetProjectedAsync(
-            x => x.DeletedDate != null && x.Id == request.TeacherId, 
+            x => x.DeletedDate == null && x.Id == request.TeacherId, 
             x => new {
                 x.Id,
                 x.Name,

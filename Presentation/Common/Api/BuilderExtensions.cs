@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
+using Presentation.Common.Converters;
 
 namespace Presentation.Common.Api;
 
@@ -22,6 +24,7 @@ public static class BuilderExtensions
         Configuration.JwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? string.Empty;
         Configuration.BackendUrl = Environment.GetEnvironmentVariable("BACKEND_URL") ?? string.Empty;
         Configuration.VersionApi = Environment.GetEnvironmentVariable("VERSION_API") ?? string.Empty;
+        Configuration.PublicUrlFrontEnd = Environment.GetEnvironmentVariable("PUBLIC_URL_FRONTEND") ?? "http://domnum.com";
         Configuration.ApiKey = Environment.GetEnvironmentVariable("API_KEY") ?? string.Empty;
         Configuration.ApiKeyAttribute = "X-API-KEY";
         Configuration.FrontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? "http://localhost:4200";
@@ -53,9 +56,9 @@ public static class BuilderExtensions
         {
             options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
             options.SerializerSettings.DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore;
-            options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
+            options.SerializerSettings.ContractResolver = new IgnoreEmptyEnumerablesContractResolver
             {
-                NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
+                NamingStrategy = new CamelCaseNamingStrategy()
             };
         });
         builder.Services.AddEndpointsApiExplorer();

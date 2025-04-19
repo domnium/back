@@ -47,7 +47,16 @@ public class Teacher : Entity
         Description = description;
         Picture = picture;
 
-        AddNotifications(name, email, cpf, endereco, description, picture);
+        AddNotificationsFromValueObjects(
+            name,
+            email,
+            cpf,
+            description,
+            picture,
+            tiktok is not null ? tiktok : null,
+            instagram is not null ? instagram : null,
+            gitHub is not null ? gitHub : null
+        );
         AddNotifications(new Contract<Teacher>()
             .IsNotNullOrWhiteSpace(phone, "Phone", "Telefone é obrigatório")
             .IsNotNullOrWhiteSpace(cep, "Cep", "CEP é obrigatório")

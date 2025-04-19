@@ -14,12 +14,13 @@ public class Picture : Archive
     public AppFile? File { get; private set;}
 
     private Picture() {}
-    public Picture(BigString? awsKey, bool ativo = true, AppFile appFile = null)
-        : base(awsKey)
+    public Picture(BigString? awsKey, bool ativo = true, AppFile appFile = null, BigString? temporaryPath = null)
     {
         AddNotificationsFromValueObjects(appFile);
         File = appFile;
         Ativo = ativo;
+        AwsKey = awsKey;
+        TemporaryPath = temporaryPath;
     }
 
     public void Activate() => Ativo = true;

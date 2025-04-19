@@ -23,19 +23,26 @@ public static class ServicesExtensions
         {
             x.AddConsumer<UploadFileConsumer>();
             x.AddConsumer<DeleteFileConsumer>(); 
+            x.AddConsumer<EmailConsumer>(); 
 
             x.UsingRabbitMq((ctx, cfg) =>
             {
-               cfg.Host(Configuration.RabbitMQHost, h =>
+               cfg.Host(Configuration.RabbitMQHost, "/", h =>
                 {
                     h.Username(Configuration.RabbitMQUser);
-                    h.Password(Configuration.RabbitMQPassword);
+                    h.Password("admin");
                 });
 
                 cfg.ReceiveEndpoint("upload_queue", e =>
                 {
                     e.ConfigureConsumer<UploadFileConsumer>(ctx);
                 });
+                
+                cfg.ReceiveEndpoint("emails_queue", e =>
+                {
+                    e.ConfigureConsumer<EmailConsumer>(ctx);
+                });
+                
                 cfg.ReceiveEndpoint("delete_queue", e =>
                 {
                     e.ConfigureConsumer<DeleteFileConsumer>(ctx);

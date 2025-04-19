@@ -80,7 +80,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
 
         // Salva a imagem fisicamente em diretório temporário
         var tempPath = await _temporaryStorageService.SaveAsync(
-            newCategory.Image.TemporaryPath.Body,
+            newCategory.Image.TemporaryPath!.Body!,
             newCategory.Image.Id,
             request.Imagem.OpenReadStream(),
             cancellationToken
@@ -91,7 +91,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             new UploadFileMessage(
                 newCategory.Image.Id,
                 Configuration.BucketArchives,
-                newCategory.Image.TemporaryPath.Body,
+                newCategory.Image.TemporaryPath.Body!,
                 request.Imagem.ContentType,
                 tempPath
             ),

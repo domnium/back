@@ -5,17 +5,17 @@ using Microsoft.AspNetCore.Http;
 namespace Application.UseCases.Course.Create;
 
 public record Request(
-    string? Name,
-    string? Description,
-    string? AboutDescription,
-    IFormFile? Image, 
+    string Name,
+    string Description,
+    string AboutDescription,
+    IFormFile Image, 
     string? GitHubUrl,
-    string? NotionUrl,
-    Guid? IAId,
-    Guid? CategoryId,
+    string NotionUrl,
+    Guid IAId,
+    Guid CategoryId,
     IFormFile? Trailer,
     Guid? ParametersId,
-    Guid? TeacherId,
+    Guid TeacherId,
     decimal Price,
     decimal TotalHours
 ) 

@@ -9,4 +9,7 @@ public interface IMessageQueueService
         CancellationToken cancellationToken);
     Task EnqueueDeleteMessageAsync(DeleteFileMessage message,
         CancellationToken cancellationToken);
+
+    Task EnqueueEmailMessageAsync(EmailMessage message,
+        CancellationToken cancellationToken);
 }

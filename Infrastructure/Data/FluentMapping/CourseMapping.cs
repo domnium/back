@@ -54,7 +54,7 @@ public class CourseMapping : IEntityTypeConfiguration<Course>
                 .HasColumnName("GitHubUrl")
                 .HasColumnType("varchar")
                 .HasMaxLength(255)
-                .IsRequired();
+                .IsRequired(false);
         });
 
        builder.Property(c => c.CreatedDate)
