@@ -34,10 +34,10 @@ public class Handler : IRequestHandler<Request, BaseResponse>
                 x.Name,
                 x.Picture.UrlTemp
             }
-            ,cancellationToken, 0, 100, x => x.Picture
+            ,cancellationToken, request.skip, request.take, x => x.Picture
         );
 
-        if(students is null) return new BaseResponse(404, "Students not found");
+        if(students is null || !students.Any()) return new BaseResponse(404, "Students not found");
         return new BaseResponse(200, "Students found", null, students);
     }
 }

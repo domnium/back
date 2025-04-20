@@ -23,7 +23,9 @@ public interface IBaseRepository<T> where T : Entity
         int skip = 0,
         int take = 10,
         params Expression<Func<T, object>>[] includes);
-
+    
+    void Attach<TConcrete>(TConcrete entity) where TConcrete : Entity;
+    
     Task<List<TResult>> GetAllProjectedAsync<TResult>(
         Expression<Func<T, bool>>? filter = null,
         Expression<Func<T, TResult>> selector = null!,

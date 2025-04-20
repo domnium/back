@@ -45,8 +45,8 @@ public class Handler : IRequestHandler<Request, BaseResponse>
 
         // Cria entidade Module com curso
         var newModule = new Domain.Entities.Core.Module(
-            new UniqueName(request.Name),
-            new Description(request.Description),
+            new UniqueName(request.Name!),
+            new Description(request.Description!),
             courseFound
         );
 

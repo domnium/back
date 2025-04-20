@@ -1,4 +1,4 @@
-using System;
+using Domain.Entities;
 using Domain.Entities.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -9,128 +9,63 @@ public class CourseMapping : IEntityTypeConfiguration<Course>
 {
     public void Configure(EntityTypeBuilder<Course> builder)
     {
-        // Table
         builder.ToTable("Courses");
-
-        // Primary Key
         builder.HasKey(c => c.Id).HasName("PK_Courses");
 
-        // Properties
-        builder.Property(c => c.Id)
-            .HasColumnName("Id")
-            .HasColumnType("uuid")
-            .IsRequired();
-
-        builder.OwnsOne(r => r.Name, name =>
-        {
-            name.Property(n => n.Name)
-                .HasColumnName("Name")
-                .HasColumnType("varchar")
-                .HasMaxLength(100)
-                .IsRequired();
-        });
-
-        builder.OwnsOne(r => r.Description, name =>
-        {
-            name.Property(n => n.Text)
-                .HasColumnName("Description")
-                .HasColumnType("varchar")
-                .HasMaxLength(255)
-                .IsRequired();
-        });
-
-        builder.OwnsOne(r => r.NotionUrl, name =>
-        {
-            name.Property(n => n.Endereco)
-                .HasColumnName("NotionUrl")
-                .HasColumnType("varchar")
-                .HasMaxLength(255)
-                .IsRequired();
-        });
-
-        builder.OwnsOne(r => r.GitHubUrl, name =>
-        {
-            name.Property(n => n.Endereco)
-                .HasColumnName("GitHubUrl")
-                .HasColumnType("varchar")
-                .HasMaxLength(255)
-                .IsRequired(false);
-        });
-
-       builder.Property(c => c.CreatedDate)
-            .HasColumnName("CreatedDate")
-            .HasColumnType("timestamp")
+        builder.Property(c => c.CreatedDate)
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(c => c.UpdatedDate)
-            .HasColumnName("UpdatedDate")
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(c => c.DeletedDate)
-            .HasColumnName("DeletedDate")
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired(false);
+        builder.Property(c => c.Price).IsRequired();
+        builder.Property(c => c.TotalHours).IsRequired();
+        builder.Property(c => c.Subscribes).HasDefaultValue(0);
 
-
-        builder.Property(c => c.Price)
-            .HasColumnName("Price")
-            .HasColumnType("FLOAT")
-            .IsRequired();
-
-        builder.OwnsOne(r => r.AboutDescription, name =>
-        {
-            name.Property(n => n.Body)
-                .HasColumnName("AboutDescription")
-                .HasColumnType("varchar")
-                .HasMaxLength(300)
-                .IsRequired();
-        });
-
-        builder.Property(c => c.TotalHours)
-            .HasColumnName("TotalHours")
-            .HasColumnType("FLOAT")
-            .IsRequired();
-
-        builder.Property(c => c.Subscribes)
-            .HasColumnName("Subscribes")
-            .HasColumnType("BIGINT")
-            .HasDefaultValue(0);
-
-        builder.HasOne(i => i.IA)
-            .WithMany(c => c.Courses)
-            .HasForeignKey(c => c.IAid)
-            .OnDelete(DeleteBehavior.SetNull);
+        builder.OwnsOne(c => c.Name, n => n.Property(p => p.Name).HasMaxLength(100).IsRequired().HasColumnName("Name"));
+        builder.OwnsOne(c => c.Description, d => d.Property(p => p.Text).HasMaxLength(255).IsRequired().HasColumnName("Description"));
+        builder.OwnsOne(c => c.AboutDescription, a => a.Property(p => p.Body).HasMaxLength(300).IsRequired().HasColumnName("AboutDescription"));
+        builder.OwnsOne(c => c.GitHubUrl, g => g.Property(p => p.Endereco).HasMaxLength(255).HasColumnName("GitHubUrl"));
+        builder.OwnsOne(c => c.NotionUrl, n => n.Property(p => p.Endereco).HasMaxLength(255).IsRequired().HasColumnName("NotionUrl"));
 
         builder.HasMany(c => c.Modules)
             .WithOne(m => m.Course)
+            .HasForeignKey(m => m.CourseId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(c => c.Teacher)
+            .WithMany(t => t.Courses)
+            .HasForeignKey(c => c.TeacherId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(c => c.Category)
-            .WithMany()
+            .WithMany(ca => ca.Courses)
             .HasForeignKey(c => c.CategoryId)
-            .HasConstraintName("FK_Course_Category")
-            .OnDelete(DeleteBehavior.SetNull);  
+            .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(c => c.Teacher)
-            .WithMany()
-            .HasForeignKey(c => c.TeacherId)
-            .HasConstraintName("FK_Course_Teacher")
-            .OnDelete(DeleteBehavior.SetNull);
-
-        builder.HasOne(c => c.Image)
-            .WithMany() 
-            .HasForeignKey(c => c.PictureId) 
-            .HasConstraintName("FK_Course_Picture")
+        builder.HasOne(c => c.Picture)
+            .WithOne(p => p.Course)
+            .HasForeignKey<Picture>(p => p.CourseId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(c => c.Trailer)
-            .WithOne()
-            .HasConstraintName("FK_Course_Trailer_Video")
+            .WithOne(v => v.Course)
+            .HasForeignKey<Video>(v => v.CourseId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(c => c.IA)
+            .WithMany(ia => ia.Courses)
+            .HasForeignKey(c => c.IAid)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(c => c.Parameters)
             .WithOne(p => p.Course)
+            .HasForeignKey<Parameter>(p => p.CourseId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

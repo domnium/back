@@ -8,7 +8,7 @@ public record Request(
     string Name,
     string Description,
     string AboutDescription,
-    IFormFile Image, 
+    IFormFile Picture, 
     string? GitHubUrl,
     string NotionUrl,
     Guid IAId,

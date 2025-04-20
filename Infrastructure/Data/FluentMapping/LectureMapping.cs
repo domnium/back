@@ -8,75 +8,34 @@ public class LectureMapping : IEntityTypeConfiguration<Lecture>
 {
     public void Configure(EntityTypeBuilder<Lecture> builder)
     {
-        // Table
         builder.ToTable("Lectures");
+        builder.HasKey(l => l.Id);
 
-        // Primary Key
-        builder.HasKey(l => l.Id).HasName("PK_Lectures");
-
-        // Properties
-        builder.Property(l => l.Id)
-            .HasColumnName("Id")
-            .HasColumnType("uuid")
-            .IsRequired()
-            ;
-
-        builder.Property(l => l.CreatedDate)
-            .HasColumnName("CreatedDate")
-            .HasColumnType("timestamp")
+       builder.Property(l => l.CreatedDate)
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(l => l.UpdatedDate)
-            .HasColumnName("UpdatedDate")
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(l => l.DeletedDate)
-            .HasColumnName("DeletedDate")
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired(false);
+        builder.Property(l => l.Tempo).HasMaxLength(20).IsRequired();
+        builder.Property(l => l.Views).HasDefaultValue(0);
 
-        builder.Property(l => l.Tempo)
-            .HasColumnName("Tempo")
-            .HasColumnType("varchar")
-            .HasMaxLength(20)
-            .IsRequired();
+        builder.OwnsOne(l => l.Name, n => n.Property(p => p.Name).HasMaxLength(100).IsRequired().HasColumnName("Name"));
+        builder.OwnsOne(l => l.GithubUrl, g => g.Property(p => p.Endereco).HasMaxLength(255).HasColumnName("GithubUrl"));
 
-        builder.Property(l => l.Views)
-            .HasColumnName("Views")
-            .HasColumnType("bigint")
-            .HasDefaultValue(0);
-
-        // Value Object: Name
-        builder.OwnsOne(l => l.Name, name =>
-        {
-            name.Property(n => n.Name)
-                .HasColumnName("Name")
-                .HasColumnType("varchar")
-                .HasMaxLength(100)
-                .IsRequired();
-        });
-
-        // Value Object: GithubUrl
-        builder.OwnsOne(l => l.GithubUrl, url =>
-        {
-            url.Property(u => u.Endereco)
-                .HasColumnName("GithubUrl")
-                .HasColumnType("varchar")
-                .HasMaxLength(255)
-                .IsRequired(false);
-        });
-
-        // Relationships
         builder.HasOne(l => l.Module)
             .WithMany(m => m.Lectures)
             .HasForeignKey(l => l.ModuleId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(l => l.Video)
-            .WithMany() 
-            .HasForeignKey(l => l.VideoId)
-            .HasConstraintName("FK_Lecture_Video")
+            .WithOne(v => v.Lecture)
+            .HasForeignKey<Video>(v => v.LectureId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(l => l.StudentLectures)

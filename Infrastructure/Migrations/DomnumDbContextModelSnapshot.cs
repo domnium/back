@@ -29,20 +29,20 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<decimal?>("Price")
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal");
 
                     b.Property<DateTime?>("StartDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<string>("StripeCustomerId")
                         .HasMaxLength(255)
@@ -61,7 +61,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("character varying(13)");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.HasKey("Id")
                         .HasName("PK_Subscriptions");
@@ -86,28 +86,21 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("Id");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("CreatedDate");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("DeletedDate");
+                        .HasColumnType("timestamptz");
 
                     b.Property<Guid>("PictureId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("UpdatedDate");
+                        .HasColumnType("timestamptz");
 
-                    b.HasKey("Id")
-                        .HasName("PK_Categories");
-
-                    b.HasIndex("PictureId");
+                    b.HasKey("Id");
 
                     b.ToTable("Categories", (string)null);
                 });
@@ -116,22 +109,16 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("Id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CategoryId1")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("CreatedDate");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("DeletedDate");
+                        .HasColumnType("timestamptz");
 
                     b.Property<Guid>("IAid")
                         .HasColumnType("uuid");
@@ -143,47 +130,33 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("FLOAT")
-                        .HasColumnName("Price");
+                        .HasColumnType("numeric");
 
                     b.Property<long>("Subscribes")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("BIGINT")
-                        .HasDefaultValue(0L)
-                        .HasColumnName("Subscribes");
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L);
 
                     b.Property<Guid>("TeacherId")
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("TotalHours")
-                        .HasColumnType("FLOAT")
-                        .HasColumnName("TotalHours");
+                        .HasColumnType("numeric");
 
                     b.Property<Guid?>("TrailerId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("UpdatedDate");
+                        .HasColumnType("timestamptz");
 
                     b.HasKey("Id")
                         .HasName("PK_Courses");
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("CategoryId1");
-
                     b.HasIndex("IAid");
 
-                    b.HasIndex("ParameterId")
-                        .IsUnique();
-
-                    b.HasIndex("PictureId");
-
                     b.HasIndex("TeacherId");
-
-                    b.HasIndex("TrailerId")
-                        .IsUnique();
 
                     b.ToTable("Courses", (string)null);
                 });
@@ -192,28 +165,21 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("Id");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("CreatedDate");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("DeletedDate");
+                        .HasColumnType("timestamptz");
 
                     b.Property<Guid>("PictureId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("UpdatedDate");
+                        .HasColumnType("timestamptz");
 
-                    b.HasKey("Id")
-                        .HasName("PK_IAs");
-
-                    b.HasIndex("PictureId");
+                    b.HasKey("Id");
 
                     b.ToTable("IAs", (string)null);
                 });
@@ -222,16 +188,13 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("Id");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("CreatedDate");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("DeletedDate");
+                        .HasColumnType("timestamptz");
 
                     b.Property<Guid>("ModuleId")
                         .HasColumnType("uuid");
@@ -239,12 +202,10 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Tempo")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar")
-                        .HasColumnName("Tempo");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("UpdatedDate");
+                        .HasColumnType("timestamptz");
 
                     b.Property<Guid?>("VideoId")
                         .HasColumnType("uuid");
@@ -252,15 +213,11 @@ namespace Infrastructure.Migrations
                     b.Property<long>("Views")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
-                        .HasDefaultValue(0L)
-                        .HasColumnName("Views");
+                        .HasDefaultValue(0L);
 
-                    b.HasKey("Id")
-                        .HasName("PK_Lectures");
+                    b.HasKey("Id");
 
                     b.HasIndex("ModuleId");
-
-                    b.HasIndex("VideoId");
 
                     b.ToTable("Lectures", (string)null);
                 });
@@ -269,26 +226,21 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("Id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CourseId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("CreatedDate");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("DeletedDate");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("UpdatedDate");
+                        .HasColumnType("timestamptz");
 
-                    b.HasKey("Id")
-                        .HasName("PK_Modules");
+                    b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
@@ -301,21 +253,27 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("CourseId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<bool?>("FreeCourse")
                         .HasColumnType("boolean")
                         .HasColumnName("FreeCourse");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.HasKey("Id")
                         .HasName("PK_Parameters");
+
+                    b.HasIndex("CourseId")
+                        .IsUnique();
 
                     b.ToTable("Parameters", (string)null);
                 });
@@ -328,13 +286,11 @@ namespace Infrastructure.Migrations
                         .HasColumnName("Id");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp")
-                        .HasColumnName("CreatedDate")
-                        .HasDefaultValueSql("now()");
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("CreatedDate");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("DeletedDate");
 
                     b.Property<string>("Slug")
@@ -344,10 +300,8 @@ namespace Infrastructure.Migrations
                         .HasColumnName("Slug");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp")
-                        .HasColumnName("UpdatedDate")
-                        .HasDefaultValueSql("now()");
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("UpdatedDate");
 
                     b.HasKey("Id");
 
@@ -361,28 +315,24 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<bool>("IsFreeStudent")
-                        .HasColumnType("boolean")
-                        .HasColumnName("IsFreeStudent");
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("PictureId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id")
-                        .HasName("PK_Students");
-
-                    b.HasIndex("PictureId");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
@@ -401,10 +351,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("varchar");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -415,13 +365,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.HasKey("Id")
                         .HasName("PK_Teachers");
-
-                    b.HasIndex("PictureId")
-                        .IsUnique();
 
                     b.ToTable("Teachers", (string)null);
                 });
@@ -438,13 +385,11 @@ namespace Infrastructure.Migrations
                         .HasColumnName("Active");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp")
-                        .HasColumnName("CreatedDate")
-                        .HasDefaultValueSql("now()");
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("CreatedDate");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("DeletedDate");
 
                     b.Property<string>("TokenActivate")
@@ -452,10 +397,8 @@ namespace Infrastructure.Migrations
                         .HasColumnName("TokenActivate");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp")
-                        .HasColumnName("UpdatedDate")
-                        .HasDefaultValueSql("now()");
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("UpdatedDate");
 
                     b.HasKey("Id");
 
@@ -473,28 +416,36 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("BucketName")
                         .HasMaxLength(255)
-                        .HasColumnType("varchar")
-                        .HasColumnName("BucketName");
+                        .HasColumnType("character varying(255)");
 
-                    b.Property<string>("ContentType")
-                        .HasColumnType("varchar")
-                        .HasColumnName("ContentType");
+                    b.Property<int?>("ContentType")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("CourseId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
+
+                    b.Property<Guid?>("LectureId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("UrlExpired")
-                        .HasColumnType("timestamp")
-                        .HasColumnName("UrlExpired");
+                        .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id")
-                        .HasName("PK_Videos");
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId")
+                        .IsUnique();
+
+                    b.HasIndex("LectureId")
+                        .IsUnique();
 
                     b.ToTable("Videos", (string)null);
                 });
@@ -506,10 +457,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<string>("EventId")
                         .IsRequired()
@@ -523,7 +474,7 @@ namespace Infrastructure.Migrations
                         .HasColumnName("PayloadJson");
 
                     b.Property<DateTime>("ReceivedAt")
-                        .HasColumnType("timestamp")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("ReceivedAt");
 
                     b.Property<string>("Type")
@@ -533,7 +484,7 @@ namespace Infrastructure.Migrations
                         .HasColumnName("Type");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.HasKey("Id")
                         .HasName("PK_StripeWebhookEvents");
@@ -556,25 +507,55 @@ namespace Infrastructure.Migrations
                         .HasColumnType("varchar")
                         .HasColumnName("BucketName");
 
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("ContentType")
                         .HasColumnType("varchar")
                         .HasColumnName("ContentType");
 
+                    b.Property<Guid?>("CourseId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
+
+                    b.Property<Guid?>("IAId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("TeacherId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("UrlExpired")
-                        .HasColumnType("timestamp")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("UrlExpired");
 
                     b.HasKey("Id")
                         .HasName("PK_Pictures");
+
+                    b.HasIndex("CategoryId")
+                        .IsUnique();
+
+                    b.HasIndex("CourseId")
+                        .IsUnique();
+
+                    b.HasIndex("IAId")
+                        .IsUnique();
+
+                    b.HasIndex("StudentId")
+                        .IsUnique();
+
+                    b.HasIndex("TeacherId")
+                        .IsUnique();
 
                     b.ToTable("Pictures", (string)null);
                 });
@@ -589,22 +570,21 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime>("EnrollmentDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
-                    b.HasKey("Id")
-                        .HasName("PK_StudentCourses");
+                    b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
@@ -620,16 +600,16 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("CompletionDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("CourseId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("boolean");
@@ -641,10 +621,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamptz");
 
-                    b.HasKey("Id")
-                        .HasName("PK_StudentLectures");
+                    b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
@@ -738,11 +717,11 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("uuid");
 
                             b1.Property<DateTime>("EndDate")
-                                .HasColumnType("timestamp")
+                                .HasColumnType("timestamptz")
                                 .HasColumnName("EndDate");
 
                             b1.Property<DateTime>("StartDate")
-                                .HasColumnType("timestamp")
+                                .HasColumnType("timestamptz")
                                 .HasColumnName("StartDate");
 
                             b1.HasKey("SubscriptionId");
@@ -763,12 +742,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Core.Category", b =>
                 {
-                    b.HasOne("Domain.Entities.Picture", "Image")
-                        .WithMany()
-                        .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.OwnsOne("Domain.ValueObjects.Description", "Description", b1 =>
                         {
                             b1.Property<Guid>("CategoryId")
@@ -777,7 +750,7 @@ namespace Infrastructure.Migrations
                             b1.Property<string>("Text")
                                 .IsRequired()
                                 .HasMaxLength(255)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(255)")
                                 .HasColumnName("Description");
 
                             b1.HasKey("CategoryId");
@@ -796,7 +769,7 @@ namespace Infrastructure.Migrations
                             b1.Property<string>("Name")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(100)")
                                 .HasColumnName("Name");
 
                             b1.HasKey("CategoryId");
@@ -810,8 +783,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Description")
                         .IsRequired();
 
-                    b.Navigation("Image");
-
                     b.Navigation("Name")
                         .IsRequired();
                 });
@@ -819,15 +790,10 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.Course", b =>
                 {
                     b.HasOne("Domain.Entities.Core.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired()
-                        .HasConstraintName("FK_Course_Category");
-
-                    b.HasOne("Domain.Entities.Core.Category", null)
                         .WithMany("Courses")
-                        .HasForeignKey("CategoryId1");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.Core.IA", "IA")
                         .WithMany("Courses")
@@ -835,30 +801,11 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Core.Parameter", "Parameters")
-                        .WithOne("Course")
-                        .HasForeignKey("Domain.Entities.Core.Course", "ParameterId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Domain.Entities.Picture", "Image")
-                        .WithMany()
-                        .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Course_Picture");
-
                     b.HasOne("Domain.Entities.Core.Teacher", "Teacher")
                         .WithMany("Courses")
                         .HasForeignKey("TeacherId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Course_Teacher");
-
-                    b.HasOne("Domain.Entities.Core.Video", "Trailer")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entities.Core.Course", "TrailerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("FK_Course_Trailer_Video");
+                        .IsRequired();
 
                     b.OwnsOne("Domain.ValueObjects.BigString", "AboutDescription", b1 =>
                         {
@@ -868,7 +815,7 @@ namespace Infrastructure.Migrations
                             b1.Property<string>("Body")
                                 .IsRequired()
                                 .HasMaxLength(300)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(300)")
                                 .HasColumnName("AboutDescription");
 
                             b1.HasKey("CourseId");
@@ -887,7 +834,7 @@ namespace Infrastructure.Migrations
                             b1.Property<string>("Text")
                                 .IsRequired()
                                 .HasMaxLength(255)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(255)")
                                 .HasColumnName("Description");
 
                             b1.HasKey("CourseId");
@@ -904,8 +851,9 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("Endereco")
+                                .IsRequired()
                                 .HasMaxLength(255)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(255)")
                                 .HasColumnName("GitHubUrl");
 
                             b1.HasKey("CourseId");
@@ -924,7 +872,7 @@ namespace Infrastructure.Migrations
                             b1.Property<string>("Name")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(100)")
                                 .HasColumnName("Name");
 
                             b1.HasKey("CourseId");
@@ -943,7 +891,7 @@ namespace Infrastructure.Migrations
                             b1.Property<string>("Endereco")
                                 .IsRequired()
                                 .HasMaxLength(255)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(255)")
                                 .HasColumnName("NotionUrl");
 
                             b1.HasKey("CourseId");
@@ -966,29 +914,17 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("IA");
 
-                    b.Navigation("Image");
-
                     b.Navigation("Name")
                         .IsRequired();
 
                     b.Navigation("NotionUrl")
                         .IsRequired();
 
-                    b.Navigation("Parameters");
-
                     b.Navigation("Teacher");
-
-                    b.Navigation("Trailer");
                 });
 
             modelBuilder.Entity("Domain.Entities.Core.IA", b =>
                 {
-                    b.HasOne("Domain.Entities.Picture", "Picture")
-                        .WithMany()
-                        .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.OwnsOne("Domain.ValueObjects.UniqueName", "Name", b1 =>
                         {
                             b1.Property<Guid>("IAId")
@@ -997,7 +933,7 @@ namespace Infrastructure.Migrations
                             b1.Property<string>("Name")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(100)")
                                 .HasColumnName("Name");
 
                             b1.HasKey("IAId");
@@ -1009,8 +945,6 @@ namespace Infrastructure.Migrations
                         });
 
                     b.Navigation("Name");
-
-                    b.Navigation("Picture");
                 });
 
             modelBuilder.Entity("Domain.Entities.Core.Lecture", b =>
@@ -1021,20 +955,15 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Core.Video", "Video")
-                        .WithMany()
-                        .HasForeignKey("VideoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("FK_Lecture_Video");
-
                     b.OwnsOne("Domain.ValueObjects.Url", "GithubUrl", b1 =>
                         {
                             b1.Property<Guid>("LectureId")
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("Endereco")
+                                .IsRequired()
                                 .HasMaxLength(255)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(255)")
                                 .HasColumnName("GithubUrl");
 
                             b1.HasKey("LectureId");
@@ -1053,7 +982,7 @@ namespace Infrastructure.Migrations
                             b1.Property<string>("Name")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(100)")
                                 .HasColumnName("Name");
 
                             b1.HasKey("LectureId");
@@ -1071,8 +1000,6 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Name")
                         .IsRequired();
-
-                    b.Navigation("Video");
                 });
 
             modelBuilder.Entity("Domain.Entities.Core.Module", b =>
@@ -1080,7 +1007,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Core.Course", "Course")
                         .WithMany("Modules")
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.OwnsOne("Domain.ValueObjects.Description", "Description", b1 =>
@@ -1091,7 +1018,7 @@ namespace Infrastructure.Migrations
                             b1.Property<string>("Text")
                                 .IsRequired()
                                 .HasMaxLength(255)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(255)")
                                 .HasColumnName("Description");
 
                             b1.HasKey("ModuleId");
@@ -1110,7 +1037,7 @@ namespace Infrastructure.Migrations
                             b1.Property<string>("Name")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(100)")
                                 .HasColumnName("Name");
 
                             b1.HasKey("ModuleId");
@@ -1132,6 +1059,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Core.Parameter", b =>
                 {
+                    b.HasOne("Domain.Entities.Core.Course", "Course")
+                        .WithOne("Parameters")
+                        .HasForeignKey("Domain.Entities.Core.Parameter", "CourseId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.OwnsOne("Domain.ValueObjects.Description", "Description", b1 =>
                         {
                             b1.Property<Guid>("ParameterId")
@@ -1169,6 +1101,8 @@ namespace Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("ParameterId");
                         });
+
+                    b.Navigation("Course");
 
                     b.Navigation("Description");
 
@@ -1202,12 +1136,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Core.Student", b =>
                 {
-                    b.HasOne("Domain.Entities.Picture", "Picture")
-                        .WithMany()
-                        .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.Core.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -1222,7 +1150,7 @@ namespace Infrastructure.Migrations
                             b1.Property<string>("Name")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(100)")
                                 .HasColumnName("Name");
 
                             b1.HasKey("StudentId");
@@ -1236,18 +1164,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("Name")
                         .IsRequired();
 
-                    b.Navigation("Picture");
-
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.Core.Teacher", b =>
                 {
-                    b.HasOne("Domain.Entities.Picture", "Picture")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entities.Core.Teacher", "PictureId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.OwnsOne("Domain.ValueObjects.Description", "Description", b1 =>
                         {
                             b1.Property<Guid>("TeacherId")
@@ -1416,8 +1337,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Name")
                         .IsRequired();
 
-                    b.Navigation("Picture");
-
                     b.Navigation("Tiktok");
                 });
 
@@ -1534,6 +1453,16 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Core.Video", b =>
                 {
+                    b.HasOne("Domain.Entities.Core.Course", "Course")
+                        .WithOne("Trailer")
+                        .HasForeignKey("Domain.Entities.Core.Video", "CourseId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Domain.Entities.Core.Lecture", "Lecture")
+                        .WithOne("Video")
+                        .HasForeignKey("Domain.Entities.Core.Video", "LectureId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.OwnsOne("Domain.ValueObjects.BigString", "AwsKey", b1 =>
                         {
                             b1.Property<Guid>("VideoId")
@@ -1542,7 +1471,7 @@ namespace Infrastructure.Migrations
                             b1.Property<string>("Body")
                                 .IsRequired()
                                 .HasMaxLength(255)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(255)")
                                 .HasColumnName("AwsKey");
 
                             b1.HasKey("VideoId");
@@ -1561,7 +1490,7 @@ namespace Infrastructure.Migrations
                             b1.Property<string>("Body")
                                 .IsRequired()
                                 .HasMaxLength(255)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(255)")
                                 .HasColumnName("TemporaryPath");
 
                             b1.HasKey("VideoId");
@@ -1578,8 +1507,9 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("Endereco")
+                                .IsRequired()
                                 .HasMaxLength(255)
-                                .HasColumnType("varchar")
+                                .HasColumnType("character varying(255)")
                                 .HasColumnName("UrlTemp");
 
                             b1.HasKey("VideoId");
@@ -1591,6 +1521,10 @@ namespace Infrastructure.Migrations
                         });
 
                     b.Navigation("AwsKey");
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Lecture");
 
                     b.Navigation("TemporaryPath");
 
@@ -1599,6 +1533,31 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Picture", b =>
                 {
+                    b.HasOne("Domain.Entities.Core.Category", "Category")
+                        .WithOne("Picture")
+                        .HasForeignKey("Domain.Entities.Picture", "CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Domain.Entities.Core.Course", "Course")
+                        .WithOne("Picture")
+                        .HasForeignKey("Domain.Entities.Picture", "CourseId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Domain.Entities.Core.IA", "IA")
+                        .WithOne("Picture")
+                        .HasForeignKey("Domain.Entities.Picture", "IAId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Domain.Entities.Core.Student", "Student")
+                        .WithOne("Picture")
+                        .HasForeignKey("Domain.Entities.Picture", "StudentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Domain.Entities.Core.Teacher", "Teacher")
+                        .WithOne("Picture")
+                        .HasForeignKey("Domain.Entities.Picture", "TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.OwnsOne("Domain.ValueObjects.BigString", "AwsKey", b1 =>
                         {
                             b1.Property<Guid>("PictureId")
@@ -1656,6 +1615,16 @@ namespace Infrastructure.Migrations
                         });
 
                     b.Navigation("AwsKey");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Course");
+
+                    b.Navigation("IA");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Teacher");
 
                     b.Navigation("TemporaryPath");
 
@@ -1665,9 +1634,9 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Relationships.StudentCourse", b =>
                 {
                     b.HasOne("Domain.Entities.Core.Course", "Course")
-                        .WithMany()
+                        .WithMany("StudentCourses")
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Core.Student", "Student")
@@ -1684,14 +1653,14 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Relationships.StudentLecture", b =>
                 {
                     b.HasOne("Domain.Entities.Core.Course", "Course")
-                        .WithMany()
+                        .WithMany("StudentLectures")
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Domain.Entities.Core.Lecture", "Lecture")
                         .WithMany("StudentLectures")
                         .HasForeignKey("LectureId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Core.Student", "Student")
@@ -1725,21 +1694,41 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.Category", b =>
                 {
                     b.Navigation("Courses");
+
+                    b.Navigation("Picture")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.Core.Course", b =>
                 {
                     b.Navigation("Modules");
+
+                    b.Navigation("Parameters");
+
+                    b.Navigation("Picture")
+                        .IsRequired();
+
+                    b.Navigation("StudentCourses");
+
+                    b.Navigation("StudentLectures");
+
+                    b.Navigation("Trailer")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.Core.IA", b =>
                 {
                     b.Navigation("Courses");
+
+                    b.Navigation("Picture");
                 });
 
             modelBuilder.Entity("Domain.Entities.Core.Lecture", b =>
                 {
                     b.Navigation("StudentLectures");
+
+                    b.Navigation("Video")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.Core.Module", b =>
@@ -1747,13 +1736,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("Lectures");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Core.Parameter", b =>
-                {
-                    b.Navigation("Course");
-                });
-
             modelBuilder.Entity("Domain.Entities.Core.Student", b =>
                 {
+                    b.Navigation("Picture")
+                        .IsRequired();
+
                     b.Navigation("StudentCourses");
 
                     b.Navigation("StudentLectures");
@@ -1764,6 +1751,9 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.Teacher", b =>
                 {
                     b.Navigation("Courses");
+
+                    b.Navigation("Picture")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

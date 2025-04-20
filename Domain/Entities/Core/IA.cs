@@ -17,6 +17,7 @@ public class IA : Entity
         AddNotificationsFromValueObjects(name, picture);
         Name = name;
         Picture = picture;
-        SetValuesCreate();
+        PictureId = picture.Id;
+        Picture.SetPictureOwner(this);
     }
 }

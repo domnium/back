@@ -38,6 +38,7 @@ public class GeneratePresignedUrl(IServiceScopeFactory scopeFactory,
                 if (picture.BucketName != null && picture.AwsKey != null
                     && picture.ContentType is not null 
                     && picture.DeletedDate is null
+                    && !picture.Ativo 
                     && urlExpiradaOuInexistente)
                 {
                     picture.SetTemporaryUrl(
@@ -49,7 +50,7 @@ public class GeneratePresignedUrl(IServiceScopeFactory scopeFactory,
                                 picture.ContentType!.Value.ToString()!
                             )
                         ),
-                        DateTime.Now.AddHours(Configuration.DurationUrlTempImage)
+                        DateTime.UtcNow.AddHours(Configuration.DurationUrlTempImage)
                     );
                     picture.Activate();
                     pictureRepository.Update(picture);
@@ -62,7 +63,7 @@ public class GeneratePresignedUrl(IServiceScopeFactory scopeFactory,
             {
                 var urlExpiradaOuInexistente = video.UrlExpired is null || video.UrlExpired <= DateTime.UtcNow;
 
-                if (video.IsValid && video.Ativo && video.AwsKey != null && 
+                if (video.IsValid && !video.Ativo && video.AwsKey != null && 
                     video.BucketName != null && video.ContentType is not null
                     && video.DeletedDate is null &&
                     urlExpiradaOuInexistente)
@@ -76,7 +77,7 @@ public class GeneratePresignedUrl(IServiceScopeFactory scopeFactory,
                                 video.ContentType!.Value.ToString()!
                             )
                         ),
-                        DateTime.Now.AddHours(Configuration.DurationUrlTempVideos)
+                        DateTime.UtcNow.AddHours(Configuration.DurationUrlTempVideos)
                     );
                     video.Activate();
                     videoRepository.Update(video);

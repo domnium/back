@@ -31,9 +31,9 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// Retorna todos os estudantes cadastrados.
     /// </summary>
     [HttpGet("Get/All")]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] int skip, [FromQuery] int take, CancellationToken cancellationToken)
     {
-        var response = await mediator.Send(new GetAllStudentsRequest(), cancellationToken);
+        var response = await mediator.Send(new GetAllStudentsRequest(skip, take), cancellationToken);
         return StatusCode(response.statuscode, new { response.message, response.Response });
     }
 
@@ -41,7 +41,7 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// Cria um novo estudante.
     /// </summary>
     [HttpPost("Create")]
-    public async Task<IActionResult> Create([FromBody] CreateStudentRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromForm] CreateStudentRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
         return StatusCode(response.statuscode, new { response.message, response.Response });

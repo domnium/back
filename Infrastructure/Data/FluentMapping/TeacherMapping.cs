@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Domain.Entities.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -21,15 +22,15 @@ public class TeacherMapping : IEntityTypeConfiguration<Teacher>
             ;
 
         builder.Property(t => t.CreatedDate)
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(t => t.UpdatedDate)
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(t => t.DeletedDate)
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired(false);
 
         builder.Property(t => t.Phone)
@@ -116,10 +117,9 @@ public class TeacherMapping : IEntityTypeConfiguration<Teacher>
                 .IsRequired(false);
         });
 
-        // Relacionamento com Picture
         builder.HasOne(t => t.Picture)
-            .WithOne() 
-            .HasForeignKey<Teacher>(t => t.PictureId)
+            .WithOne(p => p.Teacher) 
+            .HasForeignKey<Picture>(p => p.TeacherId)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Relacionamento com Course

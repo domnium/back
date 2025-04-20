@@ -19,11 +19,12 @@ public class CourseRepository(DomnumDbContext context)
     => await context.Courses
         .Where(c => c.DeletedDate == null)
         .OrderByDescending(c => c.Subscribes)
+        .Take(5)
         .Select(c => new CoursePopularDto(
             c.Id,
             c.Name.Name,
             c.Description.Text,
-            c.Image.UrlTemp.Endereco,
+            c.Picture.UrlTemp.Endereco,
             c.Price,
             c.Subscribes,
             c.Modules.Select(m => new ModulePopularDto(
@@ -36,7 +37,6 @@ public class CourseRepository(DomnumDbContext context)
                 )).ToList()
             )).ToList()
         ))
-        .Take(5)
         .ToListAsync(cancellationToken);
 
 }

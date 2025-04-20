@@ -53,11 +53,16 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         if (userFound is null)
             return new BaseResponse(400, "User does not exist");
 
+        if(await _studentRepository.GetWithParametersAsync(
+            s => s.UserId.Equals(request.UserId) 
+            , cancellationToken) is not null)
+            return new BaseResponse(400, "Student already Exist");
+
         // Cria a imagem
         var picture = new Picture(
             null, 
-            false, 
-            new AppFile(request.Picture.OpenReadStream(), request.Picture.FileName),
+            true, 
+            new AppFile(request.Picture!.OpenReadStream(), request.Picture.FileName),
             new BigString(Configuration.PicturesStudensPath),
             ContentTypeExtensions.ParseMimeType(request.Picture.ContentType)
             );
@@ -67,7 +72,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
 
         // Cria entidade Student com imagem
         var newStudent = new Domain.Entities.Core.Student(
-            new UniqueName(request.Name),
+            new UniqueName(request.Name!),
             userFound,
             request.IsFreeStudent,
             picture
@@ -77,6 +82,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             return new BaseResponse(400, "Invalid student", newStudent.Notifications.ToList());
 
         // Persiste tudo: Student + Picture
+        _studentRepository.Attach(userFound);
         await _studentRepository.CreateAsync(newStudent, cancellationToken);
         await _dbCommit.Commit(cancellationToken);
 

@@ -8,6 +8,7 @@ public sealed class Parameter : Entity
     public Description? Description { get;private set;}
     public bool? FreeCourse { get; private set;}
     public Course? Course { get; private set;}
+    public Guid? CourseId {get; private set;}
 
     private Parameter() {}
     public Parameter(UniqueName? name, Description? description, bool? freeCourse, Course? course)
@@ -17,6 +18,7 @@ public sealed class Parameter : Entity
         Description = description;
         FreeCourse = freeCourse;
         Course = course;
+        CourseId = course.Id;
     }
 }
 

@@ -17,13 +17,15 @@ public class Lecture : Entity
     public IReadOnlyCollection<StudentLecture> StudentLectures => _studentLectures.ToList();
 
     private Lecture() {}
-    public Lecture(UniqueName name, string tempo, Url? githubUrl, Video? video)
+    public Lecture(UniqueName name, string tempo, Url? githubUrl, Video video)
     {
         AddNotificationsFromValueObjects(name, githubUrl, video);
         Name = name;
         Tempo = tempo;
         Video = video;
         GithubUrl = githubUrl;
+        VideoId = video.Id;
+        Video.SetVideoOwner(this);
     }
 
     public void AddModule(Module module)

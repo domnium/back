@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using CreateRequest = Application.UseCases.IA.Create.Request;
+using DeleteRequest = Application.UseCases.IA.Delete.Request;
 using GetAllRequest = Application.UseCases.IA.Get.All.Request;
 
 namespace Presentation.Controllers;
@@ -33,6 +34,17 @@ public class IAController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetAll([FromQuery] int skip, [FromQuery] int take, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetAllRequest(skip, take), cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response });
+    }
+
+    
+    /// <summary>
+    /// Deleta registro de IA no banco.
+    /// </summary>
+    [HttpGet("Delete")]
+    public async Task<IActionResult> Delete([FromQuery] Guid Id, CancellationToken cancellationToken)
+    {
+        var response = await mediator.Send(new DeleteRequest(Id), cancellationToken);
         return StatusCode(response.statuscode, new { response.message, response.Response });
     }
 }

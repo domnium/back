@@ -5,6 +5,7 @@ using Domain.ValueObjects;
 namespace Domain.Entities.Abstracts;
 public abstract class Archive : Entity
 {
+    public bool Ativo {get; protected set;}
     public BigString? AwsKey { get; protected set; }
     public ContentType? ContentType { get; protected set; }
     public DateTime? UrlExpired { get; protected set; }

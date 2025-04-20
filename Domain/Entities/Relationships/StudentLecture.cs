@@ -12,7 +12,6 @@ public class StudentLecture : Entity
     public Student Student { get; private set; }
     public Lecture Lecture { get; private set; }
     public Course Course { get; private set; }
-
     public bool IsCompleted { get; private set; }
     public DateTime? CompletionDate { get; private set; }
 
@@ -32,14 +31,11 @@ public class StudentLecture : Entity
             .IsNotEmpty(StudentId, "StudentId", "Estudante obrigatório")
             .IsNotEmpty(LectureId, "LectureId", "Aula obrigatória")
         );
-
-        SetValuesCreate();
     }
 
     public void CompleteLecture()
     {
         IsCompleted = true;
         CompletionDate = DateTime.UtcNow;
-        SetValuesUpdate();
     }
 }

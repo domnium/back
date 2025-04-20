@@ -18,9 +18,9 @@ public class SubscriptionMapping : IEntityTypeConfiguration<Subscription>
             .IsRequired()
             ;
 
-        builder.Property(s => s.CreatedDate).HasColumnType("timestamp").IsRequired();
-        builder.Property(s => s.UpdatedDate).HasColumnType("timestamp").IsRequired();
-        builder.Property(s => s.DeletedDate).HasColumnType("timestamp").IsRequired(false);
+        builder.Property(s => s.CreatedDate).HasColumnType("timestamptz").IsRequired();
+        builder.Property(s => s.UpdatedDate).HasColumnType("timestamptz").IsRequired();
+        builder.Property(s => s.DeletedDate).HasColumnType("timestamptz").IsRequired(false);
 
         // Relacionamento com Student
         builder.HasOne(s => s.Student)
@@ -33,12 +33,12 @@ public class SubscriptionMapping : IEntityTypeConfiguration<Subscription>
         {
             period.Property(p => p.StartDate)
                 .HasColumnName("StartDate")
-                .HasColumnType("timestamp")
+                .HasColumnType("timestamptz")
                 .IsRequired();
 
             period.Property(p => p.EndDate)
                 .HasColumnName("EndDate")
-                .HasColumnType("timestamp")
+                .HasColumnType("timestamptz")
                 .IsRequired();
         });
 
@@ -80,11 +80,11 @@ public class SubscriptionMapping : IEntityTypeConfiguration<Subscription>
             .IsRequired(false);
 
         builder.Property<DateTime?>("StartDate")
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired(false);
 
         builder.Property<DateTime?>("EndDate")
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired(false);
 
     }

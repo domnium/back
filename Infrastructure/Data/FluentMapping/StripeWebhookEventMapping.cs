@@ -21,20 +21,20 @@ public class StripeWebhookEventMapping : IEntityTypeConfiguration<StripeWebhookE
 
         // Datas
         builder.Property(e => e.CreatedDate)
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(e => e.UpdatedDate)
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(e => e.DeletedDate)
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired(false);
 
         builder.Property(e => e.ReceivedAt)
             .HasColumnName("ReceivedAt")
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         // Propriedades simples

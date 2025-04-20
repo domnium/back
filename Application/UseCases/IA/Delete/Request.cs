@@ -1,9 +1,9 @@
+using System;
 using Domain.Records;
 using MediatR;
 
-namespace Application.UseCases.Student.GetAll;
+namespace Application.UseCases.IA.Delete;
 
 public record Request(
-    int skip,
-    int take
+    Guid Id
 ) : IRequest<BaseResponse>;

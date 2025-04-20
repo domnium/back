@@ -28,7 +28,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             cancellationToken,
             c => c.Modules,
             c => c.Modules.Select(m => m.Lectures),
-            c => c.Image,
+            c => c.Picture,
             c => c.Trailer,
             c => c.Parameters
         );
@@ -39,10 +39,10 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         _courseRepository.Delete(course);
         var deleteTasks = new List<Task>();
 
-        if (course.Image?.AwsKey is not null && !string.IsNullOrWhiteSpace(course.Image.BucketName))
+        if (course.Picture?.AwsKey is not null && !string.IsNullOrWhiteSpace(course.Picture.BucketName))
         {
             deleteTasks.Add(_messageQueueService.EnqueueDeleteMessageAsync(
-                new DeleteFileMessage(course.Image.BucketName, course.Image.AwsKey.Body),
+                new DeleteFileMessage(course.Picture.BucketName, course.Picture.AwsKey.Body),
                 cancellationToken
             ));
         }

@@ -16,13 +16,13 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
        var entities = await _categoryRepository.GetAllWithParametersAsync(
-            x => x.DeletedDate == null, cancellationToken, 0, 100, x => x.Image);
+            x => x.DeletedDate == null, cancellationToken, 0, 100, x => x.Picture);
 
         var categories = entities.Select(x => new {
             x.Id,
             x.Name,
             x.Description,
-            ImageUrl = x.Image?.UrlTemp
+            ImageUrl = x.Picture?.UrlTemp
         }).ToList();
         
         if(categories is null || categories.Any()) return new BaseResponse(404, "Categories not found");

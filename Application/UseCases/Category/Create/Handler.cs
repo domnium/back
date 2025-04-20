@@ -77,14 +77,15 @@ public class Handler : IRequestHandler<Request, BaseResponse>
 
         if (!newCategory.IsValid)
             return new BaseResponse(400, "Error creating category", newCategory.Notifications.ToList());
-
+        
+        newPicture.SetPictureOwner(newCategory);
         await _categoryRepository.CreateAsync(newCategory, cancellationToken);
         await _dbCommit.Commit(cancellationToken);
 
         // Salva a imagem fisicamente em diretório temporário
         var tempPath = await _temporaryStorageService.SaveAsync(
-            newCategory.Image.TemporaryPath!.Body!,
-            newCategory.Image.Id,
+            newCategory.Picture.TemporaryPath!.Body!,
+            newCategory.Picture.Id,
             request.Imagem.OpenReadStream(),
             cancellationToken
         );
@@ -92,9 +93,9 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         // Enfileira upload da imagem para o serviço de background
         await _messageQueueService.EnqueueUploadMessageAsync(
             new UploadFileMessage(
-                newCategory.Image.Id,
+                newCategory.Picture.Id,
                 Configuration.BucketArchives,
-                newCategory.Image.TemporaryPath.Body!,
+                newCategory.Picture.TemporaryPath.Body!,
                 request.Imagem.ContentType,
                 tempPath
             ),

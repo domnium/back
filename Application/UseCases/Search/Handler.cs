@@ -55,13 +55,13 @@ public class Handler : IRequestHandler<Request, BaseResponse>
                 c.Id,
                 Name = c.Name.Name,
                 Description = c.Description.Text,
-                ImageUrl = c.Image != null && c.Image.UrlTemp != null ? c.Image.UrlTemp.Endereco : null,
+                ImageUrl = c.Picture != null && c.Picture.UrlTemp != null ? c.Picture.UrlTemp.Endereco : null,
                 c.Price
             },
             cancellationToken,
             skip,
             take,
-            c => c.Image
+            c => c.Picture
         );
 
         var categories = await _categoryRepository.GetAllProjectedAsync(
@@ -72,13 +72,13 @@ public class Handler : IRequestHandler<Request, BaseResponse>
                 c.Id,
                 Name = c.Name.Name,
                 Description = (string?)null,
-                ImageUrl = c.Image != null && c.Image.UrlTemp != null ? c.Image.UrlTemp.Endereco : null,
+                ImageUrl = c.Picture != null && c.Picture.UrlTemp != null ? c.Picture.UrlTemp.Endereco : null,
                 Price = (decimal?)null
             },
             cancellationToken,
             skip,
             take,
-            c => c.Image
+            c => c.Picture
         );
 
         var teachers = await _teacherRepository.GetAllProjectedAsync(

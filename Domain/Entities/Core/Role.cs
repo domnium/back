@@ -21,7 +21,6 @@ public class Role : Entity
         AddNotifications(new Contract<Role>()
             .IsNotNullOrWhiteSpace(Slug, "Slug", "Slug é obrigatório")
         );
-        SetValuesCreate();
     }
 
     public void AddUser(User user)

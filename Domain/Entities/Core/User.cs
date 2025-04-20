@@ -31,7 +31,6 @@ public class User : Entity
         TokenActivate = GenerateToken();
 
         AddNotificationsFromValueObjects(fullName, email, address, password);
-        SetValuesCreate();
     }
 
     public User(Email email, Password password)

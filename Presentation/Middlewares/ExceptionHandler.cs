@@ -26,12 +26,19 @@ public class ExceptionHandler
             _logger.LogError(ex, "Ocorreu um erro inesperado");
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
             var response = new
             {
                 message = "Ocorreu um erro interno no servidor. Tente novamente mais tarde.",
-                devMessage = _env.IsDevelopment() ? ex : null
+                devMessage = _env.IsDevelopment() ? new
+                {
+                    exception = ex.GetType().Name,
+                    message = ex.Message,
+                    stackTrace = ex.StackTrace,
+                    innerException = ex.InnerException?.Message
+                } : null
             };
-            await context.Response.WriteAsJsonAsync(response);
+            await context.Response.WriteAsJsonAsync(response.ToString());
         }
     }
 }

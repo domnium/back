@@ -19,6 +19,7 @@ public class Module : Entity
         Name = name;
         Description = description;
         Course = course;
+        CourseId = course.Id;
     }
 
     public void AddLecture(Lecture lecture)

@@ -23,19 +23,17 @@ public class RoleMapping : IEntityTypeConfiguration<Role>
 
         builder.Property(r => r.CreatedDate)
             .HasColumnName("CreatedDate")
-            .HasColumnType("timestamp")
-            .HasDefaultValueSql("now()")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(r => r.UpdatedDate)
             .HasColumnName("UpdatedDate")
-            .HasColumnType("timestamp")
-            .HasDefaultValueSql("now()")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(r => r.DeletedDate)
             .HasColumnName("DeletedDate")
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired(false);
 
         builder.OwnsOne(r => r.Name, name =>

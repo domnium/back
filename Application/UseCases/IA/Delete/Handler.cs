@@ -4,38 +4,38 @@ using Domain.Interfaces.Services;
 using Domain.Records;
 using MediatR;
 
-namespace Application.UseCases.Category.Delete;
+namespace Application.UseCases.IA.Delete;
 
 public class Handler : IRequestHandler<Request, BaseResponse>
 {
-    private readonly ICategoryRepository _categoryRepository;
+    private readonly IIARepository _iaRepository;
     private readonly IDbCommit _dbCommit;   
     private readonly IMessageQueueService _messageQueueService;
-    public Handler(ICategoryRepository categoryRepository, 
+    public Handler(IIARepository iaRepository, 
         IDbCommit dbCommit,
         IMessageQueueService messageQueueService)
     {
-        _categoryRepository = categoryRepository;
+        _iaRepository = iaRepository;
         _dbCommit = dbCommit;
         _messageQueueService = messageQueueService;
     }
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
-        var category = await _categoryRepository.GetWithParametersAsync(
+        var IA = await _iaRepository.GetWithParametersAsync(
                 c => c.Id.Equals(request.Id), cancellationToken);
 
-        if (category is null)
-            return new BaseResponse(404, "Category not found");
+        if (IA is null)
+            return new BaseResponse(404, "IA not found");
 
-        if (category.Picture?.AwsKey is not null && !string.IsNullOrWhiteSpace(category.Picture.BucketName))
+        if (IA.Picture?.AwsKey is not null && !string.IsNullOrWhiteSpace(IA.Picture.BucketName))
         {
             await _messageQueueService.EnqueueDeleteMessageAsync(
-                    new DeleteFileMessage(category.Picture.BucketName, category.Picture.AwsKey!.Body),
+                    new DeleteFileMessage(IA.Picture.BucketName, IA.Picture.AwsKey!.Body),
                     cancellationToken);
         }
 
-        _categoryRepository.Delete(category);
+        _iaRepository.Delete(IA);
         await _dbCommit.Commit(cancellationToken);
-        return new BaseResponse(200, "Category deleted", null);
+        return new BaseResponse(200, "IA deleted", null);
     }
 }

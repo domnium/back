@@ -24,7 +24,5 @@ public class StudentCourse : Entity
             .IsNotEmpty(StudentId, "StudentId", "Estudante obrigatório")
             .IsNotEmpty(CourseId, "CourseId", "Curso obrigatório")
         );
-
-        SetValuesCreate();
     }
 }

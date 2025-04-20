@@ -8,62 +8,32 @@ public class ModuleMapping : IEntityTypeConfiguration<Module>
 {
     public void Configure(EntityTypeBuilder<Module> builder)
     {
-        // Table
         builder.ToTable("Modules");
-
-        // Primary Key
-        builder.HasKey(m => m.Id).HasName("PK_Modules");
-
-        // Properties
-        builder.Property(m => m.Id)
-            .HasColumnName("Id")
-            .HasColumnType("uuid")
-            .IsRequired()
-            ;
+        builder.HasKey(m => m.Id);
 
         builder.Property(m => m.CreatedDate)
-            .HasColumnName("CreatedDate")
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(m => m.UpdatedDate)
-            .HasColumnName("UpdatedDate")
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(m => m.DeletedDate)
-            .HasColumnName("DeletedDate")
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired(false);
 
-        // Value Object: Name
-        builder.OwnsOne(m => m.Name, name =>
-        {
-            name.Property(n => n.Name)
-                .HasColumnName("Name")
-                .HasColumnType("varchar")
-                .HasMaxLength(100)
-                .IsRequired();
-        });
+        builder.OwnsOne(m => m.Name, n => n.Property(p => p.Name).HasMaxLength(100).IsRequired().HasColumnName("Name"));
+        builder.OwnsOne(m => m.Description, d => d.Property(p => p.Text).HasMaxLength(255).IsRequired().HasColumnName("Description"));
 
-        // Value Object: Description
-        builder.OwnsOne(m => m.Description, desc =>
-        {
-            desc.Property(d => d.Text)
-                .HasColumnName("Description")
-                .HasColumnType("varchar")
-                .HasMaxLength(255)
-                .IsRequired();
-        });
-
-        // Relationships
         builder.HasOne(m => m.Course)
             .WithMany(c => c.Modules)
             .HasForeignKey(m => m.CourseId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(m => m.Lectures)
             .WithOne(l => l.Module)
+            .HasForeignKey(l => l.ModuleId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

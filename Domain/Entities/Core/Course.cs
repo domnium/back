@@ -1,5 +1,6 @@
 using Domain.Entities.Abstracts;
 using Domain.Entities.Core;
+using Domain.Entities.Relationships;
 using Domain.ValueObjects;
 
 namespace Domain.Entities.Core;
@@ -20,11 +21,15 @@ public class Course : Entity
     public Guid? ParameterId { get; private set; }
     public Category Category { get; private set; }
     public Guid CategoryId { get; set; }
-    public Picture Image { get; private set; }
+    public Picture Picture { get; private set; }
     public Guid PictureId {get; private set;}
     public Teacher Teacher { get; private set; }
     public Guid TeacherId { get; private set; }
     public long Subscribes { get; private set; }
+    private readonly IList<StudentCourse> _studentCourses = new List<StudentCourse>();
+    public IReadOnlyCollection<StudentCourse> StudentCourses => _studentCourses.ToList();
+    private readonly IList<StudentLecture> _studentLectures = new List<StudentLecture>();
+    public IReadOnlyCollection<StudentLecture> StudentLectures => _studentLectures.ToList();
 
     private readonly IList<Module> _modules = new List<Module>();
     public IReadOnlyCollection<Module> Modules => _modules.ToList();
@@ -32,7 +37,7 @@ public class Course : Entity
     private Course() {}
     public Course(UniqueName name, Description description,
         BigString about, decimal price, decimal totalHours, Url? notionUrl, IA ia,
-        Video trailer, Category category, Teacher teacher, Picture? image)
+        Video trailer, Category category, Teacher teacher, Picture picture)
     {
         AddNotificationsFromValueObjects(name, description, about, notionUrl, trailer);
         Name = name;
@@ -45,7 +50,10 @@ public class Course : Entity
         Trailer = trailer;
         Category = category;
         Teacher = teacher;
-        Image = image;
+        Picture = picture;
+        PictureId = picture.Id;
+        Picture!.SetPictureOwner(this);
+        Trailer!.SetVideoOwner(this);
     }
 
     public void AddModule(Module module)

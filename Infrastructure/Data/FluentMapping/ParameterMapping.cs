@@ -18,15 +18,15 @@ public class ParameterMapping : IEntityTypeConfiguration<Parameter>
             ;
 
         builder.Property(p => p.CreatedDate)
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(p => p.UpdatedDate)
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(p => p.DeletedDate)
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired(false);
 
         builder.Property(p => p.FreeCourse)

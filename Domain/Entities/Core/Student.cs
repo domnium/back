@@ -24,13 +24,13 @@ public class Student : Entity
 
     public Student(UniqueName name, User user, bool isFreeStudent, Picture picture)
     {
+        AddNotificationsFromValueObjects(name, user, picture);
         Name = name;
         User = user;
         IsFreeStudent = isFreeStudent;
         Picture = picture;
-
-        AddNotificationsFromValueObjects(name, user, picture);
-        SetValuesCreate();
+        PictureId = picture.Id;
+        picture.SetPictureOwner(this);
     }
 
     public void AddSubscription(Subscription subscription)

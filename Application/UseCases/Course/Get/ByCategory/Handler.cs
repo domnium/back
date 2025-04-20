@@ -24,7 +24,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
                 x.Subscribes,
                 x.Description,
                 x.AboutDescription,
-                ImageUrl = x.Image!.UrlTemp!.Endereco!,
+                ImageUrl = x.Picture!.UrlTemp!.Endereco!,
                 TrailerUrl = x.Trailer!.UrlTemp!.Endereco!,
                 TeacherName = x.Teacher!.Name!.Name!,
                 TeacherPictureUrl = x.Teacher.Picture!.UrlTemp!.Endereco!
@@ -33,7 +33,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             skip: request.page ?? 0,
             take: request.pageSize ?? 100,
             includes: new Expression<Func<Domain.Entities.Core.Course, object>>[] {
-                x => x.Image,
+                x => x.Picture,
                 x => x.Trailer,
                 x => x.Teacher,
                 x => x.Teacher.Picture

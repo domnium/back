@@ -22,6 +22,5 @@ public abstract class Subscription : Entity
             .IsNotNull(studentId, "StudentId", "Estudante obrigatório")
             .IsNotNull(Period, "Period", "Período inválido")
         );
-        SetValuesCreate();
     }
 }

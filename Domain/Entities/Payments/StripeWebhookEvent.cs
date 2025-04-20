@@ -23,6 +23,5 @@ public class StripeWebhookEvent : Entity
             .IsNotNullOrWhiteSpace(EventId, "EventId", "ID do evento é obrigatório")
             .IsNotNullOrWhiteSpace(Type, "Type", "Tipo do evento é obrigatório")
         );
-        SetValuesCreate();
     }
 }

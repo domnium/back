@@ -1,61 +1,41 @@
 using System;
+using Domain.Entities;
 using Domain.Entities.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Data.FluentMapping;
+
 public class CategoryMap : IEntityTypeConfiguration<Category>
 {
     public void Configure(EntityTypeBuilder<Category> builder)
     {
-        //Table
         builder.ToTable("Categories");
-
-        //Primary Key
-        builder.HasKey(c => c.Id).HasName("PK_Categories");
-
-        //Properties
-        builder.Property(c => c.Id)
-            .HasColumnName("Id")
-            .HasColumnType("uuid")
-            .IsRequired();
+        builder.HasKey(c => c.Id);
 
         builder.Property(c => c.CreatedDate)
-            .HasColumnName("CreatedDate")
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(c => c.UpdatedDate)
-            .HasColumnName("UpdatedDate")
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(c => c.DeletedDate)
-            .HasColumnName("DeletedDate")
-            .HasColumnType("timestamp").IsRequired(false);
+            .HasColumnType("timestamptz")
+            .IsRequired(false);
 
-        builder.OwnsOne(r => r.Name, name =>
-        {
-            name.Property(n => n.Name)
-                .HasColumnName("Name")
-                .HasColumnType("varchar")
-                .HasMaxLength(100)
-                .IsRequired();
-        });
+        builder.OwnsOne(c => c.Name, n => n.Property(p => p.Name).HasMaxLength(100).IsRequired().HasColumnName("Name"));
+        builder.OwnsOne(c => c.Description, d => d.Property(p => p.Text).HasMaxLength(255).IsRequired().HasColumnName("Description"));
 
-             builder.OwnsOne(r => r.Description, name =>
-        {
-            name.Property(n => n.Text)
-                .HasColumnName("Description")
-                .HasColumnType("varchar")
-                .HasMaxLength(255)
-                .IsRequired();
-        });
+        builder.HasOne(c => c.Picture)
+            .WithOne(p => p.Category)
+            .HasForeignKey<Picture>(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(c => c.Image)
-            .WithMany()
-            .HasForeignKey(c => c.PictureId)
+        builder.HasMany(c => c.Courses)
+            .WithOne(c => c.Category)
+            .HasForeignKey(c => c.CategoryId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
-

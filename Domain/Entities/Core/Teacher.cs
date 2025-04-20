@@ -46,6 +46,7 @@ public class Teacher : Entity
         GitHub = gitHub;
         Description = description;
         Picture = picture;
+        PictureId = Picture.Id;
 
         AddNotificationsFromValueObjects(
             name,
@@ -61,7 +62,6 @@ public class Teacher : Entity
             .IsNotNullOrWhiteSpace(phone, "Phone", "Telefone é obrigatório")
             .IsNotNullOrWhiteSpace(cep, "Cep", "CEP é obrigatório")
         );
-        SetValuesCreate();
     }
 
     public void AddCourse(Course course)

@@ -7,7 +7,7 @@ public class Category : Entity
 {   
     public UniqueName Name { get; private set; }
     public Description Description { get; private set; }
-    public Picture Image { get; private set; }
+    public Picture Picture { get; private set; }
     public Guid PictureId {get; private set;}
     private readonly IList<Course> _courses = new List<Course>();
     public IReadOnlyCollection<Course> Courses => _courses.ToList();
@@ -18,7 +18,8 @@ public class Category : Entity
         AddNotificationsFromValueObjects(name, description, image);
         Name = name;
         Description = description;
-        Image = image;
+        Picture = image;
+        PictureId = Picture.Id;
     }
 
     public void AddCourse(Course course)

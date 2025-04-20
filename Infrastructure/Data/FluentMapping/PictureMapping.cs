@@ -19,15 +19,15 @@ public class PictureMap : IEntityTypeConfiguration<Picture>
             ;
 
         builder.Property(p => p.CreatedDate)
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(p => p.UpdatedDate)
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(p => p.DeletedDate)
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired(false);
 
         builder.Property(p => p.Ativo)
@@ -42,7 +42,7 @@ public class PictureMap : IEntityTypeConfiguration<Picture>
 
         builder.Property(p => p.UrlExpired)
             .HasColumnName("UrlExpired")
-            .HasColumnType("timestamp");
+            .HasColumnType("timestamptz");
 
         builder.OwnsOne(p => p.AwsKey, aws =>
         {
@@ -76,5 +76,30 @@ public class PictureMap : IEntityTypeConfiguration<Picture>
                 .HasMaxLength(255)
                 .IsRequired(false);
         });
+
+        builder.HasOne(p => p.Teacher)
+            .WithOne(t => t.Picture)
+            .HasForeignKey<Picture>(p => p.TeacherId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(p => p.Student)
+            .WithOne(s => s.Picture)
+            .HasForeignKey<Picture>(p => p.StudentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(p => p.Category)
+            .WithOne(c => c.Picture)
+            .HasForeignKey<Picture>(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(p => p.Course)
+            .WithOne(c => c.Picture)
+            .HasForeignKey<Picture>(p => p.CourseId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(p => p.IA)
+            .WithOne(i => i.Picture)
+            .HasForeignKey<Picture>(p => p.IAId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

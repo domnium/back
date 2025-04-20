@@ -21,8 +21,6 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     private readonly IDbCommit _dbCommit;
     private readonly ICategoryRepository _categoryRepository;
     private readonly ITeacherRepository _teacherRepository;
-    private readonly IPictureRepository _pictureRepository;
-    private readonly IVideoRepository _videoRepository;
     private readonly IIARepository _iaRepository;
     private readonly IMessageQueueService _messageQueueService;
     private readonly ITemporaryStorageService _temporaryStorageService;
@@ -34,14 +32,10 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         ICategoryRepository categoryRepository,
         ITeacherRepository teacherRepository,
         IMessageQueueService messageQueueService,
-        IPictureRepository pictureRepository,
-        IVideoRepository videoRepository,
         IIARepository iaRepository,
         ITemporaryStorageService temporaryStorageService)
     {
         _courseRepository = courseRepository;
-        _pictureRepository = pictureRepository;
-        _videoRepository = videoRepository;
         _dbCommit = dbCommit;
         _categoryRepository = categoryRepository;
         _teacherRepository = teacherRepository;
@@ -67,28 +61,24 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         var teacher = await _teacherRepository.GetWithParametersAsyncWithTracking(t => t.Id == request.TeacherId, cancellationToken);
         if (teacher is null) return new BaseResponse(404, "Teacher not found");
 
-
         var ia = await _iaRepository.GetWithParametersAsyncWithTracking(i => i.Id == request.IAId, cancellationToken);
         if (ia is null) return new BaseResponse(404, "IA not found");
 
         var picture = new Picture(new BigString(Configuration.PicturesCoursesPath),
-            false, new AppFile(request.Image.OpenReadStream(), request.Image.FileName),
+            false, new AppFile(request.Picture.OpenReadStream(), request.Picture.FileName),
             new BigString(Configuration.PicturesCoursesPath), 
-            ContentTypeExtensions.ParseMimeType(request.Image.ContentType));
+            ContentTypeExtensions.ParseMimeType(request.Picture.ContentType));
 
         var trailer = new Video(
             new BigString(Configuration.VideoCoursesTrailer), 
             false,
-            new VideoFile(request.Trailer.OpenReadStream(),
+            new VideoFile(request.Trailer!.OpenReadStream(),
             request.Trailer.FileName),
             ContentTypeExtensions.ParseMimeType(request.Trailer.ContentType) 
              );
 
         if (picture.Notifications.Any() || trailer.Notifications.Any())
             return new BaseResponse(400, "Invalid file", picture.Notifications.Concat(trailer.Notifications).ToList());
-
-        var storedPicture = await _pictureRepository.CreateReturnEntity(picture, cancellationToken);
-        var storedTrailer = await _videoRepository.CreateReturnEntity(trailer, cancellationToken);
 
         var course = new Domain.Entities.Core.Course(
             new UniqueName(request.Name),
@@ -98,10 +88,10 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             request.TotalHours,
             new Url(request.NotionUrl),
             ia,
-            storedTrailer,
+            trailer,
             category,
             teacher,
-            storedPicture
+            picture
         );
 
         if (!course.IsValid)
@@ -113,14 +103,14 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         // Salvar arquivos em disco e enfileirar para upload (em paralelo)
         var pictureSaveTask = _temporaryStorageService.SaveAsync(
             Configuration.PicturesCoursesPath,
-            storedPicture.Id,
-            request.Image.OpenReadStream(),
+            picture.Id,
+            request.Picture.OpenReadStream(),
             cancellationToken
         );
 
         var trailerSaveTask = _temporaryStorageService.SaveAsync(
             Configuration.VideoCoursesTrailer,
-            storedTrailer.Id,
+            trailer.Id,
             request.Trailer.OpenReadStream(),
             cancellationToken
         );
@@ -130,16 +120,16 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         // Enfileira uploads
         var uploadPictureTask = _messageQueueService.EnqueueUploadMessageAsync(
             new UploadFileMessage(
-                storedPicture.Id,
+                picture	.Id,
                 Configuration.BucketArchives,
                 Configuration.PicturesCoursesPath,
-                request.Image.ContentType,
+                request.Picture.ContentType,
                 pictureSaveTask.Result
             ), cancellationToken);
 
         var uploadTrailerTask = _messageQueueService.EnqueueUploadMessageAsync(
             new UploadFileMessage(
-                storedTrailer.Id,
+                trailer.Id,
                 Configuration.BucketArchives,
                 Configuration.VideoCoursesTrailer,
                 request.Trailer.ContentType,

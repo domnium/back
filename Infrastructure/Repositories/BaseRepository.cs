@@ -25,7 +25,6 @@ public class BaseRepository<T>(DbContext context)
 
     public virtual async Task SetDelete(T entity, CancellationToken cancellationToken = default)
     {
-        entity.SetValuesDelete();
         await Task.Run(() => context.Update(entity), cancellationToken);
     }
 
@@ -235,4 +234,7 @@ public class BaseRepository<T>(DbContext context)
             .Select(selector)
             .FirstOrDefaultAsync(cancellationToken);
     }
+
+   public virtual void Attach<TConcrete>(TConcrete entity) where TConcrete : Entity
+    => context.Entry(entity).State = EntityState.Unchanged;
 }

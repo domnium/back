@@ -39,7 +39,7 @@ public class Handler(IIARepository iARepository,
         await iARepository.CreateAsync(newIa, cancellationToken);
         var tempPath = await temporaryStorageService.SaveAsync(
             Configuration.PicturesIAPath,
-            newIa.Picture.Id,
+            newIa!.Picture!.Id,
             request.Picture.OpenReadStream(),
             cancellationToken
         );

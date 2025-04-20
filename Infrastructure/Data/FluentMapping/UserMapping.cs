@@ -23,19 +23,17 @@ public class UserMapping : IEntityTypeConfiguration<User>
 
         builder.Property(c => c.CreatedDate)
             .HasColumnName("CreatedDate")
-            .HasColumnType("timestamp")
-            .HasDefaultValueSql("now()")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(c => c.UpdatedDate)
             .HasColumnName("UpdatedDate")
-            .HasColumnType("timestamp")
-            .HasDefaultValueSql("now()")
+            .HasColumnType("timestamptz")
             .IsRequired();
 
         builder.Property(c => c.DeletedDate)
             .HasColumnName("DeletedDate")
-            .HasColumnType("timestamp")
+            .HasColumnType("timestamptz")
             .IsRequired(false);
 
         builder.OwnsOne(u => u.FullName, fullName =>
