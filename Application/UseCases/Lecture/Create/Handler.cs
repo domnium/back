@@ -70,7 +70,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             await _dbCommit.Commit(cancellationToken);
 
             var tempVideoPath = await _temporaryStorageService.SaveAsync(
-                lecture.Video.TemporaryPath.Body,
+                lecture.Video.TemporaryPath!.Body!,
                 lecture.Video.Id,
                 request.File.OpenReadStream(),
                 cancellationToken
@@ -80,8 +80,8 @@ public class Handler : IRequestHandler<Request, BaseResponse>
                 new UploadFileMessage(
                     lecture.Video.Id,
                     Configuration.BucketVideos,
-                    lecture.Video.TemporaryPath.Body,
-                    lecture.Video.ContentType.Value.ToString(),
+                    lecture.Video.TemporaryPath!.Body!,
+                    lecture.Video.ContentType!.Value.ToString(),
                     tempVideoPath
                 ), cancellationToken
             );

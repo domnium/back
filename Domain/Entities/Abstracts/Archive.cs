@@ -35,8 +35,9 @@ public abstract class Archive : Entity
         UrlExpired = expiration;
     }
 
-    public void SetBucket(string bucket)
+    public void SetAwsKey(BigString? awskey)
     {
-        BucketName = bucket;
+        AddNotificationsFromValueObjects(awskey);
+        AwsKey = awskey;
     }
 }

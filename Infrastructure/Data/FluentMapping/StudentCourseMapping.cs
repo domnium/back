@@ -37,11 +37,11 @@ public class StudentCourseMap : IEntityTypeConfiguration<StudentCourse>
         builder.HasOne(sc => sc.Student)
             .WithMany(s => s.StudentCourses)
             .HasForeignKey(sc => sc.StudentId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(sc => sc.Course)
             .WithMany()
             .HasForeignKey(sc => sc.CourseId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

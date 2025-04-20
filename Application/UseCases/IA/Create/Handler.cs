@@ -1,5 +1,6 @@
 using System;
 using Domain;
+using Domain.ExtensionsMethods;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Records;
@@ -29,7 +30,7 @@ public class Handler(IIARepository iARepository,
                     request.Picture.OpenReadStream(), 
                     request.Picture.FileName
                 ), new BigString(Configuration.PicturesIAPath)
-            )
+            , ContentTypeExtensions.ParseMimeType(request.Picture.ContentType))
         );
 
         if(!newIa.IsValid)

@@ -22,8 +22,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     public Handler(
         IModuleRepository moduleRepository,
         ICourseRepository courseRepository,
-        IDbCommit dbCommit,
-        ITemporaryStorageService temporaryStorageService)
+        IDbCommit dbCommit)
     {
         _moduleRepository = moduleRepository;
         _courseRepository = courseRepository;

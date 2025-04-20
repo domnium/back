@@ -41,12 +41,12 @@ public class StudentLectureMap : IEntityTypeConfiguration<StudentLecture>
         builder.HasOne(sl => sl.Student)
             .WithMany(s => s.StudentLectures)
             .HasForeignKey(sl => sl.StudentId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(sl => sl.Lecture)
             .WithMany(l => l.StudentLectures)
             .HasForeignKey(sl => sl.LectureId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(sl => sl.Course)
             .WithMany()

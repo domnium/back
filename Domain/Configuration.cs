@@ -16,8 +16,9 @@ public static class Configuration
     public static string ConnectionStringPostgresql { get; set; } = string.Empty;
     public static string ApiKeyAttribute { get; set; } = string.Empty;
     public static string PicturesStudensPath {get; set;} = "/Images/Students/";
+    public static string PicturesTeacherPath {get; set;} = "/Images/Teachers/";
     public static string PicturesCoursesPath {get; set;} = "/Images/Courses/";
-    public static string PicturesIAPath {get; set;} = "/Images/IA";
+    public static string PicturesIAPath {get; set;} = "/Images/IA/";
     public static string PicturesCategoriesPath {get; set;} = "/Images/Categories/";
     public static string VideoCoursesTrailer {get; set;} = "/Videos/Courses/Trailers/";
     public static string VideoLecturesPath {get; set;} = "/Videos/Courses/Lectures/";

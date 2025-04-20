@@ -36,7 +36,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
                 x.Instagram,
                 x.GitHub,
                 x.Description,
-                x.Picture.UrlTemp
+                TacherPictureUrl = x.Picture.UrlTemp
             }
             ,cancellationToken, 0, 100, x => x.Picture
         );

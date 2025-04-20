@@ -118,13 +118,13 @@ public class TeacherMapping : IEntityTypeConfiguration<Teacher>
 
         // Relacionamento com Picture
         builder.HasOne(t => t.Picture)
-            .WithMany()
-            .HasForeignKey(t => t.PictureId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .WithOne() 
+            .HasForeignKey<Teacher>(t => t.PictureId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Relacionamento com Course
         builder.HasMany(t => t.Courses)
             .WithOne(c => c.Teacher)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

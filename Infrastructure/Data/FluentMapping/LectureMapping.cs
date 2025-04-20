@@ -71,13 +71,13 @@ public class LectureMapping : IEntityTypeConfiguration<Lecture>
         builder.HasOne(l => l.Module)
             .WithMany(m => m.Lectures)
             .HasForeignKey(l => l.ModuleId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(l => l.Video)
             .WithMany() 
             .HasForeignKey(l => l.VideoId)
             .HasConstraintName("FK_Lecture_Video")
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(l => l.StudentLectures)
             .WithOne(sl => sl.Lecture)

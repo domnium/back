@@ -3,6 +3,7 @@ using Domain;
 using Infrastructure.DI;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Presentation.Common.Api;
+using Presentation.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +23,10 @@ var app = builder.Build();
 app.ConfigureEnvironment();
 
 app.UseRouting();
+app.UseMiddleware<ExceptionHandler>();
 app.UseCors(Configuration.CorsPolicyName);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

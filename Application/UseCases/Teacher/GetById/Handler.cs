@@ -32,7 +32,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             x => new {
                 x.Id,
                 x.Name,
-                x.Picture.UrlTemp
+                TacherPictureUrl = x.Picture.UrlTemp
             }
             ,cancellationToken, x => x.Picture
         );

@@ -1,6 +1,7 @@
 using Domain;
 using Domain.Entities;
 using Domain.Entities.Core;
+using Domain.ExtensionsMethods;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Records;
@@ -70,8 +71,18 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         var ia = await _iaRepository.GetWithParametersAsyncWithTracking(i => i.Id == request.IAId, cancellationToken);
         if (ia is null) return new BaseResponse(404, "IA not found");
 
-        var picture = new Picture(null, false, new AppFile(request.Image.OpenReadStream(), request.Image.FileName));
-        var trailer = new Video(null, false, new VideoFile(request.Trailer.OpenReadStream(), request.Trailer.FileName));
+        var picture = new Picture(new BigString(Configuration.PicturesCoursesPath),
+            false, new AppFile(request.Image.OpenReadStream(), request.Image.FileName),
+            new BigString(Configuration.PicturesCoursesPath), 
+            ContentTypeExtensions.ParseMimeType(request.Image.ContentType));
+
+        var trailer = new Video(
+            new BigString(Configuration.VideoCoursesTrailer), 
+            false,
+            new VideoFile(request.Trailer.OpenReadStream(),
+            request.Trailer.FileName),
+            ContentTypeExtensions.ParseMimeType(request.Trailer.ContentType) 
+             );
 
         if (picture.Notifications.Any() || trailer.Notifications.Any())
             return new BaseResponse(400, "Invalid file", picture.Notifications.Concat(trailer.Notifications).ToList());

@@ -35,14 +35,20 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     /// <returns><see cref="BaseResponse"/> com status da operação</returns>
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
-        var studentFound = await _studentRepository
-            .GetWithParametersAsync(x => x.Id == request.StudentId, cancellationToken);
+        var studentFound = await _studentRepository.GetWithParametersAsyncWithTracking(
+            x => x.Id == request.StudentId,
+            cancellationToken,
+            x => x.Picture,
+            x => x.User,
+            x => x.StudentLectures,
+            x => x.StudentCourses,
+            x => x.Subscriptions
+        );
 
         if (studentFound is null)
             return new BaseResponse(404, "Student not found");
 
-        await _studentRepository.DeleteAsync(studentFound, cancellationToken);
-
+        _studentRepository.Delete(studentFound);
         var deleteTasks = new List<Task>();
 
         // Enfileira a exclusão da imagem, se existir
@@ -59,7 +65,6 @@ public class Handler : IRequestHandler<Request, BaseResponse>
 
         await Task.WhenAll(deleteTasks);
         await _dbCommit.Commit(cancellationToken);
-
         return new BaseResponse(200, "Student deleted successfully");
     }
 }

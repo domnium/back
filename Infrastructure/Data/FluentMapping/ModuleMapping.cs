@@ -60,7 +60,7 @@ public class ModuleMapping : IEntityTypeConfiguration<Module>
         builder.HasOne(m => m.Course)
             .WithMany(c => c.Modules)
             .HasForeignKey(m => m.CourseId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(m => m.Lectures)
             .WithOne(l => l.Module)

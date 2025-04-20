@@ -50,7 +50,7 @@ public class StudentMapping : IEntityTypeConfiguration<Student>
 
         builder.HasOne(s => s.Picture)
             .WithMany()
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(s => s.StudentCourses)
             .WithOne(sc => sc.Student)

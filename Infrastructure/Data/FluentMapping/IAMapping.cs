@@ -50,12 +50,12 @@ public class IAMapping : IEntityTypeConfiguration<IA>
         builder.HasOne(i => i.Picture)
             .WithMany()
             .HasForeignKey(i => i.PictureId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Relacionamento com Courses
         builder.HasMany(i => i.Courses)
             .WithOne(c => c.IA)
             .HasForeignKey(c => c.IAid)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

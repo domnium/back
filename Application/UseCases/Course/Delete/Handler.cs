@@ -23,13 +23,20 @@ public class Handler : IRequestHandler<Request, BaseResponse>
 
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
-        var course = await _courseRepository
-            .GetWithParametersAsync(c => c.Id.Equals(request.id), cancellationToken);
+        var course = await _courseRepository.GetWithParametersAsyncWithTracking(
+            c => c.Id == request.id,
+            cancellationToken,
+            c => c.Modules,
+            c => c.Modules.Select(m => m.Lectures),
+            c => c.Image,
+            c => c.Trailer,
+            c => c.Parameters
+        );
 
         if (course is null)
             return new BaseResponse(404, "Course not found");
 
-        await _courseRepository.DeleteAsync(course, cancellationToken);
+        _courseRepository.Delete(course);
         var deleteTasks = new List<Task>();
 
         if (course.Image?.AwsKey is not null && !string.IsNullOrWhiteSpace(course.Image.BucketName))

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DomnumDbContext))]
-    [Migration("20250416011830_AddTemporaryPath")]
-    partial class AddTemporaryPath
+    [Migration("20250420030015_AjusteRelationShip")]
+    partial class AjusteRelationShip
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -125,6 +125,8 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("CategoryId1")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp")
@@ -172,6 +174,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("CategoryId1");
 
                     b.HasIndex("IAid");
 
@@ -420,7 +423,8 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("PK_Teachers");
 
-                    b.HasIndex("PictureId");
+                    b.HasIndex("PictureId")
+                        .IsUnique();
 
                     b.ToTable("Teachers", (string)null);
                 });
@@ -445,10 +449,6 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("timestamp")
                         .HasColumnName("DeletedDate");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("TokenActivate")
                         .HasColumnType("varchar")
@@ -824,20 +824,24 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Core.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired()
                         .HasConstraintName("FK_Course_Category");
+
+                    b.HasOne("Domain.Entities.Core.Category", null)
+                        .WithMany("Courses")
+                        .HasForeignKey("CategoryId1");
 
                     b.HasOne("Domain.Entities.Core.IA", "IA")
                         .WithMany("Courses")
                         .HasForeignKey("IAid")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Core.Parameter", "Parameters")
                         .WithOne("Course")
                         .HasForeignKey("Domain.Entities.Core.Course", "ParameterId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Domain.Entities.Picture", "Image")
                         .WithMany()
@@ -849,7 +853,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Core.Teacher", "Teacher")
                         .WithMany("Courses")
                         .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Course_Teacher");
 
@@ -903,7 +907,6 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("Endereco")
-                                .IsRequired()
                                 .HasMaxLength(255)
                                 .HasColumnType("varchar")
                                 .HasColumnName("GitHubUrl");
@@ -962,8 +965,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("Description")
                         .IsRequired();
 
-                    b.Navigation("GitHubUrl")
-                        .IsRequired();
+                    b.Navigation("GitHubUrl");
 
                     b.Navigation("IA");
 
@@ -987,7 +989,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Picture", "Picture")
                         .WithMany()
                         .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.OwnsOne("Domain.ValueObjects.UniqueName", "Name", b1 =>
@@ -1025,7 +1027,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Core.Video", "Video")
                         .WithMany()
                         .HasForeignKey("VideoId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK_Lecture_Video");
 
                     b.OwnsOne("Domain.ValueObjects.Url", "GithubUrl", b1 =>
@@ -1081,7 +1083,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Core.Course", "Course")
                         .WithMany("Modules")
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
                     b.OwnsOne("Domain.ValueObjects.Description", "Description", b1 =>
@@ -1206,7 +1208,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Picture", "Picture")
                         .WithMany()
                         .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Core.User", "User")
@@ -1245,9 +1247,9 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Core.Teacher", b =>
                 {
                     b.HasOne("Domain.Entities.Picture", "Picture")
-                        .WithMany()
-                        .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .WithOne()
+                        .HasForeignKey("Domain.Entities.Core.Teacher", "PictureId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.OwnsOne("Domain.ValueObjects.Description", "Description", b1 =>
                         {
@@ -1668,7 +1670,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Core.Course", "Course")
                         .WithMany()
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Core.Student", "Student")
@@ -1692,7 +1694,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Core.Lecture", "Lecture")
                         .WithMany("StudentLectures")
                         .HasForeignKey("LectureId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Core.Student", "Student")

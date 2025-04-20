@@ -10,7 +10,7 @@ using DeleteModuleRequest = Application.UseCases.Module.Delete.Request;
 namespace Presentation.Controllers;
 
 /// <summary>
-/// Controller responsável pelos métodos de retorno, exclução e criação de Módulos.
+/// Controller responsável pelos métodos de retorno, exclusão e criação de Módulos.
 /// </summary>
 [ApiController]
 [Route("Module")]
@@ -18,81 +18,42 @@ namespace Presentation.Controllers;
 public class ModuleController(IMediator mediator) : ControllerBase
 {
     /// <summary>
-    /// Método responsável por retornar um módulo do sistema pelo seu identificador.
+    /// Retorna um módulo pelo seu identificador.
     /// </summary>
-    /// <param name="id">Identificador para o filtro</param>
-    /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
-    [HttpGet("get/{id}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    [HttpGet("Get/{id}")]
+    public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var response = await mediator.Send(new GetModuleRequest( ModuleId: id ), cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response});
-        }
-        catch(Exception e)
-        {   
-            return StatusCode(500, e.StackTrace);
-        }
+        var response = await mediator.Send(new GetModuleRequest(id), cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response });
     }
 
     /// <summary>
-    /// Método responsável por retornar até 100 módulos do sistema.
+    /// Retorna todos os módulos cadastrados.
     /// </summary>
-    /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
-    [HttpGet("getall")]
+    [HttpGet("Get/All")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        try
-        {
-            var response = await mediator.Send(new GetAllModulesRequest(), cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response});
-        }
-        catch(Exception e)
-        {   
-            return StatusCode(500, e.StackTrace);
-        }
+        var response = await mediator.Send(new GetAllModulesRequest(), cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response });
     }
 
     /// <summary>
-    /// Método responsável por criar um módulo no sistema.
+    /// Cria um novo módulo.
     /// </summary>
-    /// <param name="request">Objeto com os parâmetros necessários para a criação de um módulo</param>
-    /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
-    [HttpPost("create")]
-    public async Task<IActionResult> Create(CreateModuleRequest request, CancellationToken cancellationToken)
+    [HttpPost("Create")]
+    public async Task<IActionResult> Create([FromBody] CreateModuleRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var response = await mediator.Send(request, cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response});
-        }
-        catch(Exception e)
-        {   
-            return StatusCode(500, e.StackTrace);
-        }
+        var response = await mediator.Send(request, cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response });
     }
 
     /// <summary>
-    /// Método responsável por deletar um módulo no sistema.
+    /// Deleta um módulo pelo seu ID.
     /// </summary>
-    /// <param name="id">Identificador para a exclução</param>
-    /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
-    [HttpDelete("delete")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    [HttpDelete("Delete")]
+    public async Task<IActionResult> Delete([FromQuery] Guid id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var response = await mediator.Send(new DeleteModuleRequest( ModuleId: id ), cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response});
-        }
-        catch(Exception e)
-        {   
-            return StatusCode(500, e.StackTrace);
-        }
-    } 
+        var response = await mediator.Send(new DeleteModuleRequest(id), cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response });
+    }
 }

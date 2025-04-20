@@ -1,5 +1,4 @@
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CreateRequest = Application.UseCases.Lecture.Create.Request;
 using DeleteRequest = Application.UseCases.Lecture.Delete.Request;
@@ -17,117 +16,59 @@ public class LectureController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Cria uma nova aula (lecture).
     /// </summary>
-    /// <param name="request">Dados da aula a ser criada</param>
-    /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns>Status da operação e dados da aula criada</returns>
     [HttpPost("Create")]
-    public async Task<IActionResult> Create(CreateRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreateRequest request, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        try
-        {
-            var response = await mediator.Send(request, cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.StackTrace);
-        }
+        var response = await mediator.Send(request, cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
     }
 
     /// <summary>
     /// Remove uma aula com base no seu ID.
     /// </summary>
-    /// <param name="request">Request contendo o ID da aula</param>
-    /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns>Status da operação</returns>
     [HttpDelete("Delete/{id}")]
-    public async Task<IActionResult> Delete(DeleteRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete([FromRoute] DeleteRequest request, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        try
-        {
-            var response = await mediator.Send(request, cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.StackTrace);
-        }
+        var response = await mediator.Send(request, cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
     }
 
     /// <summary>
     /// Retorna todas as aulas de um curso com base no estudante e paginação.
     /// </summary>
-    /// <param name="courseId">ID do curso</param>
-    /// <param name="studentId">ID do estudante</param>
-    /// <param name="page">Página atual da listagem</param>
-    /// <param name="pageSize">Quantidade de registros por página</param>
-    /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns>Status da operação e lista de aulas</returns>
     [HttpGet("Get/All/{courseId}/{studentId}/Page/{page}/PageSize/{pageSize}")]
-    public async Task<IActionResult> GetAll(Guid courseId, Guid studentId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromRoute] Guid courseId, [FromRoute] Guid studentId,
+        [FromRoute] int page, [FromRoute] int pageSize, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        try
-        {
-            var response = await mediator.Send(new Application.UseCases.Lecture.Get.AllCourseCompleted
-                .Request(courseId, studentId, page, pageSize), cancellationToken);
+        var response = await mediator.Send(new Application.UseCases.Lecture.Get.AllCourseCompleted
+            .Request(courseId, studentId, page, pageSize), cancellationToken);
 
-            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.StackTrace);
-        }
+        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
     }
 
     /// <summary>
     /// Verifica se uma aula foi concluída por um estudante.
     /// </summary>
-    /// <param name="studentId">ID do estudante</param>
-    /// <param name="lectureId">ID da aula</param>
-    /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns>Status da operação e resultado booleano</returns>
     [HttpGet("Get/IsLectureCompleted/{studentId}/{lectureId}")]
-    public async Task<IActionResult> IsLectureCompleted(Guid studentId, Guid lectureId, CancellationToken cancellationToken)
+    public async Task<IActionResult> IsLectureCompleted([FromRoute] Guid studentId, [FromRoute] Guid lectureId,
+        CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        try
-        {
-            var response = await mediator.Send(new Application.UseCases.Lecture.Get.IsLectureCompleted.
-                Request(studentId, lectureId), cancellationToken);
+        var response = await mediator.Send(new Application.UseCases.Lecture.Get.IsLectureCompleted
+            .Request(studentId, lectureId), cancellationToken);
 
-            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.StackTrace);
-        }
+        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
     }
 
     /// <summary>
     /// Marca uma aula como concluída para um estudante em um curso.
     /// </summary>
-    /// <param name="courseId">ID do curso</param>
-    /// <param name="studentId">ID do estudante</param>
-    /// <param name="lectureId">ID da aula</param>
-    /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns>Status da operação</returns>
     [HttpPost("CompleteLecture/{courseId}/{studentId}/{lectureId}")]
-    public async Task<IActionResult> CompleteLecture(Guid courseId, Guid studentId,
-        Guid lectureId, CancellationToken cancellationToken)
+    public async Task<IActionResult> CompleteLecture([FromRoute] Guid courseId, [FromRoute] Guid studentId,
+        [FromRoute] Guid lectureId, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        try
-        {
-            var response = await mediator.Send(new Application.UseCases.Lecture.MarkLectureCompleted
-                .Request(courseId, studentId, lectureId), cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.StackTrace);
-        }
+        var response = await mediator.Send(new Application.UseCases.Lecture.MarkLectureCompleted
+            .Request(courseId, studentId, lectureId), cancellationToken);
+
+        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
     }
 }

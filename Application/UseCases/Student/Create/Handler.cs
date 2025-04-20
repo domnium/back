@@ -1,5 +1,6 @@
 using Domain;
 using Domain.Entities;
+using Domain.ExtensionsMethods;
 using Domain.Interfaces;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
@@ -53,7 +54,13 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             return new BaseResponse(400, "User does not exist");
 
         // Cria a imagem
-        var picture = new Picture(null, false, new AppFile(request.Picture.OpenReadStream(), request.Picture.FileName));
+        var picture = new Picture(
+            null, 
+            false, 
+            new AppFile(request.Picture.OpenReadStream(), request.Picture.FileName),
+            new BigString(Configuration.PicturesStudensPath),
+            ContentTypeExtensions.ParseMimeType(request.Picture.ContentType)
+            );
 
         if (picture.Notifications.Any())
             return new BaseResponse(400, "Error creating picture", picture.Notifications.ToList());
