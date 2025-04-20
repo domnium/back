@@ -110,13 +110,13 @@ public class CourseMapping : IEntityTypeConfiguration<Course>
             .WithMany()
             .HasForeignKey(c => c.CategoryId)
             .HasConstraintName("FK_Course_Category")
-            .OnDelete(DeleteBehavior.Cascade);  
+            .OnDelete(DeleteBehavior.SetNull);  
 
         builder.HasOne(c => c.Teacher)
             .WithMany()
             .HasForeignKey(c => c.TeacherId)
             .HasConstraintName("FK_Course_Teacher")
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(c => c.Image)
             .WithMany() 

@@ -29,14 +29,16 @@ public class GeneratePresignedUrl(IServiceScopeFactory scopeFactory,
             var dbCommit = scope.ServiceProvider.GetRequiredService<IDbCommit>();
 
             logger.LogInformation("Iniciando geração de URLs temporárias.");
-
             var pictures = await pictureRepository.GetAll(new CancellationToken());
 
             foreach (var picture in pictures)
             {
                 var urlExpiradaOuInexistente = picture.UrlExpired is null || picture.UrlExpired <= DateTime.UtcNow;
 
-                if (picture.BucketName != null && urlExpiradaOuInexistente)
+                if (picture.BucketName != null && picture.AwsKey != null
+                    && picture.ContentType is not null 
+                    && picture.DeletedDate is null
+                    && urlExpiradaOuInexistente)
                 {
                     picture.SetTemporaryUrl(
                         new Domain.ValueObjects.Url(
@@ -47,9 +49,9 @@ public class GeneratePresignedUrl(IServiceScopeFactory scopeFactory,
                                 picture.ContentType!.Value.ToString()!
                             )
                         ),
-                        DateTime.UtcNow.AddHours(Configuration.DurationUrlTempImage)
+                        DateTime.Now.AddHours(Configuration.DurationUrlTempImage)
                     );
-
+                    picture.Activate();
                     pictureRepository.Update(picture);
                 }
             }
@@ -60,7 +62,10 @@ public class GeneratePresignedUrl(IServiceScopeFactory scopeFactory,
             {
                 var urlExpiradaOuInexistente = video.UrlExpired is null || video.UrlExpired <= DateTime.UtcNow;
 
-                if (video.IsValid && video.Ativo && video.BucketName != null && urlExpiradaOuInexistente)
+                if (video.IsValid && video.Ativo && video.AwsKey != null && 
+                    video.BucketName != null && video.ContentType is not null
+                    && video.DeletedDate is null &&
+                    urlExpiradaOuInexistente)
                 {
                     video.SetTemporaryUrl(
                         new Domain.ValueObjects.Url(
@@ -71,9 +76,9 @@ public class GeneratePresignedUrl(IServiceScopeFactory scopeFactory,
                                 video.ContentType!.Value.ToString()!
                             )
                         ),
-                        DateTime.UtcNow.AddHours(Configuration.DurationUrlTempVideos)
+                        DateTime.Now.AddHours(Configuration.DurationUrlTempVideos)
                     );
-
+                    video.Activate();
                     videoRepository.Update(video);
                 }
             }

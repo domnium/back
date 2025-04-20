@@ -17,8 +17,7 @@ namespace Presentation.Common.Api;
 
 public static class BuilderExtensions
 {
-    public static void AddConfiguration(
-        this WebApplicationBuilder builder)
+   public static void AddConfiguration(this WebApplicationBuilder builder)
     {
         Configuration.IsDevelopment = builder.Environment.IsDevelopment();
         Configuration.JwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? string.Empty;
@@ -40,19 +39,38 @@ public static class BuilderExtensions
         Configuration.AwsRegion = Environment.GetEnvironmentVariable("AWS_REGION") ?? string.Empty;
         Configuration.BucketArchives = Environment.GetEnvironmentVariable("BUCKET_ARCHIVES") ?? string.Empty;
         Configuration.BucketVideos = Environment.GetEnvironmentVariable("BUCKET_VIDEOS") ?? string.Empty;
-    builder.Services.AddControllers(options =>
-    {
-        options.Filters.Add(new ProducesAttribute("application/json"));
-        options.ReturnHttpNotAcceptable = true;
-    }).ConfigureApiBehaviorOptions(options =>
-    {
-        options.SuppressModelStateInvalidFilter = true;})
-    .AddJsonOptions(x =>
-    {
-        x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-        x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
-    })
-    .AddNewtonsoftJson(options =>
+
+        builder.Services.AddControllers(options =>
+        {
+            options.Filters.Add(new ProducesAttribute("application/json"));
+            options.ReturnHttpNotAcceptable = true;
+        })
+        .ConfigureApiBehaviorOptions(options =>
+        {
+            options.InvalidModelStateResponseFactory = context =>
+            {
+                var errors = context.ModelState
+                    .Where(e => e.Value.Errors.Count > 0)
+                    .Select(e => new
+                    {
+                        field = e.Key,
+                        errors = e.Value.Errors.Select(err => err.ErrorMessage)
+                    });
+
+                var result = new
+                {
+                    message = "Invalid Request.",
+                    notifications = errors
+                };
+                return new BadRequestObjectResult(result);
+            };
+        })
+        .AddJsonOptions(x =>
+        {
+            x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+        })
+        .AddNewtonsoftJson(options =>
         {
             options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
             options.SerializerSettings.DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore;
@@ -61,6 +79,7 @@ public static class BuilderExtensions
                 NamingStrategy = new CamelCaseNamingStrategy()
             };
         });
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Logging.AddConsole();
         builder.Logging.AddDebug();

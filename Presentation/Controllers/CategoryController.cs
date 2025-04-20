@@ -22,20 +22,12 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// Retorna todas as categorias cadastradas.
     /// </summary>
     /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns>Lista de categorias ou erro interno</returns>
-    [HttpGet("GetAll")]
+    /// <returns>Lista de categorias</returns>
+    [HttpGet("Get/All")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        try
-        {
-            var response = await mediator.Send(new GetAllCategoryRequest(), cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.StackTrace);
-        }
+        var response = await mediator.Send(new GetAllCategoryRequest(), cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
     }
 
     /// <summary>
@@ -43,20 +35,12 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// </summary>
     /// <param name="Id">ID da categoria</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns>Categoria encontrada ou mensagem de erro</returns>
-    [HttpGet("GetById")]
+    /// <returns>Categoria encontrada</returns>
+    [HttpGet("Get/ById")]
     public async Task<IActionResult> GetById([FromQuery] Guid Id, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        try
-        {
-            var response = await mediator.Send(new GetByIdRequest(Id), cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.StackTrace);
-        }
+        var response = await mediator.Send(new GetByIdRequest(Id), cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
     }
 
     /// <summary>
@@ -68,16 +52,8 @@ public class CategoryController(IMediator mediator) : ControllerBase
     [HttpPost("Create")]
     public async Task<IActionResult> Create([FromForm] CreateCategoryRequest request, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        try
-        {
-            var response = await mediator.Send(request, cancellationToken);
-            return StatusCode(response.statuscode,new {response.message, response.Response, response.notifications});
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.StackTrace);
-        }
+        var response = await mediator.Send(request, cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
     }
 
     /// <summary>
@@ -89,15 +65,7 @@ public class CategoryController(IMediator mediator) : ControllerBase
     [HttpDelete("Delete")]
     public async Task<IActionResult> Delete([FromQuery] Guid Id, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        try
-        {
-            var response = await mediator.Send(new DeleteCategoryRequest(Id), cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.StackTrace);
-        }
+        var response = await mediator.Send(new DeleteCategoryRequest(Id), cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
     }
 }

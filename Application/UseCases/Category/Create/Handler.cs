@@ -1,6 +1,7 @@
 using System;
 using Domain;
 using Domain.Entities;
+using Domain.ExtensionsMethods;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Records;
@@ -62,7 +63,9 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         var newPicture = new Picture(
             new BigString(Configuration.PicturesCategoriesPath),
             true,
-            new AppFile(request.Imagem.OpenReadStream(), request.Imagem.FileName)
+            new AppFile(request.Imagem.OpenReadStream(), request.Imagem.FileName),
+            new BigString(Configuration.PicturesCategoriesPath),
+             ContentTypeExtensions.ParseMimeType(request.Imagem.ContentType)
         );
 
         // Cria a categoria

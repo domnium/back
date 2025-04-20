@@ -37,11 +37,12 @@ namespace Infrastructure.Migrations
                     CreatedDate = table.Column<DateTime>(type: "timestamp", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp", nullable: false),
                     DeletedDate = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    AwsKey = table.Column<string>(type: "varchar", maxLength: 255, nullable: false),
+                    AwsKey = table.Column<string>(type: "varchar", maxLength: 255, nullable: true),
                     ContentType = table.Column<string>(type: "varchar", nullable: true),
                     UrlExpired = table.Column<DateTime>(type: "timestamp", nullable: true),
                     UrlTemp = table.Column<string>(type: "varchar", maxLength: 255, nullable: true),
-                    BucketName = table.Column<string>(type: "varchar", maxLength: 255, nullable: true)
+                    BucketName = table.Column<string>(type: "varchar", maxLength: 255, nullable: true),
+                    TemporaryPath = table.Column<string>(type: "varchar", maxLength: 255, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -98,7 +99,6 @@ namespace Infrastructure.Migrations
                     Salt = table.Column<string>(type: "varchar", nullable: true),
                     Active = table.Column<bool>(type: "boolean", nullable: false),
                     TokenActivate = table.Column<string>(type: "varchar", nullable: true),
-                    Token = table.Column<string>(type: "text", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp", nullable: false, defaultValueSql: "now()"),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp", nullable: false, defaultValueSql: "now()"),
                     DeletedDate = table.Column<DateTime>(type: "timestamp", nullable: true)
@@ -117,11 +117,12 @@ namespace Infrastructure.Migrations
                     CreatedDate = table.Column<DateTime>(type: "timestamp", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp", nullable: false),
                     DeletedDate = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    AwsKey = table.Column<string>(type: "varchar", maxLength: 255, nullable: false),
+                    AwsKey = table.Column<string>(type: "varchar", maxLength: 255, nullable: true),
                     ContentType = table.Column<string>(type: "varchar", nullable: true),
                     UrlExpired = table.Column<DateTime>(type: "timestamp", nullable: true),
                     UrlTemp = table.Column<string>(type: "varchar", maxLength: 255, nullable: true),
-                    BucketName = table.Column<string>(type: "varchar", maxLength: 255, nullable: true)
+                    BucketName = table.Column<string>(type: "varchar", maxLength: 255, nullable: true),
+                    TemporaryPath = table.Column<string>(type: "varchar", maxLength: 255, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -170,7 +171,7 @@ namespace Infrastructure.Migrations
                         column: x => x.PictureId,
                         principalTable: "Pictures",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -201,7 +202,7 @@ namespace Infrastructure.Migrations
                         column: x => x.PictureId,
                         principalTable: "Pictures",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -225,7 +226,7 @@ namespace Infrastructure.Migrations
                         column: x => x.PictureId,
                         principalTable: "Pictures",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Students_Users_UserId",
                         column: x => x.UserId,
@@ -269,7 +270,7 @@ namespace Infrastructure.Migrations
                     Price = table.Column<decimal>(type: "FLOAT", nullable: false),
                     TotalHours = table.Column<decimal>(type: "FLOAT", nullable: false),
                     NotionUrl = table.Column<string>(type: "varchar", maxLength: 255, nullable: false),
-                    GitHubUrl = table.Column<string>(type: "varchar", maxLength: 255, nullable: false),
+                    GitHubUrl = table.Column<string>(type: "varchar", maxLength: 255, nullable: true),
                     IAid = table.Column<Guid>(type: "uuid", nullable: false),
                     TrailerId = table.Column<Guid>(type: "uuid", nullable: true),
                     ParameterId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -277,6 +278,7 @@ namespace Infrastructure.Migrations
                     PictureId = table.Column<Guid>(type: "uuid", nullable: false),
                     TeacherId = table.Column<Guid>(type: "uuid", nullable: false),
                     Subscribes = table.Column<long>(type: "BIGINT", nullable: false, defaultValue: 0L),
+                    CategoryId1 = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp", nullable: false),
                     DeletedDate = table.Column<DateTime>(type: "timestamp", nullable: true)
@@ -289,37 +291,42 @@ namespace Infrastructure.Migrations
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Course_Picture",
                         column: x => x.PictureId,
                         principalTable: "Pictures",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Course_Teacher",
                         column: x => x.TeacherId,
                         principalTable: "Teachers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Course_Trailer_Video",
                         column: x => x.TrailerId,
                         principalTable: "Videos",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Courses_Categories_CategoryId1",
+                        column: x => x.CategoryId1,
+                        principalTable: "Categories",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Courses_IAs_IAid",
                         column: x => x.IAid,
                         principalTable: "IAs",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Courses_Parameters_ParameterId",
                         column: x => x.ParameterId,
                         principalTable: "Parameters",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -373,7 +380,7 @@ namespace Infrastructure.Migrations
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -396,7 +403,7 @@ namespace Infrastructure.Migrations
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_StudentCourses_Students_StudentId",
                         column: x => x.StudentId,
@@ -428,7 +435,7 @@ namespace Infrastructure.Migrations
                         column: x => x.VideoId,
                         principalTable: "Videos",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Lectures_Modules_ModuleId",
                         column: x => x.ModuleId,
@@ -465,7 +472,7 @@ namespace Infrastructure.Migrations
                         column: x => x.LectureId,
                         principalTable: "Lectures",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_StudentLectures_Students_StudentId",
                         column: x => x.StudentId,
@@ -484,6 +491,10 @@ namespace Infrastructure.Migrations
                 table: "Courses",
                 column: "CategoryId");
 
+            migrationBuilder.CreateIndex(
+                name: "IX_Courses_CategoryId1",
+                table: "Courses",
+                column: "CategoryId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Courses_IAid",

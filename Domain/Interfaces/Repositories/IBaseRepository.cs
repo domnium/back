@@ -8,7 +8,7 @@ public interface IBaseRepository<T> where T : Entity
     Task CreateAsync(T entity, CancellationToken cancellationToken);
     Task<T> CreateReturnEntity(T entity, CancellationToken cancellationToken);
     void Update(T entity);
-    Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
+    void Delete(T entity);
 
     Task<List<T>> GetAll(CancellationToken cancellationToken, int skip = 0, int take = 10);
 

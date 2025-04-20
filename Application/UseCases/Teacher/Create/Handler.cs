@@ -1,5 +1,6 @@
 using Domain;
 using Domain.Entities;
+using Domain.ExtensionsMethods;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Records;
@@ -16,7 +17,6 @@ public class Handler : IRequestHandler<Request, BaseResponse>
 {
     private readonly IMessageQueueService _messageQueueService;
     private readonly ITeacherRepository _teacherRepository;
-    private readonly IUserRepository _userRepository;
     private readonly IDbCommit _dbCommit;
     private readonly ITemporaryStorageService _temporaryStorageService;
 
@@ -26,13 +26,11 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     public Handler(
         IMessageQueueService messageQueueService,
         ITeacherRepository teacherRepository,
-        IUserRepository userRepository,
         IDbCommit dbCommit,
         ITemporaryStorageService temporaryStorageService)
     {
         _messageQueueService = messageQueueService;
         _teacherRepository = teacherRepository;
-        _userRepository = userRepository;
         _dbCommit = dbCommit;
         _temporaryStorageService = temporaryStorageService;
     }
@@ -46,7 +44,10 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
         // Cria a imagem
-        var picture = new Picture(null, false, new AppFile(request.Picture.OpenReadStream(), request.Picture.FileName));
+        var picture = new Picture(null, false, new AppFile(request.Picture.OpenReadStream(), request.Picture.FileName),
+            new BigString(Configuration.PicturesTeacherPath),
+            ContentTypeExtensions.ParseMimeType(request.Picture.ContentType)
+        );
 
         if (picture.Notifications.Any())
             return new BaseResponse(400, "Error creating picture", picture.Notifications.ToList());
@@ -61,14 +62,13 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             request.Cep,
             !string.IsNullOrEmpty(request.Tiktok) ? new Url(request.Tiktok) : null,
             !string.IsNullOrEmpty(request.Instagram) ? new Url(request.Instagram) : null,
-            !string.IsNullOrEmpty(request.Instagram) ? new Url(request.GitHub) : null,
+            !string.IsNullOrEmpty(request.GitHub) ? new Url(request.GitHub) : null,
             new Description(request.Description),
             picture
         );
 
         if (newTeacher.Notifications.Any())
             return new BaseResponse(400, "Invalid teacher", newTeacher.Notifications.ToList());
-
 
         var teacherAlreadyExists = await _teacherRepository.GetWithParametersAsync(
             t => t.Cpf.Numero.Equals(request.Cpf), cancellationToken
@@ -83,7 +83,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
 
         // Salva imagem local
         var tempPath = await _temporaryStorageService.SaveAsync(
-            Configuration.PicturesStudensPath,
+            Configuration.PicturesTeacherPath,
             picture.Id,
             request.Picture.OpenReadStream(),
             cancellationToken
@@ -93,11 +93,10 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         await _messageQueueService.EnqueueUploadMessageAsync(new UploadFileMessage(
             picture.Id,
             Configuration.BucketArchives,
-            Configuration.PicturesStudensPath,
+            Configuration.PicturesTeacherPath,
             request.Picture.ContentType,
             tempPath
         ), cancellationToken);
-
         return new BaseResponse(201, "Teacher created");
     }
 }

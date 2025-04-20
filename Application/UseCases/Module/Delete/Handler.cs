@@ -34,16 +34,19 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     /// <returns><see cref="BaseResponse"/> com status da operação</returns>
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
-        var moduleFound = await _moduleRepository
-            .GetWithParametersAsync(x => x.Id == request.ModuleId, cancellationToken);
+       var moduleFound = await _moduleRepository.GetWithParametersAsyncWithTracking(
+            x => x.Id == request.ModuleId,
+            cancellationToken,
+            x => x.Lectures,
+            x => x.Lectures.Select(l => l.StudentLectures),
+            x => x.Lectures.Select(l => l.Video) 
+        );
 
         if (moduleFound is null)
             return new BaseResponse(404, "Module not found");
 
-        await _moduleRepository.DeleteAsync(moduleFound, cancellationToken);
-
+        _moduleRepository.Delete(moduleFound);
         await _dbCommit.Commit(cancellationToken);
-
         return new BaseResponse(200, "Module deleted successfully");
     }
 }

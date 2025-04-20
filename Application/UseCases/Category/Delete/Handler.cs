@@ -31,7 +31,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
                 new DeleteFileMessage(category.Image.BucketName, category.Image.AwsKey.Body),
                 cancellationToken);
 
-        await _categoryRepository.DeleteAsync(category, cancellationToken);
+        _categoryRepository.Delete(category);
         await _dbCommit.Commit(cancellationToken);
         return new BaseResponse(200, "Category deleted", null, category);
     }

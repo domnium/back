@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Entities.Abstracts;
+using Domain.Enums;
 using Domain.ValueObjects;
 
 namespace Domain.Entities.Core;
@@ -11,12 +12,15 @@ public class Video : Archive
     public VideoFile? File { get; private set; }
 
     private Video() {}
-    public Video( BigString path, bool ativo = true, VideoFile file = null)
-        : base(path)
+    public Video(BigString? temporaryPath, bool ativo = true, VideoFile file = null, 
+        ContentType? contentType = null)
     {
-        AddNotificationsFromValueObjects(file);
+        AddNotificationsFromValueObjects(file, temporaryPath);
         File = file;
         Ativo = ativo;
+        BucketName = Configuration.BucketVideos;
+        ContentType = contentType;
+        TemporaryPath = temporaryPath;
     }
 
     public void Activate() => Ativo = true;

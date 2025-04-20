@@ -40,11 +40,17 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     /// <returns>Instância de <see cref="BaseResponse"/> com status da operação</returns>
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
-        var lecture = await _lectureRepository.GetWithParametersAsync(x => x.Id.Equals(request.id), cancellationToken);
+        var lecture = await _lectureRepository.GetWithParametersAsyncWithTracking(
+                x => x.Id == request.id,
+                cancellationToken,
+                x => x.StudentLectures,
+                x => x.Video
+        );
+
         if (lecture is null)
             return new BaseResponse(404, "Lecture not found");
 
-        await _lectureRepository.DeleteAsync(lecture, cancellationToken);
+        _lectureRepository.Delete(lecture);
         await _dbCommit.Commit(cancellationToken);
 
         if (lecture.Video?.AwsKey is not null && !string.IsNullOrWhiteSpace(lecture.Video.BucketName))

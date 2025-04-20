@@ -35,12 +35,16 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
     {
         var teacherFound = await _teacherRepository
-            .GetWithParametersAsync(x => x.Id == request.TeacherId, cancellationToken);
+            .GetWithParametersAsyncWithTracking(
+                x => x.Id == request.TeacherId,
+                cancellationToken,
+                x => x.Picture
+            );
 
         if (teacherFound is null)
             return new BaseResponse(404, "Teacher not found");
 
-        await _teacherRepository.DeleteAsync(teacherFound, cancellationToken);
+         _teacherRepository.Delete(teacherFound);
 
         // Enfileira a exclusão da imagem, se existir
         if (teacherFound.Picture?.AwsKey is not null &&
@@ -55,7 +59,6 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         }
 
         await _dbCommit.Commit(cancellationToken);
-
         return new BaseResponse(200, "Teacher deleted successfully");
     }
 }

@@ -10,7 +10,7 @@ using DeleteTeacherRequest = Application.UseCases.Teacher.Delete.Request;
 namespace Presentation.Controllers;
 
 /// <summary>
-/// Controller responsável pelos métodos de retorno, exclução e criação de Professores.
+/// Controller responsável pelos métodos de retorno, exclusão e criação de Professores.
 /// </summary>
 [ApiController]
 [Route("Teacher")]
@@ -24,17 +24,10 @@ public class TeacherController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
     [HttpGet("Get/{Id}")]
-    public async Task<IActionResult> GetById([FromQuery]Guid Id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById([FromQuery] Guid Id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var response = await mediator.Send(new GetTeacherRequest( TeacherId: Id ), cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response});
-        }
-        catch(Exception e)
-        {   
-            return StatusCode(500, e.StackTrace);
-        }
+        var response = await mediator.Send(new GetTeacherRequest(TeacherId: Id), cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response });
     }
 
     /// <summary>
@@ -42,18 +35,11 @@ public class TeacherController(IMediator mediator) : ControllerBase
     /// </summary>
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
-    [HttpGet("GetAll")]
+    [HttpGet("Get/All")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        try
-        {
-            var response = await mediator.Send(new GetAllTeachersRequest(), cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response});
-        }
-        catch(Exception e)
-        {   
-            return StatusCode(500, e.StackTrace);
-        }
+        var response = await mediator.Send(new GetAllTeachersRequest(), cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response });
     }
 
     /// <summary>
@@ -65,34 +51,20 @@ public class TeacherController(IMediator mediator) : ControllerBase
     [HttpPost("Create")]
     public async Task<IActionResult> Create([FromForm] CreateTeacherRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var response = await mediator.Send(request, cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response, response.notifications});
-        }
-        catch(Exception e)
-        {   
-            return StatusCode(500, e.StackTrace);
-        }
+        var response = await mediator.Send(request, cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
     }
 
     /// <summary>
     /// Método responsável por deletar um professor no sistema.
     /// </summary>
-    /// <param name="Id">Identificador para a exclução</param>
+    /// <param name="Id">Identificador para a exclusão</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
     [HttpDelete("Delete")]
-    public async Task<IActionResult> Delete([FromQuery]Guid Id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete([FromQuery] Guid Id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var response = await mediator.Send(new DeleteTeacherRequest( TeacherId: Id ), cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response});
-        }
-        catch(Exception e)
-        {   
-            return StatusCode(500, e.StackTrace);
-        }
-    } 
+        var response = await mediator.Send(new DeleteTeacherRequest(TeacherId: Id), cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response });
+    }
 }

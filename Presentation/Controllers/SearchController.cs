@@ -23,17 +23,11 @@ public class SearchController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento da operação</param>
     [HttpGet]
     public async Task<IActionResult> Search([FromQuery] string query,
-         [FromQuery] int? page = 0, [FromQuery] int? pageSize = 10, CancellationToken cancellationToken = default)
+        [FromQuery] int? page = 0,
+        [FromQuery] int? pageSize = 10,
+        CancellationToken cancellationToken = default)
     {
-        if(!ModelState.IsValid) return BadRequest(ModelState);
-        try
-        {
-            var response = await mediator.Send(new SearchRequest(query, page, pageSize), cancellationToken);
-            return StatusCode(response.statuscode, new {response.message, response.Response});
-        }
-        catch(Exception e)
-        {
-            return StatusCode(500, e.StackTrace);
-        }
+        var response = await mediator.Send(new SearchRequest(query, page, pageSize), cancellationToken);
+        return StatusCode(response.statuscode, new { response.message, response.Response });
     }
 }

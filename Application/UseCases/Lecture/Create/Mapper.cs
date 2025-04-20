@@ -2,6 +2,7 @@ using System;
 using AutoMapper;
 using Domain;
 using Domain.Entities.Core;
+using Domain.ExtensionsMethods;
 using Domain.ValueObjects;
 
 namespace Application.UseCases.Lecture.Create;
@@ -22,7 +23,7 @@ public class Mapper : Profile
                         src.File.OpenReadStream(),
                         src.File != null ? src.File.FileName : string.Empty
                     )
-                )
+                , ContentTypeExtensions.ParseMimeType(src.File!.ContentType))
             ));
     }
 }

@@ -54,6 +54,6 @@ public class ParameterMapping : IEntityTypeConfiguration<Parameter>
 
         builder.HasOne(p => p.Course)
             .WithOne(c => c.Parameters)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }
