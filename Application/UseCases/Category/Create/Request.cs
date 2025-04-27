@@ -8,4 +8,4 @@ public record Request(
     string Name, 
     string Description,
     IFormFile Imagem
-) : IRequest<BaseResponse>;
+) : IRequest<BaseResponse<object>>;

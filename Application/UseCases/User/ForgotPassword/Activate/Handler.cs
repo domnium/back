@@ -5,30 +5,62 @@ using MediatR;
 
 namespace Application.UseCases.User.ForgotPassword.Activate;
 
-public class Handler : IRequestHandler<Request, BaseResponse>
+/// <summary>
+/// Handler responsável por ativar a redefinição de senha de um usuário.
+/// </summary>
+public class Handler : IRequestHandler<Request, BaseResponse<object>>
 {
     private readonly IUserRepository _userRepository;
     private readonly IDbCommit _dbCommit;
 
+    /// <summary>
+    /// Construtor do handler de ativação de redefinição de senha.
+    /// </summary>
     public Handler(IUserRepository userRepository, IDbCommit dbCommit)
     {
         _userRepository = userRepository;
         _dbCommit = dbCommit;
     }
 
-    public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
+    /// <summary>
+    /// Manipula a ativação da redefinição de senha.
+    /// </summary>
+    /// <param name="request">Request contendo o e-mail, token e nova senha</param>
+    /// <param name="cancellationToken">Token de cancelamento</param>
+    /// <returns><see cref="BaseResponse"/> com status e mensagem</returns>
+    public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
+        // Busca o usuário pelo e-mail
         var userFromDb = await _userRepository.GetByEmail(request.email, cancellationToken);
         if (userFromDb == null || !userFromDb.TokenActivate.Equals(request.token))
-            return new BaseResponse(404, "User not found or invalid token");
+        {
+            return new BaseResponse<object>(
+                statusCode: 404,
+                message: "User not found or invalid token"
+            );
+        }
 
+        // Atualiza a senha do usuário
         userFromDb.UpdatePassword(new Password(request.newPassword));
         if (userFromDb.Notifications.Any())
-            return new BaseResponse(400, "Request invalid", userFromDb.Notifications.ToList());
+        {
+            return new BaseResponse<object>(
+                statusCode: 400,
+                message: "Request invalid",
+                notifications: userFromDb.Notifications.ToList()
+            );
+        }
 
+        // Atualiza o usuário no repositório
         _userRepository.Update(userFromDb);
+
+        // Confirma as alterações no banco de dados
         await _dbCommit.Commit(cancellationToken);
 
-        return new BaseResponse(200, "Password changed successfully");
+        // Retorna sucesso
+        return new BaseResponse<object>(
+            statusCode: 200,
+            message: "Password changed successfully"
+        );
     }
 }

@@ -110,6 +110,16 @@ public class UserMapping : IEntityTypeConfiguration<User>
             password.Ignore(p => p.Content);
         });
 
+        builder.Property(u => u.StudentId)
+            .HasColumnName("StudentId")
+            .HasColumnType("uuid")
+            .IsRequired(false);
+        
+        builder.HasOne(u => u.Student)
+            .WithOne()
+            .HasForeignKey<User>(s => s.StudentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder
             .HasMany(x => x.Roles)
             .WithMany(x => x.Users)

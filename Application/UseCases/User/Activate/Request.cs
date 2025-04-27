@@ -3,4 +3,10 @@ using MediatR;
 
 namespace Application.UseCases.User.Activate;
 
-public record Request(string email,long token) : IRequest<BaseResponse>;
+/// <summary>
+/// Representa a requisição para ativar um usuário.
+/// </summary>
+public record Request(
+    string email,
+    long token
+) : IRequest<BaseResponse<object>>;

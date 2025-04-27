@@ -1,4 +1,3 @@
-using System;
 using AutoMapper;
 using Domain.ValueObjects;
 
@@ -23,8 +22,9 @@ public class Mapper : Profile
         CreateMap<Domain.Entities.Core.User, Response>()
             .ConstructUsing(user => new Response(
                 201, 
-                "User created successfully. An email has been sent to activate the account",
-                user.Notifications.ToList()
+                "User created successfully. An email has been sent to activate the account", 
+                user.Notifications.ToList(), 
+                null 
             ));
     }
-}   
+}

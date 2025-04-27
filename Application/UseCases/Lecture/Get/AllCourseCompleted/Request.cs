@@ -8,6 +8,4 @@ public record Request(
     Guid CourseId,
     int skip, 
     int take
-) 
-: IRequest<BaseResponse>;
-
+) : IRequest<BaseResponse<List<Response>>>;

@@ -7,4 +7,4 @@ namespace Application.UseCases.IA.Create;
 public record Request(
     string Name, 
     IFormFile Picture
-) : IRequest<BaseResponse>;
+) : IRequest<BaseResponse<object>>;

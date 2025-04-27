@@ -66,5 +66,8 @@ public class Course : Entity
 
         _modules.Add(module);
     }
-    public void AddSubscribe() => Subscribes++;
+    public Course AddSubscribe() {
+        Subscribes++;
+        return this;   
+    }
 }

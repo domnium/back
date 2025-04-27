@@ -9,7 +9,7 @@ namespace Application.UseCases.Student.Delete;
 /// <summary>
 /// Handler responsável pela exclusão lógica de um estudante e envio assíncrono da exclusão da imagem associada.
 /// </summary>
-public class Handler : IRequestHandler<Request, BaseResponse>
+public class Handler : IRequestHandler<Request, BaseResponse<object>>
 {
     private readonly IStudentRepository _studentRepository;
     private readonly IDbCommit _dbCommit;
@@ -18,7 +18,8 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     /// <summary>
     /// Construtor do handler de deleção de estudante.
     /// </summary>
-    public Handler(IStudentRepository studentRepository,
+    public Handler(
+        IStudentRepository studentRepository,
         IDbCommit dbCommit,
         IMessageQueueService messageQueueService)
     {
@@ -32,9 +33,10 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     /// </summary>
     /// <param name="request">Request com o ID do estudante</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns><see cref="BaseResponse"/> com status da operação</returns>
-    public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
+    /// <returns><see cref="BaseResponse{object}"/> com status da operação</returns>
+    public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
+        // Busca o estudante no repositório
         var studentFound = await _studentRepository.GetWithParametersAsyncWithTracking(
             x => x.Id == request.StudentId,
             cancellationToken,
@@ -45,10 +47,19 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             x => x.Subscriptions
         );
 
+        // Verifica se o estudante foi encontrado
         if (studentFound is null)
-            return new BaseResponse(404, "Student not found");
+        {
+            return new BaseResponse<object>(
+                statusCode: 404,
+                message: "Student not found"
+            );
+        }
 
+        // Remove o estudante do repositório
         _studentRepository.Delete(studentFound);
+
+        // Lista de tarefas para exclusão de arquivos
         var deleteTasks = new List<Task>();
 
         // Enfileira a exclusão da imagem, se existir
@@ -63,8 +74,16 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             ));
         }
 
+        // Aguarda a conclusão das tarefas de exclusão
         await Task.WhenAll(deleteTasks);
+
+        // Confirma as alterações no banco de dados
         await _dbCommit.Commit(cancellationToken);
-        return new BaseResponse(200, "Student deleted successfully");
+
+        // Retorna sucesso
+        return new BaseResponse<object>(
+            statusCode: 200,
+            message: "Student deleted successfully"
+        );
     }
 }

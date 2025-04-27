@@ -6,5 +6,4 @@ namespace Application.UseCases.Course.Get.All;
 public record Request(
     int? page, 
     int? pageSize
-) : IRequest<BaseResponse>;
-
+) : IRequest<BaseResponse<List<Response>>>;

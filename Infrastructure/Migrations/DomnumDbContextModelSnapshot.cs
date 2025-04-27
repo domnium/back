@@ -392,6 +392,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("timestamptz")
                         .HasColumnName("DeletedDate");
 
+                    b.Property<Guid?>("StudentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("StudentId");
+
                     b.Property<string>("TokenActivate")
                         .HasColumnType("varchar")
                         .HasColumnName("TokenActivate");
@@ -401,6 +405,9 @@ namespace Infrastructure.Migrations
                         .HasColumnName("UpdatedDate");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StudentId")
+                        .IsUnique();
 
                     b.ToTable("Users", (string)null);
                 });
@@ -418,8 +425,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<int?>("ContentType")
-                        .HasColumnType("integer");
+                    b.Property<string>("ContentType")
+                        .HasColumnType("varchar")
+                        .HasColumnName("ContentType");
 
                     b.Property<Guid?>("CourseId")
                         .HasColumnType("uuid");
@@ -1342,6 +1350,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Core.User", b =>
                 {
+                    b.HasOne("Domain.Entities.Core.Student", "Student")
+                        .WithOne()
+                        .HasForeignKey("Domain.Entities.Core.User", "StudentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.OwnsOne("Domain.ValueObjects.Email", "Email", b1 =>
                         {
                             b1.Property<Guid>("UserId")
@@ -1449,6 +1462,8 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Password")
                         .IsRequired();
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("Domain.Entities.Core.Video", b =>

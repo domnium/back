@@ -13,10 +13,10 @@ public record Request(
     string NotionUrl,
     Guid IAId,
     Guid CategoryId,
-    IFormFile? Trailer,
+    IFormFile Trailer,
     Guid? ParametersId,
     Guid TeacherId,
     decimal Price,
     decimal TotalHours
 ) 
-: IRequest<BaseResponse>;
+: IRequest<BaseResponse<object>>;

@@ -29,11 +29,11 @@ public class ExceptionHandler
 
             var response = new
             {
-                message = "Ocorreu um erro interno no servidor. Tente novamente mais tarde.",
+                Message = "Ocorreu um erro interno no servidor. Tente novamente mais tarde.",
                 devMessage = _env.IsDevelopment() ? new
                 {
                     exception = ex.GetType().Name,
-                    message = ex.Message,
+                    Message = ex.Message,
                     stackTrace = ex.StackTrace,
                     innerException = ex.InnerException?.Message
                 } : null

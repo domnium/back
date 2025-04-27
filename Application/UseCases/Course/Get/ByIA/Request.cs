@@ -5,4 +5,4 @@ namespace Application.UseCases.Course.Get.ByIA;
 
 public record Request(
     Guid IAId, int? Page, int? PageSize
-) : IRequest<BaseResponse>;
+) : IRequest<BaseResponse<List<Response>>>;

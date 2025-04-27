@@ -10,30 +10,13 @@ using MediatR;
 
 namespace Application.UseCases.Category.Create;
 
-/// <summary>
-/// Handler responsável pela criação de uma nova categoria no sistema,
-/// incluindo o processamento de imagem associada.
-///
-/// O fluxo contempla:
-/// - Verificação de existência da categoria por nome.
-/// - Criação da entidade <see cref="Category"/> com a imagem.
-/// - Armazenamento temporário do arquivo no disco.
-/// - Envio de mensagem assíncrona para upload definitivo via RabbitMQ.
-/// </summary>
-public class Handler : IRequestHandler<Request, BaseResponse>
+public class Handler : IRequestHandler<Request, BaseResponse<object>>
 {
     private readonly ICategoryRepository _categoryRepository;
     private readonly IDbCommit _dbCommit;
     private readonly IMessageQueueService _messageQueueService;
     private readonly ITemporaryStorageService _temporaryStorageService;
 
-    /// <summary>
-    /// Construtor do handler de criação de categoria.
-    /// </summary>
-    /// <param name="categoryRepository">Repositório de categorias</param>
-    /// <param name="dbCommit">Serviço para commit da unidade de trabalho</param>
-    /// <param name="messageQueueService">Serviço para envio de mensagens assíncronas</param>
-    /// <param name="temporaryStorageService">Serviço de armazenamento temporário de arquivos</param>
     public Handler(
         ICategoryRepository categoryRepository,
         IDbCommit dbCommit,
@@ -46,18 +29,17 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         _temporaryStorageService = temporaryStorageService;
     }
 
-    /// <summary>
-    /// Manipula a criação de uma nova categoria, salvando os metadados e processando a imagem em paralelo.
-    /// </summary>
-    /// <param name="request">Request contendo nome, descrição e imagem da categoria</param>
-    /// <param name="cancellationToken">Token de cancelamento da operação</param>
-    /// <returns>Retorna um <see cref="BaseResponse"/> com status HTTP, mensagem e notificações de erro (se houver)</returns>
-    public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
+    public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
-        // Verifica se categoria já existe
+        // Verifica se a categoria já existe
         if (await _categoryRepository.GetWithParametersAsync(
             x => x.Name.Name.Equals(request.Name), cancellationToken) is not null)
-            return new BaseResponse(400, "Category already exists");
+        {
+            return new BaseResponse<object>(
+                statusCode: 400,
+                message: "Category already exists"
+            );
+        }
 
         // Cria imagem temporária associada à categoria
         var newPicture = new Picture(
@@ -65,7 +47,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             true,
             new AppFile(request.Imagem.OpenReadStream(), request.Imagem.FileName),
             new BigString(Configuration.PicturesCategoriesPath),
-             ContentTypeExtensions.ParseMimeType(request.Imagem.ContentType)
+            ContentTypeExtensions.ParseMimeType(request.Imagem.ContentType)
         );
 
         // Cria a categoria
@@ -75,10 +57,19 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             newPicture
         );
 
+        // Verifica se a categoria é válida
         if (!newCategory.IsValid)
-            return new BaseResponse(400, "Error creating category", newCategory.Notifications.ToList());
-        
+        {
+            return new BaseResponse<object>(
+                statusCode: 400,
+                message: "Error creating category",
+                notifications: newCategory.Notifications.ToList()
+            );
+        }
+
+        // Define o proprietário da imagem
         newPicture.SetPictureOwner(newCategory);
+        // Salva a categoria no banco de dados
         await _categoryRepository.CreateAsync(newCategory, cancellationToken);
         await _dbCommit.Commit(cancellationToken);
 
@@ -102,6 +93,10 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             cancellationToken
         );
 
-        return new BaseResponse(201, "Category created");
+        // Retorna sucesso
+        return new BaseResponse<object>(
+            statusCode: 201,
+            message: "Category created successfully"
+        );
     }
 }

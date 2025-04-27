@@ -5,11 +5,11 @@ namespace Domain.Interfaces.Services;
 
 public interface IMessageQueueService
 {
-    Task EnqueueUploadMessageAsync(UploadFileMessage message, 
+    Task EnqueueUploadMessageAsync(UploadFileMessage Message, 
         CancellationToken cancellationToken);
-    Task EnqueueDeleteMessageAsync(DeleteFileMessage message,
+    Task EnqueueDeleteMessageAsync(DeleteFileMessage Message,
         CancellationToken cancellationToken);
 
-    Task EnqueueEmailMessageAsync(EmailMessage message,
+    Task EnqueueEmailMessageAsync(EmailMessage Message,
         CancellationToken cancellationToken);
 }

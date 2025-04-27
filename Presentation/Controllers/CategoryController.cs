@@ -5,7 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using GetAllCategoryRequest = Application.UseCases.Category.GetAll.Request;
 using GetByIdRequest = Application.UseCases.Category.GetById.Request;
 using CreateCategoryRequest = Application.UseCases.Category.Create.Request;
+
+using GetAllCategoryResponse = Application.UseCases.Category.GetAll.Response;
+using GetByIdCategoryResponse = Application.UseCases.Category.GetById.Response;
+
 using DeleteCategoryRequest = Application.UseCases.Category.Delete.Request;
+using Domain.Records;
+using Presentation.Common.Api.Attributes;
 
 namespace Presentation.Controllers;
 
@@ -13,7 +19,6 @@ namespace Presentation.Controllers;
 /// Controlador responsável pelas operações de categorias (Category),
 /// incluindo criação, consulta, listagem e remoção.
 /// </summary>
-[ApiController]
 [Route("Category")]
 [Authorize]
 public class CategoryController(IMediator mediator) : ControllerBase
@@ -24,10 +29,11 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Lista de categorias</returns>
     [HttpGet("Get/All")]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    [DefaultResponseTypes(typeof(BaseResponse<List<GetAllCategoryResponse>>))]
+    public async Task<IActionResult> GetAll([FromQuery] int skip, [FromQuery] int take, CancellationToken cancellationToken)
     {
-        var response = await mediator.Send(new GetAllCategoryRequest(), cancellationToken);
-        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
+        var response = await mediator.Send(new GetAllCategoryRequest(skip, take), cancellationToken);
+        return StatusCode(response.StatusCode, response);
     }
 
     /// <summary>
@@ -37,10 +43,11 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Categoria encontrada</returns>
     [HttpGet("Get/ById")]
+    [DefaultResponseTypes(typeof(BaseResponse<GetByIdCategoryResponse>))]
     public async Task<IActionResult> GetById([FromQuery] Guid Id, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetByIdRequest(Id), cancellationToken);
-        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
+        return StatusCode(response.StatusCode, response);
     }
 
     /// <summary>
@@ -50,10 +57,11 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Status de criação e dados da categoria</returns>
     [HttpPost("Create")]
+    [DefaultResponseTypes(typeof(BaseResponse<object>))]
     public async Task<IActionResult> Create([FromForm] CreateCategoryRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
-        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
+        return StatusCode(response.StatusCode, response);
     }
 
     /// <summary>
@@ -63,9 +71,10 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Status da operação</returns>
     [HttpDelete("Delete")]
+    [DefaultResponseTypes(typeof(BaseResponse<object>))]
     public async Task<IActionResult> Delete([FromQuery] Guid Id, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new DeleteCategoryRequest(Id), cancellationToken);
-        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
+        return StatusCode(response.StatusCode, response);
     }
 }

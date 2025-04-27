@@ -6,5 +6,4 @@ namespace Application.UseCases.Lecture.Get.IsLectureCompleted;
 public record Request(
     Guid StudentId,
     Guid LectureId
-) : IRequest<BaseResponse>;
-
+) : IRequest<BaseResponse<Response>>;

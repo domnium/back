@@ -29,7 +29,7 @@ public class UserController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
-        return StatusCode(response.statuscode, response);
+        return StatusCode(response.StatusCode, response.Token);
     }
 
     /// <summary>
@@ -40,7 +40,7 @@ public class UserController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
-        return StatusCode(response.statuscode, new { response.statuscode, response.message, response.notifications });
+        return StatusCode(response.StatusCode, new { response.StatusCode, response.Message, response.Notifications });
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ public class UserController(IMediator mediator) : ControllerBase
     {
         var tokenlong = long.TryParse(code, out var parsedToken) ? parsedToken : 0;
         var response = await mediator.Send(new ActivateRequest(email, tokenlong), cancellationToken);
-        return StatusCode(response.statuscode, response);
+        return StatusCode(response.StatusCode, response);
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ public class UserController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
-        return StatusCode(response.statuscode, new { response.statuscode, response.message, response.notifications });
+        return StatusCode(response.StatusCode, new { response.StatusCode, response.Message, response.Notifications });
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public class UserController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ResendCode([FromBody] ResendCodeRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
-        return StatusCode(response.statuscode, new { response.statuscode, response.message, response.notifications });
+        return StatusCode(response.StatusCode, new { response.StatusCode, response.Message, response.Notifications });
     }
 
     /// <summary>
@@ -85,6 +85,6 @@ public class UserController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ForgotPasswordActivate([FromBody] ActivatePasswordRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
-        return StatusCode(response.statuscode, new { response.message, response.notifications });
+        return StatusCode(response.StatusCode, new { response.Message, response.Notifications });
     }
 }

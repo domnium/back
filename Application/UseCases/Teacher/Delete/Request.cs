@@ -5,4 +5,4 @@ namespace Application.UseCases.Teacher.Delete;
 
 public record Request(
     Guid TeacherId
-) : IRequest<BaseResponse>;
+) : IRequest<BaseResponse<object>>;

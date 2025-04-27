@@ -6,11 +6,12 @@ using MediatR;
 
 namespace Application.UseCases.Category.Delete;
 
-public class Handler : IRequestHandler<Request, BaseResponse>
+public class Handler : IRequestHandler<Request, BaseResponse<object>>
 {
     private readonly ICategoryRepository _categoryRepository;
     private readonly IDbCommit _dbCommit;   
     private readonly IMessageQueueService _messageQueueService;
+
     public Handler(ICategoryRepository categoryRepository, 
         IDbCommit dbCommit,
         IMessageQueueService messageQueueService)
@@ -19,23 +20,40 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         _dbCommit = dbCommit;
         _messageQueueService = messageQueueService;
     }
-    public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
+
+    public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
+        // Busca a categoria no repositório
         var category = await _categoryRepository.GetWithParametersAsync(
-                c => c.Id.Equals(request.Id), cancellationToken);
+            c => c.Id.Equals(request.Id), cancellationToken);
 
+        // Verifica se a categoria foi encontrada
         if (category is null)
-            return new BaseResponse(404, "Category not found");
+        {
+            return new BaseResponse<object>(
+                statusCode: 404,
+                message: "Category not found"
+            );
+        }
 
+        // Enfileira a exclusão da imagem, se existir
         if (category.Picture?.AwsKey is not null && !string.IsNullOrWhiteSpace(category.Picture.BucketName))
         {
             await _messageQueueService.EnqueueDeleteMessageAsync(
-                    new DeleteFileMessage(category.Picture.BucketName, category.Picture.AwsKey!.Body),
-                    cancellationToken);
+                new DeleteFileMessage(category.Picture.BucketName, category.Picture.AwsKey.Body),
+                cancellationToken);
         }
 
+        // Remove a categoria do repositório
         _categoryRepository.Delete(category);
+
+        // Confirma as alterações no banco de dados
         await _dbCommit.Commit(cancellationToken);
-        return new BaseResponse(200, "Category deleted", null);
+
+        // Retorna sucesso
+        return new BaseResponse<object>(
+            statusCode: 200,
+            message: "Category deleted successfully"
+        );
     }
 }

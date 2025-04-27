@@ -16,4 +16,4 @@ public record Request(
     string? GitHub,
     string Description,
     IFormFile Picture
-) : IRequest<BaseResponse>;
+) : IRequest<BaseResponse<object>>;

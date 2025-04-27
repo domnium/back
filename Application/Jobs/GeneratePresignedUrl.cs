@@ -63,7 +63,7 @@ public class GeneratePresignedUrl(IServiceScopeFactory scopeFactory,
             {
                 var urlExpiradaOuInexistente = video.UrlExpired is null || video.UrlExpired <= DateTime.UtcNow;
 
-                if (video.IsValid && !video.Ativo && video.AwsKey != null && 
+                if (video.IsValid &&  video.AwsKey != null && 
                     video.BucketName != null && video.ContentType is not null
                     && video.DeletedDate is null &&
                     urlExpiradaOuInexistente)

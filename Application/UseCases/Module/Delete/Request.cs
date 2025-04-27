@@ -5,4 +5,4 @@ namespace Application.UseCases.Module.Delete;
 
 public record Request(
     Guid ModuleId
-) : IRequest<BaseResponse>;
+) : IRequest<BaseResponse<object>>;

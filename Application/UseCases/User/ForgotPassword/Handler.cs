@@ -7,21 +7,38 @@ using MediatR;
 
 namespace Application.UseCases.User.ForgotPassword;
 
+/// <summary>
+/// Handler responsável por gerar um token de redefinição de senha e enviar um e-mail de ativação.
+/// </summary>
 public class Handler(
     IUserRepository userRepository,
     IDbCommit dbCommit,
     IEmailService emailService,
-    IMessageQueueService messageQueueService) : IRequestHandler<Request, BaseResponse>
+    IMessageQueueService messageQueueService) : IRequestHandler<Request, BaseResponse<object>>
 {
-    public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
+    /// <summary>
+    /// Manipula a geração do token de redefinição de senha e o envio do e-mail de ativação.
+    /// </summary>
+    /// <param name="request">Request contendo o e-mail do usuário</param>
+    /// <param name="cancellationToken">Token de cancelamento</param>
+    /// <returns><see cref="BaseResponse"/> com status e mensagem</returns>
+    public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
+        // Busca o usuário pelo e-mail
         var userFromDb = await userRepository.GetByEmail(request.Email, cancellationToken);
         if (userFromDb is null)
-            return new BaseResponse(404, "User not found");
+        {
+            return new BaseResponse<object>(
+                statusCode: 404,
+                message: "User not found"
+            );
+        }
 
+        // Gera o token de redefinição de senha
         userFromDb.GenerateToken();
         userRepository.Update(userFromDb);
 
+        // Cria as tarefas de commit e envio de e-mail
         var commitTask = dbCommit.Commit(cancellationToken);
         var emailTask = messageQueueService.EnqueueEmailMessageAsync(
             new EmailMessage(
@@ -36,7 +53,13 @@ public class Handler(
             cancellationToken
         );
 
+        // Aguarda a conclusão das tarefas
         await Task.WhenAll(commitTask, emailTask);
-        return new BaseResponse(201, "Password change activation email sent");
+
+        // Retorna sucesso
+        return new BaseResponse<object>(
+            statusCode: 201,
+            message: "Password change activation email sent"
+        );
     }
 }

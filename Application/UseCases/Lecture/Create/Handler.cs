@@ -2,6 +2,7 @@ using System;
 using AutoMapper;
 using Domain;
 using Domain.Entities.Core;
+using Domain.ExtensionsMethods;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Records;
@@ -15,84 +16,80 @@ namespace Application.UseCases.Lecture.Create;
 /// Realiza a validação, persistência no banco, 
 /// armazenamento temporário do vídeo e envio de mensagem para processamento assíncrono.
 /// </summary>
-public class Handler : IRequestHandler<Request, BaseResponse>
+public class Handler : IRequestHandler<Request, BaseResponse<object>>
 {
     private readonly IModuleRepository _moduleRepository;
     private readonly IDbCommit _dbCommit;
     private readonly IMessageQueueService _messageQueueService;
     private readonly ITemporaryStorageService _temporaryStorageService;
+    private readonly ILectureRepository _lectureRepository;
     private readonly IMapper _mapper;
 
-    /// <summary>
-    /// Construtor do handler de criação de Lecture.
-    /// </summary>
-    /// <param name="moduleRepository">Repositório de módulos</param>
-    /// <param name="dbCommit">Serviço de commit unitário</param>
-    /// <param name="mapper">AutoMapper para converter Request → Lecture</param>
-    /// <param name="messageQueueService">Serviço para enfileirar upload</param>
-    /// <param name="temporaryStorageService">Serviço para salvar vídeo em disco temporário</param>
     public Handler(
         IModuleRepository moduleRepository,
         IDbCommit dbCommit,
         IMapper mapper,
         IMessageQueueService messageQueueService,
-        ITemporaryStorageService temporaryStorageService)
+        ITemporaryStorageService temporaryStorageService,
+        ILectureRepository lectureRepository)
     {
         _moduleRepository = moduleRepository;
         _dbCommit = dbCommit;
         _mapper = mapper;
+        _lectureRepository = lectureRepository;
         _messageQueueService = messageQueueService;
         _temporaryStorageService = temporaryStorageService;
     }
 
-    /// <summary>
-    /// Manipula a criação de uma Lecture, associando-a a um módulo existente,
-    /// salvando o vídeo temporariamente e enfileirando a mensagem de upload para o RabbitMQ.
-    /// </summary>
-    /// <param name="request">Request contendo os dados da aula (Lecture)</param>
-    /// <param name="cancellationToken">Token de cancelamento da operação</param>
-    /// <returns>Retorna um <see cref="BaseResponse"/> com status e mensagens de validação</returns>
-    public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
+    public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
+        // Busca o módulo no repositório
         var module = await _moduleRepository.GetWithParametersAsync(
             x => x.Id.Equals(request.Moduleid), cancellationToken);
 
         if (module is null)
-            return new BaseResponse(404, "Module not found");
+            return new BaseResponse<object>(404, "Module not found");
 
+        _moduleRepository.Attach(module);
         var lecture = _mapper.Map<Domain.Entities.Core.Lecture>(request);
-        lecture.AddModule(module);
-        module.AddLecture(lecture);
 
-        if (lecture.IsValid && module.IsValid)
-        {
-            _moduleRepository.Update(module);
-            await _dbCommit.Commit(cancellationToken);
+        // Valida a Lecture antes de persistir
+        if (!lecture.IsValid)
+            return new BaseResponse<object>(400, "Invalid lecture", lecture.Notifications.ToList());
 
-            var tempVideoPath = await _temporaryStorageService.SaveAsync(
-                lecture.Video.TemporaryPath!.Body!,
-                lecture.Video.Id,
-                request.File.OpenReadStream(),
-                cancellationToken
-            );
+        // Persiste a Lecture no banco de dados
+        await _lectureRepository.CreateAsync(lecture, cancellationToken);
 
-            await _messageQueueService.EnqueueUploadMessageAsync(
-                new UploadFileMessage(
-                    lecture.Video.Id,
-                    Configuration.BucketVideos,
-                    lecture.Video.TemporaryPath!.Body!,
-                    lecture.Video.ContentType!.Value.ToString(),
-                    tempVideoPath
-                ), cancellationToken
-            );
+        // Valida o módulo após adicionar a Lecture
+        if (!module.IsValid)
+            return new BaseResponse<object>(400, "Invalid module", module.Notifications.ToList());
 
-            return new BaseResponse(200, "Lecture created successfully");
-        }
+        // Atualiza o módulo no repositório
+        _moduleRepository.Update(module);
 
-        return new BaseResponse(
-            400,
-            "Lecture not created",
-            lecture.Notifications.Concat(module.Notifications).ToList()
+        // Persiste as alterações no banco de dados
+        await _dbCommit.Commit(cancellationToken);
+
+        // Salva o vídeo temporariamente
+        var tempVideoPath = await _temporaryStorageService.SaveAsync(
+            lecture.Video.TemporaryPath!.Body!,
+            lecture.Video.Id,
+            request.File.OpenReadStream(),
+            cancellationToken
         );
+
+        // Enfileira a mensagem para upload do vídeo
+        await _messageQueueService.EnqueueUploadMessageAsync(
+            new UploadFileMessage(
+                lecture.Video.Id,
+                Configuration.BucketVideos,
+                lecture.Video.TemporaryPath!.Body!,
+                lecture.Video.ContentType.GetMimeType(),
+                tempVideoPath
+            ), cancellationToken
+        );
+
+        // Retorna sucesso
+        return new BaseResponse<object>(200, "Lecture created successfully");
     }
 }

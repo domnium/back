@@ -9,6 +9,25 @@ public static class ContentTypeExtensions
 {
     public static string GetMimeType(this ContentType contentType)
     {
+        if (contentType == null)
+        {
+            return "application/octet-stream"; 
+        }
+
+        return contentType
+            .GetType()
+            .GetMember(contentType.ToString())[0]
+            .GetCustomAttribute<DescriptionAttribute>()?
+            .Description ?? contentType.ToString();
+    }
+
+    public static string GetMimeType(this ContentType? contentType)
+    {
+        if (contentType == null)
+        {
+            return "application/octet-stream"; 
+        }
+
         return contentType
             .GetType()
             .GetMember(contentType.ToString())[0]

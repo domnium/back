@@ -7,16 +7,11 @@ namespace Presentation.Common.Api;
 public static class AppExtensions
 {
     #region ConfigureEnvironment
-    public static void ConfigureEnvironment(this WebApplication app)
+    public static void ConfigureDevEnvironment(this WebApplication app)
     {
-        app.UseHttpsRedirection();
-        app.UseForwardedHeaders();
-        app.UseHangfireServer();
-
-        var job = app.Services.GetRequiredService<IGeneratePresignedUrlJob>();
-        RecurringJob.AddOrUpdate<IGeneratePresignedUrlJob>(
-            job => job.GenerateAndSavePresignedUrlsAsync(),
-            Cron.Minutely); 
+        app.UseDeveloperExceptionPage();
+        app.UseSwagger();
+        app.UseSwaggerUI();
     }
     #endregion ConfigureEnvironment
 

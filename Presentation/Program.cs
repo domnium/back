@@ -1,5 +1,7 @@
 
 using Domain;
+using Domain.Interfaces.Services;
+using Hangfire;
 using Infrastructure.DI;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Presentation.Common.Api;
@@ -20,7 +22,23 @@ builder.AddServices();
 
 var app = builder.Build();
 
-app.ConfigureEnvironment();
+if (app.Environment.IsDevelopment())
+{
+    app.ConfigureDevEnvironment();
+}
+else
+{
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseForwardedHeaders();
+app.UseHangfireServer();
+
+var job = app.Services.GetRequiredService<IGeneratePresignedUrlJob>();
+RecurringJob.AddOrUpdate<IGeneratePresignedUrlJob>(
+    job => job.GenerateAndSavePresignedUrlsAsync(),
+    Cron.Minutely); 
 
 app.UseRouting();
 app.UseMiddleware<ExceptionHandler>();

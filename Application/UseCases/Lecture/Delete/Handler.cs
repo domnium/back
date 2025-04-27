@@ -10,7 +10,7 @@ namespace Application.UseCases.Lecture.Delete;
 /// Handler responsável por deletar uma aula (lecture),
 /// removendo-a do banco de dados e enfileirando a exclusão do vídeo correspondente do armazenamento externo.
 /// </summary>
-public class Handler : IRequestHandler<Request, BaseResponse>
+public class Handler : IRequestHandler<Request, BaseResponse<object>>
 {
     private readonly ILectureRepository _lectureRepository;
     private readonly IMessageQueueService _messageQueueService;
@@ -37,31 +37,48 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     /// </summary>
     /// <param name="request">Request com o ID da aula a ser removida</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns>Instância de <see cref="BaseResponse"/> com status da operação</returns>
-    public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
+    /// <returns>Instância de <see cref="BaseResponse{object}"/> com status da operação</returns>
+    public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
+        // Busca a aula no repositório
         var lecture = await _lectureRepository.GetWithParametersAsyncWithTracking(
-                x => x.Id == request.id,
-                cancellationToken,
-                x => x.StudentLectures,
-                x => x.Video
+            x => x.Id == request.id,
+            cancellationToken,
+            x => x.StudentLectures,
+            x => x.Video
         );
 
+        // Verifica se a aula foi encontrada
         if (lecture is null)
-            return new BaseResponse(404, "Lecture not found");
+        {
+            return new BaseResponse<object>(
+                statusCode: 404,
+                message: "Lecture not found"
+            );
+        }
 
+        // Remove a aula do repositório
         _lectureRepository.Delete(lecture);
+
+        // Confirma as alterações no banco de dados
         await _dbCommit.Commit(cancellationToken);
 
+        // Enfileira a exclusão do vídeo, se existir
         if (lecture.Video?.AwsKey is not null && !string.IsNullOrWhiteSpace(lecture.Video.BucketName))
         {
             await _messageQueueService.EnqueueDeleteMessageAsync(
                 new DeleteFileMessage(
                     lecture.Video.BucketName,
-                    lecture.Video.AwsKey.Body),
-                cancellationToken);
+                    lecture.Video.AwsKey.Body
+                ),
+                cancellationToken
+            );
         }
 
-        return new BaseResponse(200, "Lecture deleted", null, lecture);
+        // Retorna sucesso
+        return new BaseResponse<object>(
+            statusCode: 200,
+            message: "Lecture deleted successfully"
+        );
     }
 }

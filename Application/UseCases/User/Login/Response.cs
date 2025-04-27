@@ -3,5 +3,5 @@ using Flunt.Notifications;
 
 namespace Application.UseCases.User.Login;
 
-public record Response(int statuscode, string? message = null!,List<Notification>? notifications = null!, string? Token = null!) 
-    : BaseResponse(statuscode,message, notifications);
+public record Response(int StatusCode, string? Message = null, List<Notification>? Notifications = null, string? Token = null) 
+    : BaseResponse<string>(StatusCode, Message, Token, Notifications);

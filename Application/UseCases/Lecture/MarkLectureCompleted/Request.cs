@@ -7,4 +7,4 @@ public record Request(
     Guid CourseId,
     Guid StudentId,
     Guid LectureId
-) : IRequest<BaseResponse>;
+) : IRequest<BaseResponse<object>>;

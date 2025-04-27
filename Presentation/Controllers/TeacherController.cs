@@ -7,6 +7,12 @@ using GetAllTeachersRequest = Application.UseCases.Teacher.GetAll.Request;
 using CreateTeacherRequest = Application.UseCases.Teacher.Create.Request;
 using DeleteTeacherRequest = Application.UseCases.Teacher.Delete.Request;
 
+using GetTeacherResponse = Application.UseCases.Teacher.GetById.Response;
+using GetAllTeachersResponse = Application.UseCases.Teacher.GetAll.Response;
+
+using Domain.Records;
+using Presentation.Common.Api.Attributes;
+
 namespace Presentation.Controllers;
 
 /// <summary>
@@ -24,10 +30,11 @@ public class TeacherController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
     [HttpGet("Get/{Id}")]
-    public async Task<IActionResult> GetById([FromQuery] Guid Id, CancellationToken cancellationToken)
+    [DefaultResponseTypes(typeof(BaseResponse<GetTeacherResponse>))]
+    public async Task<IActionResult> GetById([FromRoute] Guid Id, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetTeacherRequest(TeacherId: Id), cancellationToken);
-        return StatusCode(response.statuscode, new { response.message, response.Response });
+        return StatusCode(response.StatusCode, response);
     }
 
     /// <summary>
@@ -36,10 +43,11 @@ public class TeacherController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
     [HttpGet("Get/All")]
+    [DefaultResponseTypes(typeof(BaseResponse<List<GetAllTeachersResponse>>))]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetAllTeachersRequest(), cancellationToken);
-        return StatusCode(response.statuscode, new { response.message, response.Response });
+        return StatusCode(response.StatusCode, response);
     }
 
     /// <summary>
@@ -49,10 +57,11 @@ public class TeacherController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
     [HttpPost("Create")]
+    [DefaultResponseTypes(typeof(BaseResponse<object>))]
     public async Task<IActionResult> Create([FromForm] CreateTeacherRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
-        return StatusCode(response.statuscode, new { response.message, response.Response, response.notifications });
+        return StatusCode(response.StatusCode, response);
     }
 
     /// <summary>
@@ -62,9 +71,10 @@ public class TeacherController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
     [HttpDelete("Delete")]
+    [DefaultResponseTypes(typeof(BaseResponse<object>))]
     public async Task<IActionResult> Delete([FromQuery] Guid Id, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new DeleteTeacherRequest(TeacherId: Id), cancellationToken);
-        return StatusCode(response.statuscode, new { response.message, response.Response });
+        return StatusCode(response.StatusCode, response);
     }
 }

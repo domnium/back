@@ -1,8 +1,7 @@
 using Domain.Records;
 using MediatR;
 
-namespace Application.UseCases.Teacher.GetById;
+namespace Application.UseCases.Module.GetById;
 
-public record Request(
-    Guid TeacherId
-) : IRequest<BaseResponse>;
+public record Request(Guid ModuleId) 
+: IRequest<BaseResponse<Response>>;

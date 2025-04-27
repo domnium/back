@@ -13,11 +13,15 @@ public class VideoMapping : IEntityTypeConfiguration<Video>
 
         builder.Property(v => v.Ativo).IsRequired();
         builder.Property(v => v.BucketName).HasMaxLength(255);
-        builder.Property(v => v.ContentType);
         builder.Property(v => v.UrlExpired);
         builder.Property(v => v.CreatedDate)
             .HasColumnType("timestamptz")
             .IsRequired();
+        builder.Property(v => v.ContentType)
+            .HasColumnName("ContentType")
+            .HasColumnType("varchar")
+            .HasConversion<string>() 
+            .IsRequired(false);
 
         builder.Property(v => v.UpdatedDate)
             .HasColumnType("timestamptz")

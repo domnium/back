@@ -6,12 +6,14 @@ using MediatR;
 
 namespace Application.UseCases.IA.Delete;
 
-public class Handler : IRequestHandler<Request, BaseResponse>
+public class Handler : IRequestHandler<Request, BaseResponse<object>>
 {
     private readonly IIARepository _iaRepository;
     private readonly IDbCommit _dbCommit;   
     private readonly IMessageQueueService _messageQueueService;
-    public Handler(IIARepository iaRepository, 
+
+    public Handler(
+        IIARepository iaRepository, 
         IDbCommit dbCommit,
         IMessageQueueService messageQueueService)
     {
@@ -19,23 +21,41 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         _dbCommit = dbCommit;
         _messageQueueService = messageQueueService;
     }
-    public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
+
+    public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
-        var IA = await _iaRepository.GetWithParametersAsync(
-                c => c.Id.Equals(request.Id), cancellationToken);
+        // Busca a IA no repositório
+        var ia = await _iaRepository.GetWithParametersAsync(
+            c => c.Id.Equals(request.Id), cancellationToken);
 
-        if (IA is null)
-            return new BaseResponse(404, "IA not found");
-
-        if (IA.Picture?.AwsKey is not null && !string.IsNullOrWhiteSpace(IA.Picture.BucketName))
+        // Verifica se a IA foi encontrada
+        if (ia is null)
         {
-            await _messageQueueService.EnqueueDeleteMessageAsync(
-                    new DeleteFileMessage(IA.Picture.BucketName, IA.Picture.AwsKey!.Body),
-                    cancellationToken);
+            return new BaseResponse<object>(
+                statusCode: 404,
+                message: "IA not found"
+            );
         }
 
-        _iaRepository.Delete(IA);
+        // Enfileira a exclusão da imagem, se existir
+        if (ia.Picture?.AwsKey is not null && !string.IsNullOrWhiteSpace(ia.Picture.BucketName))
+        {
+            await _messageQueueService.EnqueueDeleteMessageAsync(
+                new DeleteFileMessage(ia.Picture.BucketName, ia.Picture.AwsKey.Body),
+                cancellationToken
+            );
+        }
+
+        // Remove a IA do repositório
+        _iaRepository.Delete(ia);
+
+        // Confirma as alterações no banco de dados
         await _dbCommit.Commit(cancellationToken);
-        return new BaseResponse(200, "IA deleted", null);
+
+        // Retorna sucesso
+        return new BaseResponse<object>(
+            statusCode: 200,
+            message: "IA deleted successfully"
+        );
     }
 }

@@ -6,4 +6,4 @@ namespace Application.UseCases.IA.Delete;
 
 public record Request(
     Guid Id
-) : IRequest<BaseResponse>;
+) : IRequest<BaseResponse<object>>;

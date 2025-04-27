@@ -9,4 +9,4 @@ public record Request(
     Guid UserId,
     bool IsFreeStudent,
     IFormFile? Picture
-) : IRequest<BaseResponse>;
+) : IRequest<BaseResponse<object>>;

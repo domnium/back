@@ -10,10 +10,10 @@ using MediatR;
 namespace Application.UseCases.Teacher.Create;
 
 /// <summary>
-/// Handler responsável pela criação de um novo estudante,
-/// com associação a um usuário existente, imagem de perfil e envio assíncrono de upload para RabbitMQ.
+/// Handler responsável pela criação de um novo professor,
+/// com associação a uma imagem de perfil e envio assíncrono de upload para RabbitMQ.
 /// </summary>
-public class Handler : IRequestHandler<Request, BaseResponse>
+public class Handler : IRequestHandler<Request, BaseResponse<object>>
 {
     private readonly IMessageQueueService _messageQueueService;
     private readonly ITeacherRepository _teacherRepository;
@@ -40,17 +40,20 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     /// </summary>
     /// <param name="request">Request com dados do professor e imagem</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns><see cref="BaseResponse"/> com status e mensagem</returns>
-    public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
+    /// <returns><see cref="BaseResponse{object}"/> com status e mensagem</returns>
+    public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
         // Cria a imagem
-        var picture = new Picture(null, false, new AppFile(request.Picture.OpenReadStream(), request.Picture.FileName),
+        var picture = new Picture(
+            null,
+            false,
+            new AppFile(request.Picture.OpenReadStream(), request.Picture.FileName),
             new BigString(Configuration.PicturesTeacherPath),
             ContentTypeExtensions.ParseMimeType(request.Picture.ContentType)
         );
 
         if (picture.Notifications.Any())
-            return new BaseResponse(400, "Error creating picture", picture.Notifications.ToList());
+            return new BaseResponse<object>(400, "Error creating picture", picture.Notifications.ToList());
 
         // Cria entidade Teacher com imagem
         var newTeacher = new Domain.Entities.Core.Teacher(
@@ -68,14 +71,15 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         );
 
         if (newTeacher.Notifications.Any())
-            return new BaseResponse(400, "Invalid teacher", newTeacher.Notifications.ToList());
+            return new BaseResponse<object>(400, "Invalid teacher", newTeacher.Notifications.ToList());
 
+        // Verifica se o professor já existe
         var teacherAlreadyExists = await _teacherRepository.GetWithParametersAsync(
             t => t.Cpf.Numero.Equals(request.Cpf), cancellationToken
         );
 
-        if(teacherAlreadyExists is not null)
-            return new BaseResponse(400, "Teacher Already Exists");
+        if (teacherAlreadyExists is not null)
+            return new BaseResponse<object>(400, "Teacher already exists");
 
         // Persiste tudo: Teacher + Picture
         await _teacherRepository.CreateAsync(newTeacher, cancellationToken);
@@ -97,6 +101,8 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             request.Picture.ContentType,
             tempPath
         ), cancellationToken);
-        return new BaseResponse(201, "Teacher created");
+
+        // Retorna sucesso
+        return new BaseResponse<object>(201, "Teacher created successfully");
     }
 }

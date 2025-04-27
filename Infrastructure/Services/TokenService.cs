@@ -35,6 +35,11 @@ public static class RoleClaimsExtensions
         {
             new Claim(ClaimTypes.Email, user.Email.Address!),
         };
+
+        if (user.StudentId is not null)
+        {
+            result.Add(new Claim("StudentId", user.StudentId.ToString()!));
+        }
         return result;
     }
 }

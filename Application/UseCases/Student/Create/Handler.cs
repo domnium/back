@@ -14,7 +14,7 @@ namespace Application.UseCases.Student.Create;
 /// Handler responsável pela criação de um novo estudante,
 /// com associação a um usuário existente, imagem de perfil e envio assíncrono de upload para RabbitMQ.
 /// </summary>
-public class Handler : IRequestHandler<Request, BaseResponse>
+public class Handler : IRequestHandler<Request, BaseResponse<object>>
 {
     private readonly IMessageQueueService _messageQueueService;
     private readonly IStudentRepository _studentRepository;
@@ -44,31 +44,34 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     /// </summary>
     /// <param name="request">Request com dados do aluno e imagem</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns><see cref="BaseResponse"/> com status e mensagem</returns>
-    public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
+    /// <returns><see cref="BaseResponse{object}"/> com status e mensagem</returns>
+    public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
+        // Verifica se o usuário existe
         var userFound = await _userRepository
             .GetWithParametersAsync(x => x.Id == request.UserId, cancellationToken);
 
         if (userFound is null)
-            return new BaseResponse(400, "User does not exist");
+            return new BaseResponse<object>(400, "User does not exist");
 
-        if(await _studentRepository.GetWithParametersAsync(
-            s => s.UserId.Equals(request.UserId) 
-            , cancellationToken) is not null)
-            return new BaseResponse(400, "Student already Exist");
+        // Verifica se o estudante já existe
+        if (await _studentRepository.GetWithParametersAsync(
+            s => s.UserId.Equals(request.UserId), cancellationToken) is not null)
+        {
+            return new BaseResponse<object>(400, "Student already exists");
+        }
 
         // Cria a imagem
         var picture = new Picture(
-            null, 
-            true, 
+            null,
+            true,
             new AppFile(request.Picture!.OpenReadStream(), request.Picture.FileName),
             new BigString(Configuration.PicturesStudensPath),
             ContentTypeExtensions.ParseMimeType(request.Picture.ContentType)
-            );
+        );
 
         if (picture.Notifications.Any())
-            return new BaseResponse(400, "Error creating picture", picture.Notifications.ToList());
+            return new BaseResponse<object>(400, "Error creating picture", picture.Notifications.ToList());
 
         // Cria entidade Student com imagem
         var newStudent = new Domain.Entities.Core.Student(
@@ -79,10 +82,11 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         );
 
         if (newStudent.Notifications.Any())
-            return new BaseResponse(400, "Invalid student", newStudent.Notifications.ToList());
+            return new BaseResponse<object>(400, "Invalid student", newStudent.Notifications.ToList());
 
         // Persiste tudo: Student + Picture
-        _studentRepository.Attach(userFound);
+        userFound.AssignStudent(newStudent);
+        _userRepository.Update(userFound);
         await _studentRepository.CreateAsync(newStudent, cancellationToken);
         await _dbCommit.Commit(cancellationToken);
 
@@ -103,6 +107,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
             tempPath
         ), cancellationToken);
 
-        return new BaseResponse(201, "Student created");
+        // Retorna sucesso
+        return new BaseResponse<object>(201, "Student created successfully");
     }
 }

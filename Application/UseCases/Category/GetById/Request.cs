@@ -6,5 +6,4 @@ namespace Application.UseCases.Category.GetById;
 
 public record Request(
     Guid? Id
-)
-: IRequest<BaseResponse>;
+) : IRequest<BaseResponse<Response>>;

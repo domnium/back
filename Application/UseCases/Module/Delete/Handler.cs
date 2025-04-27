@@ -8,7 +8,7 @@ namespace Application.UseCases.Module.Delete;
 /// <summary>
 /// Handler responsável pela exclusão lógica de um módulo.
 /// </summary>
-public class Handler : IRequestHandler<Request, BaseResponse>
+public class Handler : IRequestHandler<Request, BaseResponse<object>>
 {
     private readonly IModuleRepository _moduleRepository;
     private readonly IDbCommit _dbCommit;
@@ -17,7 +17,8 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     /// <summary>
     /// Construtor do handler de deleção do módulo.
     /// </summary>
-    public Handler(IModuleRepository moduleRepository,
+    public Handler(
+        IModuleRepository moduleRepository,
         IDbCommit dbCommit,
         IMessageQueueService messageQueueService)
     {
@@ -31,22 +32,37 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     /// </summary>
     /// <param name="request">Request com o ID do módulo</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns><see cref="BaseResponse"/> com status da operação</returns>
-    public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
+    /// <returns><see cref="BaseResponse{object}"/> com status da operação</returns>
+    public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
-       var moduleFound = await _moduleRepository.GetWithParametersAsyncWithTracking(
+        // Busca o módulo no repositório
+        var moduleFound = await _moduleRepository.GetWithParametersAsyncWithTracking(
             x => x.Id == request.ModuleId,
             cancellationToken,
             x => x.Lectures,
             x => x.Lectures.Select(l => l.StudentLectures),
-            x => x.Lectures.Select(l => l.Video) 
+            x => x.Lectures.Select(l => l.Video)
         );
 
+        // Verifica se o módulo foi encontrado
         if (moduleFound is null)
-            return new BaseResponse(404, "Module not found");
+        {
+            return new BaseResponse<object>(
+                statusCode: 404,
+                message: "Module not found"
+            );
+        }
 
+        // Remove o módulo do repositório
         _moduleRepository.Delete(moduleFound);
+
+        // Confirma as alterações no banco de dados
         await _dbCommit.Commit(cancellationToken);
-        return new BaseResponse(200, "Module deleted successfully");
+
+        // Retorna sucesso
+        return new BaseResponse<object>(
+            statusCode: 200,
+            message: "Module deleted successfully"
+        );
     }
 }

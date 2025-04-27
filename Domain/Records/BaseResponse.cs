@@ -3,26 +3,21 @@ using Flunt.Notifications;
 
 namespace Domain.Records;
 
-public record BaseResponse
+public record BaseResponse<T>
 {
-    public int statuscode;
-    
+    public int StatusCode { get; init; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public string? message = string.Empty;
-    
+    public string Message { get; init; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public List<Notification>? notifications = null!;
+    public List<Notification>? Notifications { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public T? Response { get; init; }
 
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public dynamic Response { get; private set; } = null!;
-
-    public BaseResponse(int statuscode, string message, List<Notification>? notifications = null, 
-        dynamic response = null)
+    public BaseResponse(int statusCode, string message, T? response = default, List<Notification>? notifications = null)
     {
-        this.message = message;
-        this.statuscode = statuscode;
-        this.notifications = notifications != null && notifications.Any() ? notifications : null;
+        StatusCode = statusCode;
+        Message = message;
+        Notifications = notifications;
         Response = response;
     }
 }
-    

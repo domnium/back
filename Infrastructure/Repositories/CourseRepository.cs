@@ -39,4 +39,15 @@ public class CourseRepository(DomnumDbContext context)
         ))
         .ToListAsync(cancellationToken);
 
+    public async Task<Course?> GetCourseWithDetailsAsync(Guid courseId, CancellationToken cancellationToken)
+    {
+        return await context.Set<Course>()
+            .Include(c => c.Modules)
+                .ThenInclude(m => m.Lectures)
+            .Include(c => c.Picture)
+            .Include(c => c.Trailer)
+            .Include(c => c.Parameters)
+            .FirstOrDefaultAsync(c => c.Id == courseId, cancellationToken);
+    }
+
 }

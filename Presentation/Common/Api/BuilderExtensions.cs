@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using Presentation.Common.Converters;
+using Presentation.Common.Filters;
 
 namespace Presentation.Common.Api;
 
@@ -59,8 +60,8 @@ public static class BuilderExtensions
 
                 var result = new
                 {
-                    message = "Invalid Request.",
-                    notifications = errors
+                    Message = "Invalid Request.",
+                    Notifications = errors
                 };
                 return new BadRequestObjectResult(result);
             };
@@ -73,6 +74,7 @@ public static class BuilderExtensions
         .AddNewtonsoftJson(options =>
         {
             options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             options.SerializerSettings.DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore;
             options.SerializerSettings.ContractResolver = new IgnoreEmptyEnumerablesContractResolver
             {
@@ -122,6 +124,55 @@ public static class BuilderExtensions
 
     public static void AddServices(this WebApplicationBuilder builder)
     {
+        if(builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.OperationFilter<DefaultResponseTypeFilter>();
+
+                // Personaliza os nomes dos esquemas para garantir unicidade
+                options.CustomSchemaIds(type =>
+                {
+                    if (type.IsGenericType)
+                    {
+                        // Para tipos genéricos, exibe o nome base e os argumentos genéricos
+                        var genericTypeName = type.GetGenericTypeDefinition().Name;
+                        genericTypeName = genericTypeName.Substring(0, genericTypeName.IndexOf('`')); // Remove o sufixo `1, `2, etc.
+
+                        // Processa os argumentos genéricos recursivamente
+                        var genericArgs = string.Join("_", type.GenericTypeArguments.Select(ProcessTypeName));
+                        return $"{genericTypeName}_{genericArgs}";
+                    }
+
+                    // Para tipos não genéricos, inclui o namespace para garantir unicidade
+                    return ProcessTypeName(type);
+                });
+
+                static string ProcessTypeName(Type type)
+                {
+                    if (type.IsGenericType)
+                    {
+                        // Para tipos genéricos, exibe o nome base e os argumentos genéricos
+                        var genericTypeName = type.GetGenericTypeDefinition().Name;
+                        genericTypeName = genericTypeName.Substring(0, genericTypeName.IndexOf('`')); // Remove o sufixo `1, `2, etc.
+                        var genericArgs = string.Join("_", type.GenericTypeArguments.Select(ProcessTypeName));
+                        return $"{genericTypeName}_{genericArgs}";
+                    }
+
+                    // Para tipos não genéricos, verifica se "UseCases" está presente no nome completo
+                    if (type.FullName != null && type.FullName.Contains("UseCases"))
+                    {
+                        return type.FullName
+                            .Replace(".", "_")
+                            .Replace("BaseResponse_", "")
+                            .Substring(type.FullName.IndexOf("UseCases"));
+                    }
+
+                    // Caso "UseCases" não esteja presente, retorna o nome completo com ajustes
+                    return type.FullName?.Replace(".", "_").Replace("BaseResponse_", "") ?? type.Name;
+                }
+            });
+        }
         builder.Services.Configure<ForwardedHeadersOptions>(options =>
         {
             options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
@@ -148,4 +199,6 @@ public static class BuilderExtensions
         builder.Services.AddRabbitMQ();
         builder.Services.ConfigureInfraServices();
     }
+
+
 }

@@ -1,31 +1,47 @@
-using System;
+using AutoMapper;
 using Domain.Interfaces.Repositories;
 using Domain.Records;
 using MediatR;
 
 namespace Application.UseCases.Category.GetAll;
 
-public class Handler : IRequestHandler<Request, BaseResponse>
+public class Handler : IRequestHandler<Request, BaseResponse<List<Response>>>
 {
     private readonly ICategoryRepository _categoryRepository;
-    public Handler(ICategoryRepository categoryRepository)
+    private readonly IMapper _mapper;
+
+    public Handler(ICategoryRepository categoryRepository, IMapper mapper)
     {
         _categoryRepository = categoryRepository;
+        _mapper = mapper;
     }
 
-    public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
+    public async Task<BaseResponse<List<Response>>> Handle(Request request, CancellationToken cancellationToken)
     {
-       var entities = await _categoryRepository.GetAllWithParametersAsync(
-            x => x.DeletedDate == null, cancellationToken, 0, 100, x => x.Picture);
+        // Busca as categorias no repositório
+        var entities = await _categoryRepository.GetAllWithParametersAsync(
+            x => x.DeletedDate == null,
+            cancellationToken,
+            skip: request.Skip,
+            take: request.Take,
+            includes: x => x.Picture
+        );
 
-        var categories = entities.Select(x => new {
-            x.Id,
-            x.Name,
-            x.Description,
-            ImageUrl = x.Picture?.UrlTemp
-        }).ToList();
-        
-        if(categories is null || categories.Any()) return new BaseResponse(404, "Categories not found");
-        return new BaseResponse(200, "Categories found", null, categories);
+        if (entities is null || !entities.Any())
+        {
+            return new BaseResponse<List<Response>>(
+                statusCode: 404,
+                message: "Categories not found"
+            );
+        }
+
+        // Mapeia as entidades para o DTO de resposta
+        var responseDtos = _mapper.Map<List<Response>>(entities);
+        // Retorna o BaseResponse com os dados
+        return new BaseResponse<List<Response>>(
+            statusCode: 200,
+            message: "Categories found",
+            response: responseDtos
+        );
     }
 }

@@ -4,6 +4,6 @@ using MediatR;
 namespace Application.UseCases.Student.GetAll;
 
 public record Request(
-    int skip,
-    int take
-) : IRequest<BaseResponse>;
+    int Skip,
+    int Take
+) : IRequest<BaseResponse<List<Response>>>;

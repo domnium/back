@@ -7,4 +7,4 @@ public record Request(
     Guid CategoryId, 
     int? page, 
     int? pageSize
-) : IRequest<BaseResponse>;
+) : IRequest<BaseResponse<List<Response>>>;

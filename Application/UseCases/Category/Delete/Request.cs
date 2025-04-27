@@ -6,5 +6,5 @@ using MediatR;
 namespace Application.UseCases.Category.Delete;
 
 public record Request(Guid? Id) 
-    : GetById.Request(Id), IRequest<BaseResponse>;
+    : IRequest<BaseResponse<object>>;
 

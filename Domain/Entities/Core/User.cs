@@ -11,6 +11,8 @@ public class User : Entity
     public Email Email { get; private set; }
     public Address Address { get; private set; }
     public Password Password { get; private set; }
+    public Guid? StudentId { get; private set; }
+    public Student? Student { get; private set; }
     public bool Active { get; private set; }
     public long? TokenActivate { get; private set; }
     [NotMapped]
@@ -52,6 +54,13 @@ public class User : Entity
     {
         Active = isActivate;
         TokenActivate = 0;
+    }
+
+    public void AssignStudent(Student student)
+    {
+        AddNotificationsFromValueObjects(student);
+        Student = student;
+        StudentId = student.Id;
     }
 
     public void AssignRole(Role role)

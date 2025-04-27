@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Application.UseCases.Course.Delete;
 
-public class Handler : IRequestHandler<Request, BaseResponse>
+public class Handler : IRequestHandler<Request, BaseResponse<object>>
 {
     private readonly ICourseRepository _courseRepository;
     private readonly IDbCommit _dbCommit;
@@ -21,7 +21,7 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         _messageQueueService = messageQueueService;
     }
 
-    public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
+    public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
         var course = await _courseRepository.GetWithParametersAsyncWithTracking(
             c => c.Id == request.id,
@@ -34,7 +34,12 @@ public class Handler : IRequestHandler<Request, BaseResponse>
         );
 
         if (course is null)
-            return new BaseResponse(404, "Course not found");
+        {
+            return new BaseResponse<object>(
+                statusCode: 404,
+                message: "Course not found"
+            );
+        }
 
         _courseRepository.Delete(course);
         var deleteTasks = new List<Task>();
@@ -54,9 +59,13 @@ public class Handler : IRequestHandler<Request, BaseResponse>
                 cancellationToken
             ));
         }
-        await Task.WhenAll(deleteTasks); 
-        await _dbCommit.Commit(cancellationToken); 
-        return new BaseResponse(200, "Course deleted successfully");
+
+        await Task.WhenAll(deleteTasks);
+        await _dbCommit.Commit(cancellationToken);
+
+        return new BaseResponse<object>(
+            statusCode: 200,
+            message: "Course deleted successfully"
+        );
     }
 }
-

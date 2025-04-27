@@ -10,7 +10,7 @@ namespace Application.UseCases.Module.Create;
 /// Handler responsável pela criação de um novo módulo,
 /// com associação a um curso existente.
 /// </summary>
-public class Handler : IRequestHandler<Request, BaseResponse>
+public class Handler : IRequestHandler<Request, BaseResponse<object>>
 {
     private readonly IModuleRepository _moduleRepository;
     private readonly ICourseRepository _courseRepository;
@@ -34,29 +34,35 @@ public class Handler : IRequestHandler<Request, BaseResponse>
     /// </summary>
     /// <param name="request">Request com dados do módulo</param>
     /// <param name="cancellationToken">Token de cancelamento</param>
-    /// <returns><see cref="BaseResponse"/> com status e mensagem</returns>
-    public async Task<BaseResponse> Handle(Request request, CancellationToken cancellationToken)
+    /// <returns><see cref="BaseResponse{object}"/> com status e mensagem</returns>
+    public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
+        // Verifica se o curso existe
         var courseFound = await _courseRepository
             .GetWithParametersAsync(x => x.Id == request.CourseId, cancellationToken);
 
         if (courseFound is null)
-            return new BaseResponse(400, "Course does not exist");
+            return new BaseResponse<object>(400, "Course does not exist");
 
-        // Cria entidade Module com curso
+        // Anexa o curso ao contexto
+        _courseRepository.Attach(courseFound);
+
+        // Cria a entidade Module associada ao curso
         var newModule = new Domain.Entities.Core.Module(
             new UniqueName(request.Name!),
             new Description(request.Description!),
             courseFound
         );
 
+        // Verifica se o módulo é válido
         if (newModule.Notifications.Any())
-            return new BaseResponse(400, "Invalid module", newModule.Notifications.ToList());
+            return new BaseResponse<object>(400, "Invalid module", newModule.Notifications.ToList());
 
-        // Persiste tudo: Module
+        // Persiste o módulo no banco de dados
         await _moduleRepository.CreateAsync(newModule, cancellationToken);
         await _dbCommit.Commit(cancellationToken);
 
-        return new BaseResponse(201, "Module created");
+        // Retorna sucesso
+        return new BaseResponse<object>(201, "Module created");
     }
 }

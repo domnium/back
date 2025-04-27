@@ -10,4 +10,4 @@ public record Request(
     string Tempo,
     string NotionUrl, 
     IFormFile File 
-) : IRequest<BaseResponse>;
+) : IRequest<BaseResponse<object>>;
