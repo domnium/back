@@ -39,7 +39,7 @@ public class UserController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
-        return StatusCode(response.StatusCode, response.Token);
+        return StatusCode(response.StatusCode, response);
     }
 
     /// <summary>
