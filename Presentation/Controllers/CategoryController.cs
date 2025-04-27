@@ -11,7 +11,7 @@ using GetByIdCategoryResponse = Application.UseCases.Category.GetById.Response;
 
 using DeleteCategoryRequest = Application.UseCases.Category.Delete.Request;
 using Domain.Records;
-using Presentation.Common.Api.Attributes;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Presentation.Controllers;
 
@@ -29,7 +29,12 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Lista de categorias</returns>
     [HttpGet("Get/All")]
-    [DefaultResponseTypes(typeof(BaseResponse<List<GetAllCategoryResponse>>))]
+    [SwaggerOperation(OperationId = "GetAllCategories")]
+    [ProducesResponseType(typeof(List<GetAllCategoryResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetAll([FromQuery] int skip, [FromQuery] int take, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetAllCategoryRequest(skip, take), cancellationToken);
@@ -43,7 +48,12 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Categoria encontrada</returns>
     [HttpGet("Get/ById")]
-    [DefaultResponseTypes(typeof(BaseResponse<GetByIdCategoryResponse>))]
+    [SwaggerOperation(OperationId = "GetCategoryById")]
+    [ProducesResponseType(typeof(GetByIdCategoryResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetById([FromQuery] Guid Id, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetByIdRequest(Id), cancellationToken);
@@ -57,7 +67,12 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Status de criação e dados da categoria</returns>
     [HttpPost("Create")]
-    [DefaultResponseTypes(typeof(BaseResponse<object>))]
+    [SwaggerOperation(OperationId = "CreateCategory")]
+    [ProducesResponseType(typeof(GetByIdCategoryResponse), 201)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> Create([FromForm] CreateCategoryRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
@@ -71,7 +86,12 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento</param>
     /// <returns>Status da operação</returns>
     [HttpDelete("Delete")]
-    [DefaultResponseTypes(typeof(BaseResponse<object>))]
+    [SwaggerOperation(OperationId = "DeleteCategory")]
+    [ProducesResponseType(typeof(BaseResponse<object>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> Delete([FromQuery] Guid Id, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new DeleteCategoryRequest(Id), cancellationToken);

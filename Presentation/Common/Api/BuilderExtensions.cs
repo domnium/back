@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using Presentation.Common.Converters;
-using Presentation.Common.Filters;
 
 namespace Presentation.Common.Api;
 
@@ -128,8 +127,7 @@ public static class BuilderExtensions
         {
             builder.Services.AddSwaggerGen(options =>
             {
-                options.OperationFilter<DefaultResponseTypeFilter>();
-
+                options.EnableAnnotations();
                 // Personaliza os nomes dos esquemas para garantir unicidade
                 options.CustomSchemaIds(type =>
                 {

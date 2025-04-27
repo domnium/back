@@ -8,10 +8,9 @@ using MarkLectureCompletedRequest = Application.UseCases.Lecture.MarkLectureComp
 
 using GetAllResponse = Application.UseCases.Lecture.Get.AllCourseCompleted.Response;
 using IsLectureCompletedResponse = Application.UseCases.Lecture.Get.IsLectureCompleted.Response;
-using MarkLectureCompletedResponse = Application.UseCases.Lecture.MarkLectureCompleted;
 
 using Domain.Records;
-using Presentation.Common.Api.Attributes;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Presentation.Controllers;
 
@@ -27,7 +26,12 @@ public class LectureController(IMediator mediator) : ControllerBase
     /// Cria uma nova aula (lecture).
     /// </summary>
     [HttpPost("Create")]
-    [DefaultResponseTypes(typeof(BaseResponse<object>))]
+    [SwaggerOperation(OperationId = "CreateLecture")]
+    [ProducesResponseType(typeof(BaseResponse<object>), 201)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> Create([FromForm] CreateRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
@@ -38,7 +42,12 @@ public class LectureController(IMediator mediator) : ControllerBase
     /// Remove uma aula com base no seu ID.
     /// </summary>
     [HttpDelete("Delete/{id}")]
-    [DefaultResponseTypes(typeof(BaseResponse<object>))]
+    [SwaggerOperation(OperationId = "DeleteLecture")]
+    [ProducesResponseType(typeof(BaseResponse<object>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new DeleteRequest(id), cancellationToken);
@@ -49,7 +58,12 @@ public class LectureController(IMediator mediator) : ControllerBase
     /// Retorna todas as aulas de um curso com base no estudante e paginação.
     /// </summary>
     [HttpGet("Get/All/{courseId}/{studentId}/Page/{page}/PageSize/{pageSize}")]
-    [DefaultResponseTypes(typeof(BaseResponse<List<GetAllResponse>>))]
+    [SwaggerOperation(OperationId = "GetAllLectures")]
+    [ProducesResponseType(typeof(List<GetAllResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetAll(
         [FromRoute] Guid courseId,
         [FromRoute] Guid studentId,
@@ -65,7 +79,12 @@ public class LectureController(IMediator mediator) : ControllerBase
     /// Verifica se uma aula foi concluída por um estudante.
     /// </summary>
     [HttpGet("Get/IsLectureCompleted/{studentId}/{lectureId}")]
-    [DefaultResponseTypes(typeof(BaseResponse<IsLectureCompletedResponse>))]
+    [SwaggerOperation(OperationId = "IsLectureCompleted")]
+    [ProducesResponseType(typeof(IsLectureCompletedResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> IsLectureCompleted(
         [FromRoute] Guid studentId,
         [FromRoute] Guid lectureId,
@@ -79,7 +98,12 @@ public class LectureController(IMediator mediator) : ControllerBase
     /// Marca uma aula como concluída para um estudante em um curso.
     /// </summary>
     [HttpPost("CompleteLecture")]
-    [DefaultResponseTypes(typeof(BaseResponse<object>))]
+    [SwaggerOperation(OperationId = "CompleteLecture")]
+    [ProducesResponseType(typeof(BaseResponse<object>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> CompleteLecture(
         [FromQuery] Guid courseId,
         [FromQuery] Guid studentId,

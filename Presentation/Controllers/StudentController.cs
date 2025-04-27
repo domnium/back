@@ -19,7 +19,7 @@ using GetLastStudentCourseResponse = Application.UseCases.Student.GetLastStudent
 using SubscribeResponse = Application.UseCases.Student.SubscribeCourse.Response;
 
 using Domain.Records;
-using Presentation.Common.Api.Attributes;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Presentation.Controllers;
 
@@ -35,7 +35,12 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// Retorna um estudante pelo seu identificador.
     /// </summary>
     [HttpGet("Get/{id}")]
-    [DefaultResponseTypes(typeof(BaseResponse<GetStudentResponse>))]
+    [SwaggerOperation(OperationId = "GetStudentById")]
+    [ProducesResponseType(typeof(GetStudentResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetStudentRequest(id), cancellationToken);
@@ -46,7 +51,12 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// Retorna todos os estudantes cadastrados.
     /// </summary>
     [HttpGet("Get/All")]
-    [DefaultResponseTypes(typeof(BaseResponse<List<GetAllStudentsResponse>>))]
+    [SwaggerOperation(OperationId = "GetAllStudents")]
+    [ProducesResponseType(typeof(List<GetAllStudentsResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetAll([FromQuery] int skip, [FromQuery] int take, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetAllStudentsRequest(skip, take), cancellationToken);
@@ -57,7 +67,12 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// Retorna o progresso do estudante em um curso específico.
     /// </summary>
     [HttpGet("CourseProgress")]
-    [DefaultResponseTypes(typeof(BaseResponse<CourseProgressResponse>))]
+    [SwaggerOperation(OperationId = "GetStudentCourseProgress")]
+    [ProducesResponseType(typeof(CourseProgressResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetCourseProgress(
         [FromQuery] Guid courseId,
         [FromQuery] Guid studentId,
@@ -71,7 +86,12 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// Retorna o último curso acessado pelo estudante.
     /// </summary>
     [HttpGet("GetLastStudentCourse")]
-    [DefaultResponseTypes(typeof(BaseResponse<GetLastStudentCourseResponse>))]
+    [SwaggerOperation(OperationId = "GetLastStudentCourse")]
+    [ProducesResponseType(typeof(GetLastStudentCourseResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetLastStudentCourse(
         [FromQuery] Guid studentId,
         CancellationToken cancellationToken)
@@ -84,7 +104,12 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// Retorna o progresso do estudante em um módulo específico.
     /// </summary>
     [HttpGet("ModuleProgress/Student/{studentId}/Module/{moduleId}")]
-    [DefaultResponseTypes(typeof(BaseResponse<ModuleProgressResponse>))]
+    [SwaggerOperation(OperationId = "GetStudentModuleProgress")]
+    [ProducesResponseType(typeof(ModuleProgressResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetModuleProgress(
         [FromRoute] Guid moduleId,
         [FromRoute] Guid studentId,
@@ -98,7 +123,12 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// Cria um novo estudante.
     /// </summary>
     [HttpPost("Create")]
-    [DefaultResponseTypes(typeof(BaseResponse<object>))]
+    [SwaggerOperation(OperationId = "CreateStudent")]
+    [ProducesResponseType(typeof(BaseResponse<object>), 201)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> Create([FromForm] CreateStudentRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
@@ -109,7 +139,12 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// Inscreve um estudante em um curso.
     /// </summary>
     [HttpPost("SubscribeCourse")]
-    [DefaultResponseTypes(typeof(BaseResponse<SubscribeResponse>))]
+    [SwaggerOperation(OperationId = "SubscribeStudentToCourse")]
+    [ProducesResponseType(typeof(SubscribeResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> SubscribeCourse([FromQuery] Subscribe request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
@@ -120,7 +155,12 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// Deleta um estudante pelo seu ID.
     /// </summary>
     [HttpDelete("Delete")]
-    [DefaultResponseTypes(typeof(BaseResponse<object>))]
+    [SwaggerOperation(OperationId = "DeleteStudent")]
+    [ProducesResponseType(typeof(BaseResponse<object>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> Delete([FromQuery] Guid id, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new DeleteStudentRequest(id), cancellationToken);

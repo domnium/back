@@ -11,7 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(5070, o => o.Protocols = HttpProtocols.Http1); 
+   options.ListenAnyIP(7069, listenOptions =>
+    {
+        listenOptions.UseHttps(); // Usa o certificado padrão
+    });
+    options.ListenAnyIP(5070); // Porta HTTP
 });
 
 builder.AddConfiguration();

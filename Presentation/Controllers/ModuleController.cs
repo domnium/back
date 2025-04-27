@@ -11,7 +11,7 @@ using GetModuleResponse = Application.UseCases.Module.GetById.Response;
 using GetAllModulesResponse = Application.UseCases.Module.GetAll.Response;
 
 using Domain.Records;
-using Presentation.Common.Api.Attributes;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Presentation.Controllers;
 
@@ -27,7 +27,12 @@ public class ModuleController(IMediator mediator) : ControllerBase
     /// Retorna um módulo pelo seu identificador.
     /// </summary>
     [HttpGet("Get/{id}")]
-    [DefaultResponseTypes(typeof(BaseResponse<GetModuleResponse>))]
+    [SwaggerOperation(OperationId = "GetModuleById")]
+    [ProducesResponseType(typeof(GetModuleResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetModuleRequest(id), cancellationToken);
@@ -38,7 +43,12 @@ public class ModuleController(IMediator mediator) : ControllerBase
     /// Retorna todos os módulos cadastrados.
     /// </summary>
     [HttpGet("Get/All")]
-    [DefaultResponseTypes(typeof(BaseResponse<List<GetAllModulesResponse>>))]
+    [SwaggerOperation(OperationId = "GetAllModules")]
+    [ProducesResponseType(typeof(List<GetAllModulesResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetAllModulesRequest(), cancellationToken);
@@ -49,7 +59,12 @@ public class ModuleController(IMediator mediator) : ControllerBase
     /// Cria um novo módulo.
     /// </summary>
     [HttpPost("Create")]
-    [DefaultResponseTypes(typeof(BaseResponse<object>))]
+    [SwaggerOperation(OperationId = "CreateModule")]
+    [ProducesResponseType(typeof(BaseResponse<object>), 201)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> Create([FromBody] CreateModuleRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
@@ -60,7 +75,12 @@ public class ModuleController(IMediator mediator) : ControllerBase
     /// Deleta um módulo pelo seu ID.
     /// </summary>
     [HttpDelete("Delete")]
-    [DefaultResponseTypes(typeof(BaseResponse<object>))]
+    [SwaggerOperation(OperationId = "DeleteModule")]
+    [ProducesResponseType(typeof(BaseResponse<object>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> Delete([FromQuery] Guid id, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new DeleteModuleRequest(id), cancellationToken);

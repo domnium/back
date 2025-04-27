@@ -12,6 +12,11 @@ using ActivatePasswordRequest = Application.UseCases.User.ForgotPassword.Activat
 using ForgotRequest = Application.UseCases.User.ForgotPassword.Request;
 using ResendCodeRequest = Application.UseCases.User.ResendCode.Request;
 
+using LoginResponse = Application.UseCases.User.Login.Response;
+
+using Swashbuckle.AspNetCore.Annotations;
+using Domain.Records;
+
 namespace Presentation.Controllers;
 
 /// <summary>
@@ -25,7 +30,12 @@ public class UserController(IMediator mediator) : ControllerBase
     /// Realiza o login do usuário com e-mail e senha.
     /// </summary>
     [HttpPost("Login")]
+    [SwaggerOperation(OperationId = "UserLogin")]
     [ApiKey]
+    [ProducesResponseType(typeof(LoginResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 403)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
@@ -36,7 +46,11 @@ public class UserController(IMediator mediator) : ControllerBase
     /// Realiza o cadastro de um novo usuário e envia código de ativação por e-mail.
     /// </summary>
     [HttpPost("Register")]
+    [SwaggerOperation(OperationId = "UserRegister")]
     [ApiKey]
+    [ProducesResponseType(typeof(BaseResponse<object>), 201)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
@@ -47,7 +61,11 @@ public class UserController(IMediator mediator) : ControllerBase
     /// Ativa uma conta de usuário por e-mail e código.
     /// </summary>
     [HttpPut("Activate")]
+    [SwaggerOperation(OperationId = "UserActivate")]
     [ApiKey]
+    [ProducesResponseType(typeof(BaseResponse<object>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> Activate([FromQuery] string code, [FromQuery] string email, CancellationToken cancellationToken)
     {
         var tokenlong = long.TryParse(code, out var parsedToken) ? parsedToken : 0;
@@ -59,7 +77,11 @@ public class UserController(IMediator mediator) : ControllerBase
     /// Inicia o processo de recuperação de senha.
     /// </summary>
     [HttpPut("Forgot-Password")]
+    [SwaggerOperation(OperationId = "UserForgotPassword")]
     [ApiKey]
+    [ProducesResponseType(typeof(BaseResponse<object>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
@@ -70,7 +92,11 @@ public class UserController(IMediator mediator) : ControllerBase
     /// Reenvia o código de ativação para o e-mail do usuário.
     /// </summary>
     [HttpPut("Resend-Code")]
+    [SwaggerOperation(OperationId = "UserResendCode")]
     [ApiKey]
+    [ProducesResponseType(typeof(BaseResponse<object>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> ResendCode([FromBody] ResendCodeRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
@@ -81,7 +107,11 @@ public class UserController(IMediator mediator) : ControllerBase
     /// Ativa uma nova senha após processo de recuperação.
     /// </summary>
     [HttpPut("Forgot-Password/Activate")]
+    [SwaggerOperation(OperationId = "UserForgotPasswordActivate")]
     [ApiKey]
+    [ProducesResponseType(typeof(BaseResponse<object>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> ForgotPasswordActivate([FromBody] ActivatePasswordRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);

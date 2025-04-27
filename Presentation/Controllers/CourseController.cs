@@ -17,7 +17,7 @@ using GetMostPopularResponse = Application.UseCases.Course.Get.MostPopular.Respo
 using GetByIdResponse = Application.UseCases.Course.Get.ById.Response;
 
 using Domain.Records;
-using Presentation.Common.Api.Attributes;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Presentation.Controllers;
 
@@ -34,7 +34,12 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// Cria um novo curso.
     /// </summary>
     [HttpPost("Create")]
-    [DefaultResponseTypes(typeof(BaseResponse<object>))]
+    [SwaggerOperation(OperationId = "CreateCourse")]
+    [ProducesResponseType(typeof(BaseResponse<object>), 201)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> Create([FromForm] CreateRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
@@ -45,7 +50,12 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// Retorna todos os cursos paginados.
     /// </summary>
     [HttpGet("Get/All")]
-    [DefaultResponseTypes(typeof(BaseResponse<List<GetAllResponse>>))]
+    [SwaggerOperation(OperationId = "GetAllCourses")]
+    [ProducesResponseType(typeof(List<GetAllResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetAll([FromQuery] int skip, [FromQuery] int take, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetAllRequest(skip, take), cancellationToken);
@@ -56,7 +66,12 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// Retorna cursos filtrados por categoria com paginação.
     /// </summary>
     [HttpGet("Get/ByCategory")]
-    [DefaultResponseTypes(typeof(BaseResponse<List<GetByCategoryResponse>>))]
+    [SwaggerOperation(OperationId = "GetCoursesByCategory")]
+    [ProducesResponseType(typeof(List<GetByCategoryResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetByCategory([FromQuery] Guid categoryId, [FromQuery] int skip, [FromQuery] int take, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetByCategory(categoryId, skip, take), cancellationToken);
@@ -67,7 +82,12 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// Retorna detalhes de um curso pelo ID.
     /// </summary>
     [HttpGet("Get/ById/{id}")]
-    [DefaultResponseTypes(typeof(BaseResponse<GetByIdResponse>))]
+    [SwaggerOperation(OperationId = "GetCourseById")]
+    [ProducesResponseType(typeof(BaseResponse<GetByIdResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetByIdRequest(id), cancellationToken);
@@ -78,7 +98,12 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// Retorna cursos associados a uma IA específica, com paginação.
     /// </summary>
     [HttpGet("Get/ByIA")]
-    [DefaultResponseTypes(typeof(BaseResponse<List<GetByIAResponse>>))]
+    [SwaggerOperation(OperationId = "GetCoursesByIA")]
+    [ProducesResponseType(typeof(List<GetByIAResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetByIA([FromQuery] Guid IAId, [FromQuery] int skip, [FromQuery] int take, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetByIA(IAId, skip, take), cancellationToken);
@@ -89,7 +114,12 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// Retorna os cursos mais populares.
     /// </summary>
     [HttpGet("Get/MostPopular")]
-    [DefaultResponseTypes(typeof(BaseResponse<List<GetMostPopularResponse>>))]
+    [SwaggerOperation(OperationId = "GetMostPopularCourses")]
+    [ProducesResponseType(typeof(BaseResponse<List<GetMostPopularResponse>>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> GetMostPopular(CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new GetMostPopular(), cancellationToken);
@@ -99,9 +129,14 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// <summary>
     /// Exclui um curso pelo seu ID.
     /// </summary>
-    [HttpDelete("Delete/{id}")]
-    [DefaultResponseTypes(typeof(BaseResponse<object>))]
-    public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken cancellationToken)
+    [HttpDelete("Delete")]
+    [SwaggerOperation(OperationId = "DeleteCourse")]
+    [ProducesResponseType(typeof(BaseResponse<object>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
+    public async Task<IActionResult> Delete([FromQuery] Guid id, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(new DeleteRequest(id), cancellationToken);
         return StatusCode(response.StatusCode, response);

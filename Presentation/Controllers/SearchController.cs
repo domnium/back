@@ -6,7 +6,7 @@ using SearchRequest = Application.UseCases.Search.Request;
 using SearchResponse = Application.UseCases.Search.Response;
 
 using Domain.Records;
-using Presentation.Common.Api.Attributes;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Presentation.Controllers;
 
@@ -26,7 +26,12 @@ public class SearchController(IMediator mediator) : ControllerBase
     /// <param name="pageSize">Quantidade de itens por página (padrão: 10)</param>
     /// <param name="cancellationToken">Token de cancelamento da operação</param>
     [HttpGet]
-    [DefaultResponseTypes(typeof(BaseResponse<SearchResponse>))]
+    [SwaggerOperation(OperationId = "SearchItems")]
+    [ProducesResponseType(typeof(SearchResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 400)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 404)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 409)]
+    [ProducesResponseType(typeof(BaseResponse<object>), 500)]
     public async Task<IActionResult> Search(
         [FromQuery] string query,
         [FromQuery] int page = 0,
