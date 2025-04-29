@@ -10,11 +10,11 @@ namespace Infrastructure.Repositories.Cold;
 public class UserRepository(DomnumDbContext context) 
     : BaseRepository<User>(context), IUserRepository
 {
-    public async Task<bool> Authenticate(User user, CancellationToken cancellationToken)
+    public async Task<User?> Authenticate(User user, CancellationToken cancellationToken)
     {
         var userFromDb = await context.Set<User>().AsNoTracking()
             .FirstOrDefaultAsync(u => u.Email.Address == user.Email.Address && u.Active, cancellationToken);
-        return userFromDb != null && userFromDb.Password.VerifyPassword(user.Password.Content, userFromDb.Password.Salt);
+        return userFromDb;
     }
 
     public async Task<User?> ActivateUserAsync(string email, long token, CancellationToken cancellationToken)

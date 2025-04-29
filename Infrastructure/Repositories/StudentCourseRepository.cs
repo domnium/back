@@ -23,6 +23,7 @@ public class StudentCourseRepository(DomnumDbContext context)
             x.Course.Picture.UrlTemp.Endereco,
             x.Course.Price,
             x.Course.Subscribes,
+            x.StudentId,
             x.Course.Modules.Select(m => new ModulePopularDto(
                 m.Id,
                 m.Name.Name,

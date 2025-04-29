@@ -40,7 +40,6 @@ public class Handler : IRequestHandler<Request, BaseResponse<Response>>
 
         // Mapeia o curso do estudante para o DTO de resposta
         var response = _mapper.Map<Response>(studentCourse);
-
         return new BaseResponse<Response>(200, "Student course found", response);
     }
 }

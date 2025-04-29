@@ -31,7 +31,7 @@ public class TeacherController(IMediator mediator) : ControllerBase
     /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
     [HttpGet("Get/{Id}")]
     [SwaggerOperation(OperationId = "GetTeacherById")]
-    [ProducesResponseType(typeof(GetTeacherResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<GetTeacherResponse>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]
@@ -49,7 +49,7 @@ public class TeacherController(IMediator mediator) : ControllerBase
     /// <returns><see cref="IActionResult"/> com status e objeto encontrado</returns>
     [HttpGet("Get/All")]
     [SwaggerOperation(OperationId = "GetAllTeachers")]
-    [ProducesResponseType(typeof(List<GetAllTeachersResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<List<GetAllTeachersResponse>>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]

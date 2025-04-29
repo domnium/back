@@ -36,7 +36,7 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("Get/{id}")]
     [SwaggerOperation(OperationId = "GetStudentById")]
-    [ProducesResponseType(typeof(GetStudentResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<GetStudentResponse>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]
@@ -52,7 +52,7 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("Get/All")]
     [SwaggerOperation(OperationId = "GetAllStudents")]
-    [ProducesResponseType(typeof(List<GetAllStudentsResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<List<GetAllStudentsResponse>>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]
@@ -68,7 +68,7 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("CourseProgress")]
     [SwaggerOperation(OperationId = "GetStudentCourseProgress")]
-    [ProducesResponseType(typeof(CourseProgressResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<CourseProgressResponse>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]
@@ -87,7 +87,7 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("GetLastStudentCourse")]
     [SwaggerOperation(OperationId = "GetLastStudentCourse")]
-    [ProducesResponseType(typeof(GetLastStudentCourseResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<GetLastStudentCourseResponse>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]
@@ -105,7 +105,7 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("ModuleProgress/Student/{studentId}/Module/{moduleId}")]
     [SwaggerOperation(OperationId = "GetStudentModuleProgress")]
-    [ProducesResponseType(typeof(ModuleProgressResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<ModuleProgressResponse>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]
@@ -140,7 +140,7 @@ public class StudentController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpPost("SubscribeCourse")]
     [SwaggerOperation(OperationId = "SubscribeStudentToCourse")]
-    [ProducesResponseType(typeof(SubscribeResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<SubscribeResponse>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]

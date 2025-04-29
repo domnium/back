@@ -27,7 +27,7 @@ public class SearchController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">Token de cancelamento da operação</param>
     [HttpGet]
     [SwaggerOperation(OperationId = "SearchItems")]
-    [ProducesResponseType(typeof(SearchResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<SearchResponse>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]

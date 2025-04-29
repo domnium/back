@@ -8,9 +8,18 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<StudentCourse, Response>()
-            .ForMember(dest => dest.CourseId, opt => opt.MapFrom(src => src.Course.Id))
-            .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Course.Name.Name))
-            .ForMember(dest => dest.EnrollmentDate, opt => opt.MapFrom(src => src.EnrollmentDate));
+        CreateMap<CoursePopularDto, Response>()
+            .ForMember(dest => dest.CourseId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
+             .ForMember(dest => dest.StudentId, opt => opt.MapFrom(src => src.StudentId))
+            .ConstructUsing(src => new Response(
+                src.Id,
+                src.Name,
+                src.Description,
+                src.ImageUrl,
+                src.StudentId
+            ));
     }
 }

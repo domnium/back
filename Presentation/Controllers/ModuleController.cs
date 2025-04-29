@@ -28,7 +28,7 @@ public class ModuleController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("Get/{id}")]
     [SwaggerOperation(OperationId = "GetModuleById")]
-    [ProducesResponseType(typeof(GetModuleResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<GetModuleResponse>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]
@@ -44,7 +44,7 @@ public class ModuleController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("Get/All")]
     [SwaggerOperation(OperationId = "GetAllModules")]
-    [ProducesResponseType(typeof(List<GetAllModulesResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<List<GetAllModulesResponse>>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]

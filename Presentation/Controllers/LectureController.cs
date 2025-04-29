@@ -59,7 +59,7 @@ public class LectureController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("Get/All/{courseId}/{studentId}/Page/{page}/PageSize/{pageSize}")]
     [SwaggerOperation(OperationId = "GetAllLectures")]
-    [ProducesResponseType(typeof(List<GetAllResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<List<GetAllResponse>>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]
@@ -80,7 +80,7 @@ public class LectureController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("Get/IsLectureCompleted/{studentId}/{lectureId}")]
     [SwaggerOperation(OperationId = "IsLectureCompleted")]
-    [ProducesResponseType(typeof(IsLectureCompletedResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<IsLectureCompletedResponse>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]

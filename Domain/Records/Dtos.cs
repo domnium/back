@@ -5,6 +5,7 @@ public record CoursePopularDto(
     string? ImageUrl,
     decimal? Price,
     long Subscribes,
+    Guid? StudentId,
     List<ModulePopularDto> Modules
 );
 

@@ -20,13 +20,16 @@ public class Handler : IRequestHandler<Request, Response>
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
         var user = _mapper.Map<Domain.Entities.Core.User>(request);
-        var isAuthenticated = await _userRepository.Authenticate(user, cancellationToken);
+        var userFromDb = await _userRepository.Authenticate(user, cancellationToken);
 
-        if (!isAuthenticated || user.Notifications.Any())
-            return new Response(403, "Invalid password or user" ,user.Notifications.ToList());
+        if (userFromDb is null)
+            return new Response(404, "User not found");
+
+        if(!userFromDb.Password.VerifyPassword(user.Password.Content, userFromDb.Password.Salt))      
+            return new Response(403, "Invalid password");  
         
-        var token = _tokenService.GenerateToken(user);
-        user.AssignToken(token); 
+        var token = _tokenService.GenerateToken(userFromDb);
+        userFromDb.AssignToken(token); 
         return new Response(200, "Login Successful",[], token);
     }
 }

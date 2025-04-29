@@ -43,7 +43,7 @@ public class IAController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("Get/All")]
     [SwaggerOperation(OperationId = "GetAllIAs")]
-    [ProducesResponseType(typeof(List<GetAllResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<List<GetAllResponse>>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]

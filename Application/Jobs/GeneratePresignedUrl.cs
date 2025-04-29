@@ -38,7 +38,6 @@ public class GeneratePresignedUrl(IServiceScopeFactory scopeFactory,
                 if (picture.BucketName != null && picture.AwsKey != null
                     && picture.ContentType is not null 
                     && picture.DeletedDate is null
-                    && !picture.Ativo 
                     && urlExpiradaOuInexistente)
                 {
                     picture.SetTemporaryUrl(

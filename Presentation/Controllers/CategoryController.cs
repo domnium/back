@@ -30,7 +30,7 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// <returns>Lista de categorias</returns>
     [HttpGet("Get/All")]
     [SwaggerOperation(OperationId = "GetAllCategories")]
-    [ProducesResponseType(typeof(List<GetAllCategoryResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<List<GetAllCategoryResponse>>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]
@@ -49,7 +49,7 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// <returns>Categoria encontrada</returns>
     [HttpGet("Get/ById")]
     [SwaggerOperation(OperationId = "GetCategoryById")]
-    [ProducesResponseType(typeof(GetByIdCategoryResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<GetByIdCategoryResponse>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]
@@ -68,7 +68,7 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// <returns>Status de criação e dados da categoria</returns>
     [HttpPost("Create")]
     [SwaggerOperation(OperationId = "CreateCategory")]
-    [ProducesResponseType(typeof(GetByIdCategoryResponse), 201)]
+    [ProducesResponseType(typeof(BaseResponse<GetByIdCategoryResponse>), 201)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]

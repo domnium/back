@@ -51,7 +51,7 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("Get/All")]
     [SwaggerOperation(OperationId = "GetAllCourses")]
-    [ProducesResponseType(typeof(List<GetAllResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<List<GetAllResponse>>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]
@@ -67,7 +67,7 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("Get/ByCategory")]
     [SwaggerOperation(OperationId = "GetCoursesByCategory")]
-    [ProducesResponseType(typeof(List<GetByCategoryResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<List<GetByCategoryResponse>>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]
@@ -99,7 +99,7 @@ public class CourseController(IMediator mediator) : ControllerBase
     /// </summary>
     [HttpGet("Get/ByIA")]
     [SwaggerOperation(OperationId = "GetCoursesByIA")]
-    [ProducesResponseType(typeof(List<GetByIAResponse>), 200)]
+    [ProducesResponseType(typeof(BaseResponse<List<GetByIAResponse>>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 404)]
     [ProducesResponseType(typeof(BaseResponse<object>), 409)]

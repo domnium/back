@@ -32,7 +32,7 @@ public class UserController(IMediator mediator) : ControllerBase
     [HttpPost("Login")]
     [SwaggerOperation(OperationId = "UserLogin")]
     [ApiKey]
-    [ProducesResponseType(typeof(LoginResponse), 200)]
+    [ProducesResponseType(typeof(BaseResponse<LoginResponse>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 403)]
     [ProducesResponseType(typeof(BaseResponse<object>), 500)]
