@@ -7,10 +7,10 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<Domain.Entities.Core.Course, Response>()
-            .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Picture!.UrlTemp!.Endereco))
-            .ForMember(dest => dest.TrailerUrl, opt => opt.MapFrom(src => src.Trailer!.UrlTemp!.Endereco))
-            .ForMember(dest => dest.TeacherName, opt => opt.MapFrom(src => src.Teacher!.Name!.Name))
-            .ForMember(dest => dest.TeacherPictureUrl, opt => opt.MapFrom(src => src.Teacher.Picture!.UrlTemp!.Endereco));
+        CreateMap<CoursePopularDto, Response>()
+            .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
+            .ForMember(dest => dest.TrailerUrl, opt => opt.MapFrom(src => src.TrailerUrl))
+            .ForMember(dest => dest.TeacherName, opt => opt.MapFrom(src => src.TeacherName))
+            .ForMember(dest => dest.TeacherPictureUrl, opt => opt.MapFrom(src => src.TeacherPictureUrl));
     }
 }

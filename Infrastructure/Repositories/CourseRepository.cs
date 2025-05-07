@@ -36,7 +36,8 @@ public class CourseRepository(DomnumDbContext context)
                         l.Name.Name,
                         l.Tempo 
                     )).ToList()
-                )).ToList() 
+                )).ToList(), c.Trailer.UrlTemp.Endereco, c.Teacher.Name.Name,
+                c.Teacher.Picture.UrlTemp.Endereco
             ))
             .ToListAsync(cancellationToken);
 

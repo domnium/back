@@ -6,7 +6,10 @@ public record CoursePopularDto(
     decimal? Price,
     long Subscribes,
     Guid? StudentId,
-    List<ModulePopularDto> Modules
+    List<ModulePopularDto> Modules,
+    string? TrailerUrl = null,
+    string? TeacherName = null,
+    string? TeacherPictureUrl = null
 );
 
 public record ModulePopularDto(
