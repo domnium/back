@@ -14,7 +14,7 @@ public class User : Entity
     public Guid? StudentId { get; private set; }
     public Student? Student { get; private set; }
     public bool Active { get; private set; }
-    public long? TokenActivate { get; private set; }
+    public Guid? TokenActivate { get; private set; }
     [NotMapped]
     public string Token { get; private set; }
 
@@ -53,7 +53,7 @@ public class User : Entity
     public void AssignActivate(bool isActivate)
     {
         Active = isActivate;
-        TokenActivate = 0;
+        TokenActivate = Guid.Empty;
     }
 
     public void AssignStudent(Student student)
@@ -69,7 +69,7 @@ public class User : Entity
         _roles.Add(role);
     }
 
-    public long GenerateToken()
-        => Random.Shared.NextInt64(1000, 9999);
+    public Guid? GenerateToken()
+        => Guid.NewGuid();
 }
 

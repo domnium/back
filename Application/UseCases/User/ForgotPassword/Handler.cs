@@ -38,14 +38,15 @@ public class Handler(
         userFromDb.GenerateToken();
         userRepository.Update(userFromDb);
 
-        // Cria as tarefas de commit e envio de e-mail
+        var resetLink = $"{Configuration.FrontendUrl}/reset-password/?token={userFromDb.TokenActivate}";
+
         var commitTask = dbCommit.Commit(cancellationToken);
         var emailTask = messageQueueService.EnqueueEmailMessageAsync(
             new EmailMessage(
                 To: userFromDb.Email.Address!,
                 ToName: userFromDb.FullName.FirstName,
                 Subject: "Altere sua senha!",
-                Body: $"<strong> Seu código de Alteração de senha: {userFromDb.TokenActivate} </strong>",
+                Body: $"<strong> Clique no link para alterar sua senha: <a href=\"{resetLink}\">{resetLink}</a> </strong>",
                 IsHtml: true,
                 FromName: "Domnum",
                 FromEmail: Configuration.SmtpUser
@@ -53,7 +54,6 @@ public class Handler(
             cancellationToken
         );
 
-        // Aguarda a conclusão das tarefas
         await Task.WhenAll(commitTask, emailTask);
 
         // Retorna sucesso

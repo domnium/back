@@ -87,7 +87,7 @@ public class UserMapping : IEntityTypeConfiguration<User>
 
         builder.Property(u => u.TokenActivate)
             .HasColumnName("TokenActivate")
-            .HasColumnType("varchar")
+            .HasColumnType("uuid")
             .IsRequired(false);
 
         builder.Property(u => u.Active)
