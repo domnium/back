@@ -29,7 +29,7 @@ public class Handler(
         if (user.Notifications.Any())
             return new Response(404, "Request invalid", user.Notifications.ToList());
 
-        var activationLink = $"{Configuration.PublicUrlFrontEnd}/activate-account?email={Uri.EscapeDataString(user.Email.Address!)
+        var activationLink = $"{Configuration.PublicUrlFrontEnd}/auth/activate-account?email={Uri.EscapeDataString(user.Email.Address!)
             }&token={Uri.EscapeDataString(user.TokenActivate.ToString()!)}";
 
         var emailMessage = new EmailMessage(

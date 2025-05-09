@@ -197,6 +197,4 @@ public static class BuilderExtensions
         builder.Services.AddRabbitMQ();
         builder.Services.ConfigureInfraServices();
     }
-
-
 }

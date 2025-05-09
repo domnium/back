@@ -3,7 +3,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Domain;
-using Domain.Entities;
 using Domain.Entities.Core;
 using Domain.Interfaces.Services;
 using Microsoft.IdentityModel.Tokens;

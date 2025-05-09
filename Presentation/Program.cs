@@ -39,10 +39,20 @@ app.UseHttpsRedirection();
 app.UseForwardedHeaders();
 app.UseHangfireServer();
 
-var job = app.Services.GetRequiredService<IGeneratePresignedUrlJob>();
-RecurringJob.AddOrUpdate<IGeneratePresignedUrlJob>(
-    job => job.GenerateAndSavePresignedUrlsAsync(),
-    Cron.Minutely); 
+var lifetime = app.Lifetime;
+
+lifetime.ApplicationStarted.Register(() =>
+{
+    using var scope = app.Services.CreateScope();
+    var job = scope.ServiceProvider.GetRequiredService<IGeneratePresignedUrlJob>();
+    Task.Run(async () =>
+    {
+        await Task.Delay(2000);
+        RecurringJob.AddOrUpdate<IGeneratePresignedUrlJob>(
+            job => job.GenerateAndSavePresignedUrlsAsync(),
+            Cron.Minutely);
+    });
+});
 
 app.UseRouting();
 app.UseMiddleware<ExceptionHandler>();

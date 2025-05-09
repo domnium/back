@@ -8,5 +8,5 @@ namespace Application.UseCases.User.Activate;
 /// </summary>
 public record Request(
     string email,
-    long token
+    Guid token
 ) : IRequest<BaseResponse<object>>;

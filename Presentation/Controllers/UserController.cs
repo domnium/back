@@ -66,10 +66,9 @@ public class UserController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(BaseResponse<object>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 500)]
-    public async Task<IActionResult> Activate([FromQuery] string code, [FromQuery] string email, CancellationToken cancellationToken)
+    public async Task<IActionResult> Activate([FromQuery] Guid token, [FromQuery] string email, CancellationToken cancellationToken)
     {
-        var tokenlong = long.TryParse(code, out var parsedToken) ? parsedToken : 0;
-        var response = await mediator.Send(new ActivateRequest(email, tokenlong), cancellationToken);
+        var response = await mediator.Send(new ActivateRequest(email, token), cancellationToken);
         return StatusCode(response.StatusCode, response);
     }
 
@@ -82,12 +81,12 @@ public class UserController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(BaseResponse<object>), 200)]
     [ProducesResponseType(typeof(BaseResponse<object>), 400)]
     [ProducesResponseType(typeof(BaseResponse<object>), 500)]
-    public async Task<IActionResult> ForgotPassword([FromBody] ForgotRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> ForgotPassword([FromQuery] ForgotRequest request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
         return StatusCode(response.StatusCode, new { response.StatusCode, response.Message, response.Notifications });
     }
-
+    
     /// <summary>
     /// Reenvia o código de ativação para o e-mail do usuário.
     /// </summary>

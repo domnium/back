@@ -27,10 +27,10 @@ public static class ServicesExtensions
 
             x.UsingRabbitMq((ctx, cfg) =>
             {
-               cfg.Host(Configuration.RabbitMQHost, "/", h =>
+               cfg.Host(Configuration.RabbitMQHost,5672, "/", h =>
                 {
                     h.Username(Configuration.RabbitMQUser);
-                    h.Password("admin");
+                    h.Password(Configuration.RabbitMQPassword);
                 });
 
                 cfg.ReceiveEndpoint("upload_queue", e =>

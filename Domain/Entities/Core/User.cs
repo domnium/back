@@ -32,7 +32,7 @@ public class User : Entity
         Active = active;
         TokenActivate = GenerateToken();
 
-        AddNotificationsFromValueObjects(fullName, email, address, password);
+        AddNotificationsFromValueObjects(fullName, email, password);
     }
 
     public User(Email email, Password password)

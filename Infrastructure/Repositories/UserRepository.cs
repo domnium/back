@@ -17,7 +17,7 @@ public class UserRepository(DomnumDbContext context)
         return userFromDb;
     }
 
-    public async Task<User?> ActivateUserAsync(string email, long token, CancellationToken cancellationToken)
+    public async Task<User?> ActivateUserAsync(string email, Guid token, CancellationToken cancellationToken)
     {
        var user =  (await context.Set<User>().AsNoTracking()
             .FirstOrDefaultAsync(x => !x.Active && x.Email.Address!.Equals(email) && x.TokenActivate.Equals(token),

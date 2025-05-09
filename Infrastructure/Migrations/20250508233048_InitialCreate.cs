@@ -68,10 +68,10 @@ namespace Infrastructure.Migrations
                     EventId = table.Column<string>(type: "varchar", maxLength: 100, nullable: false),
                     Type = table.Column<string>(type: "varchar", maxLength: 100, nullable: false),
                     PayloadJson = table.Column<string>(type: "jsonb", nullable: false),
-                    ReceivedAt = table.Column<DateTime>(type: "timestamp", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "timestamp", nullable: false),
-                    DeletedDate = table.Column<DateTime>(type: "timestamp", nullable: true)
+                    ReceivedAt = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "timestamptz", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -101,31 +101,6 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Teachers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    FirstName = table.Column<string>(type: "varchar", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "varchar", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "varchar", maxLength: 50, nullable: false),
-                    Road = table.Column<string>(type: "varchar", maxLength: 100, nullable: true),
-                    NeighborHood = table.Column<string>(type: "varchar", nullable: true),
-                    Number = table.Column<long>(type: "bigint", nullable: true),
-                    Complement = table.Column<string>(type: "varchar", maxLength: 100, nullable: true),
-                    Hash = table.Column<string>(type: "varchar", nullable: true),
-                    Salt = table.Column<string>(type: "varchar", nullable: true),
-                    Active = table.Column<bool>(type: "boolean", nullable: false),
-                    TokenActivate = table.Column<string>(type: "varchar", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
-                    DeletedDate = table.Column<DateTime>(type: "timestamptz", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -170,54 +145,6 @@ namespace Infrastructure.Migrations
                         name: "FK_Courses_Teachers_TeacherId",
                         column: x => x.TeacherId,
                         principalTable: "Teachers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Students",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    PictureId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    IsFreeStudent = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
-                    DeletedDate = table.Column<DateTime>(type: "timestamptz", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Students", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Students_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserRole",
-                columns: table => new
-                {
-                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserRole", x => new { x.RoleId, x.UserId });
-                    table.ForeignKey(
-                        name: "FK_UserRole_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserRole_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -270,6 +197,67 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Lectures",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Tempo = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    ModuleId = table.Column<Guid>(type: "uuid", nullable: false),
+                    GithubUrl = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    VideoId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Views = table.Column<long>(type: "bigint", nullable: false, defaultValue: 0L),
+                    CreatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "timestamptz", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lectures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Lectures_Modules_ModuleId",
+                        column: x => x.ModuleId,
+                        principalTable: "Modules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Videos",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    LectureId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CourseId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "timestamptz", nullable: true),
+                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
+                    AwsKey = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    ContentType = table.Column<string>(type: "varchar", nullable: true),
+                    UrlExpired = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UrlTemp = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    BucketName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    TemporaryPath = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Videos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Videos_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Videos_Lectures_LectureId",
+                        column: x => x.LectureId,
+                        principalTable: "Lectures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Pictures",
                 columns: table => new
                 {
@@ -285,7 +273,7 @@ namespace Infrastructure.Migrations
                     Ativo = table.Column<bool>(type: "boolean", nullable: false),
                     AwsKey = table.Column<string>(type: "varchar", maxLength: 255, nullable: true),
                     ContentType = table.Column<string>(type: "varchar", nullable: true),
-                    UrlExpired = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    UrlExpired = table.Column<DateTime>(type: "timestamptz", nullable: true),
                     UrlTemp = table.Column<string>(type: "varchar", maxLength: 255, nullable: true),
                     BucketName = table.Column<string>(type: "varchar", maxLength: 255, nullable: true),
                     TemporaryPath = table.Column<string>(type: "varchar", maxLength: 255, nullable: true)
@@ -309,12 +297,6 @@ namespace Infrastructure.Migrations
                         name: "FK_Pictures_IAs_IAId",
                         column: x => x.IAId,
                         principalTable: "IAs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Pictures_Students_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Students",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -346,12 +328,55 @@ namespace Infrastructure.Migrations
                         principalTable: "Courses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StudentLectures",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    StudentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LectureId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CourseId = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsCompleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CompletionDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "timestamptz", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentLectures", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StudentCourses_Students_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Students",
+                        name: "FK_StudentLectures_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudentLectures_Lectures_LectureId",
+                        column: x => x.LectureId,
+                        principalTable: "Lectures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Students",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    PictureId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsFreeStudent = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    DeletedDate = table.Column<DateTime>(type: "timestamptz", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Students", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -386,62 +411,31 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Lectures",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Tempo = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    ModuleId = table.Column<Guid>(type: "uuid", nullable: false),
-                    GithubUrl = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    VideoId = table.Column<Guid>(type: "uuid", nullable: true),
-                    Views = table.Column<long>(type: "bigint", nullable: false, defaultValue: 0L),
+                    FirstName = table.Column<string>(type: "varchar", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "varchar", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "varchar", maxLength: 50, nullable: false),
+                    Road = table.Column<string>(type: "varchar", maxLength: 100, nullable: true),
+                    NeighborHood = table.Column<string>(type: "varchar", nullable: true),
+                    Number = table.Column<long>(type: "bigint", nullable: true),
+                    Complement = table.Column<string>(type: "varchar", maxLength: 100, nullable: true),
+                    Hash = table.Column<string>(type: "varchar", nullable: true),
+                    Salt = table.Column<string>(type: "varchar", nullable: true),
+                    StudentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Active = table.Column<bool>(type: "boolean", nullable: false),
+                    TokenActivate = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
                     DeletedDate = table.Column<DateTime>(type: "timestamptz", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Lectures", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Lectures_Modules_ModuleId",
-                        column: x => x.ModuleId,
-                        principalTable: "Modules",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "StudentLectures",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    StudentId = table.Column<Guid>(type: "uuid", nullable: false),
-                    LectureId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CourseId = table.Column<Guid>(type: "uuid", nullable: true),
-                    IsCompleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CompletionDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
-                    DeletedDate = table.Column<DateTime>(type: "timestamptz", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StudentLectures", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_StudentLectures_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_StudentLectures_Lectures_LectureId",
-                        column: x => x.LectureId,
-                        principalTable: "Lectures",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_StudentLectures_Students_StudentId",
+                        name: "FK_Users_Students_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Students",
                         principalColumn: "Id",
@@ -449,36 +443,25 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Videos",
+                name: "UserRole",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    LectureId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CourseId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "timestamptz", nullable: false),
-                    DeletedDate = table.Column<DateTime>(type: "timestamptz", nullable: true),
-                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
-                    AwsKey = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    ContentType = table.Column<int>(type: "integer", nullable: true),
-                    UrlExpired = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    UrlTemp = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    BucketName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    TemporaryPath = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true)
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Videos", x => x.Id);
+                    table.PrimaryKey("PK_UserRole", x => new { x.RoleId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_Videos_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
+                        name: "FK_UserRole_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Videos_Lectures_LectureId",
-                        column: x => x.LectureId,
-                        principalTable: "Lectures",
+                        name: "FK_UserRole_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -585,6 +568,12 @@ namespace Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_StudentId",
+                table: "Users",
+                column: "StudentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Videos_CourseId",
                 table: "Videos",
                 column: "CourseId",
@@ -595,11 +584,47 @@ namespace Infrastructure.Migrations
                 table: "Videos",
                 column: "LectureId",
                 unique: true);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Pictures_Students_StudentId",
+                table: "Pictures",
+                column: "StudentId",
+                principalTable: "Students",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_StudentCourses_Students_StudentId",
+                table: "StudentCourses",
+                column: "StudentId",
+                principalTable: "Students",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_StudentLectures_Students_StudentId",
+                table: "StudentLectures",
+                column: "StudentId",
+                principalTable: "Students",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Students_Users_UserId",
+                table: "Students",
+                column: "UserId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Users_Students_StudentId",
+                table: "Users");
+
             migrationBuilder.DropTable(
                 name: "Parameters");
 
@@ -625,16 +650,10 @@ namespace Infrastructure.Migrations
                 name: "Videos");
 
             migrationBuilder.DropTable(
-                name: "Students");
-
-            migrationBuilder.DropTable(
                 name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Lectures");
-
-            migrationBuilder.DropTable(
-                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Modules");
@@ -650,6 +669,12 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Teachers");
+
+            migrationBuilder.DropTable(
+                name: "Students");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

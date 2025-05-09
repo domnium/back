@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DomnumDbContext))]
-    [Migration("20250426203546_AjusteUserID")]
-    partial class AjusteUserID
+    [Migration("20250508233048_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -399,8 +399,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("StudentId");
 
-                    b.Property<string>("TokenActivate")
-                        .HasColumnType("varchar")
+                    b.Property<Guid?>("TokenActivate")
+                        .HasColumnType("uuid")
                         .HasColumnName("TokenActivate");
 
                     b.Property<DateTime>("UpdatedDate")

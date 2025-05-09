@@ -29,8 +29,7 @@ public class Handler : IRequestHandler<Request, BaseResponse<object>>
     /// <returns><see cref="BaseResponse"/> com status e mensagem</returns>
     public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
-        // Verifica se o token é inválido
-        if (request.token == 0)
+        if (request.token == Guid.Empty)
             return new BaseResponse<object>(400, "Token inválido");
 
         // Tenta ativar o usuário
