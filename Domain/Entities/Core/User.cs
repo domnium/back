@@ -70,6 +70,9 @@ public class User : Entity
     }
 
     public Guid? GenerateToken()
-        => Guid.NewGuid();
+        => TokenActivate = Guid.NewGuid();
+
+    public void ClearToken()
+        => TokenActivate = Guid.Empty;
 }
 

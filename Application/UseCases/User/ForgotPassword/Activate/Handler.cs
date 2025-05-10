@@ -30,37 +30,18 @@ public class Handler : IRequestHandler<Request, BaseResponse<object>>
     /// <returns><see cref="BaseResponse"/> com status e mensagem</returns>
     public async Task<BaseResponse<object>> Handle(Request request, CancellationToken cancellationToken)
     {
-        // Busca o usuário pelo e-mail
-        var userFromDb = await _userRepository.GetByEmail(request.email, cancellationToken);
-        if (userFromDb == null || !userFromDb.TokenActivate.Equals(request.token))
-        {
-            return new BaseResponse<object>(
-                statusCode: 404,
-                message: "User not found or invalid token"
-            );
-        }
+        var userFromDb = await _userRepository.GetWithParametersAsync(u => u.TokenActivate.Equals(request.token),
+             cancellationToken);
 
-        // Atualiza a senha do usuário
+        if (userFromDb is null) return new BaseResponse<object>(statusCode: 400, message: "Invalid or expired token");
+
         userFromDb.UpdatePassword(new Password(request.newPassword));
-        if (userFromDb.Notifications.Any())
-        {
-            return new BaseResponse<object>(
-                statusCode: 400,
-                message: "Request invalid",
-                notifications: userFromDb.Notifications.ToList()
-            );
-        }
+        if(!userFromDb.IsValid)
+            return new BaseResponse<object>(statusCode: 400, message: "Invalid password", notifications: userFromDb.Notifications.ToList());
 
-        // Atualiza o usuário no repositório
+        userFromDb.ClearToken(); 
         _userRepository.Update(userFromDb);
-
-        // Confirma as alterações no banco de dados
         await _dbCommit.Commit(cancellationToken);
-
-        // Retorna sucesso
-        return new BaseResponse<object>(
-            statusCode: 200,
-            message: "Password changed successfully"
-        );
+        return new BaseResponse<object>(statusCode: 200, message: "Password reset successful");
     }
 }

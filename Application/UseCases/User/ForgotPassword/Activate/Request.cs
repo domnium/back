@@ -3,5 +3,4 @@ using MediatR;
 
 namespace Application.UseCases.User.ForgotPassword.Activate;
 
-public record Request(string email, 
-    long token, string newPassword) : IRequest<BaseResponse<object>>;
+public record Request(Guid? token, string newPassword) : IRequest<BaseResponse<object>>;

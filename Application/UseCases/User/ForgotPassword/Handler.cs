@@ -38,7 +38,7 @@ public class Handler(
         userFromDb.GenerateToken();
         userRepository.Update(userFromDb);
 
-        var resetLink = $"{Configuration.FrontendUrl}/reset-password/?token={userFromDb.TokenActivate}";
+        var resetLink = $"{Configuration.PublicUrlFrontEnd}/auth/forgot-password-activate/?token={userFromDb.TokenActivate}";
 
         var commitTask = dbCommit.Commit(cancellationToken);
         var emailTask = messageQueueService.EnqueueEmailMessageAsync(
